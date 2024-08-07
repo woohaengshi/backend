@@ -19,10 +19,10 @@ public class Statistics {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "daily_time")
+    @Column(name = "monthly_time")
     private int monthlyTime;
 
-    @Column(name = "daily_time")
+    @Column(name = "weekly_time")
     private int weeklyTime;
 
     @Column(name = "daily_time")
