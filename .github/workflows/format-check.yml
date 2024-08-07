@@ -1,0 +1,28 @@
+name: Check Java Code Format
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  format-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Download Google Java Format
+        run: curl -LJO https://github.com/google/google-java-format/releases/download/v1.15.0/google-java-format-1.15.0-all-deps.jar
+
+      - name: Run Google Java Format Check
+        run: |
+          java -jar google-java-format-1.15.0-all-deps.jar --set-exit-if-changed $(find . -name '*.java')
+        shell: bash
