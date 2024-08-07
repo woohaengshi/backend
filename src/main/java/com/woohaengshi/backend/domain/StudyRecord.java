@@ -13,6 +13,8 @@ import jakarta.persistence.ManyToOne;
 
 import lombok.Getter;
 
+import java.time.LocalDate;
+
 @Entity
 @Getter
 public class StudyRecord {
@@ -24,6 +26,9 @@ public class StudyRecord {
     @Column(name = "time", nullable = false)
     private int time;
 
+    @Column(name = "date", nullable = false)
+    private LocalDate date;
+
     @JoinColumn(name = "member_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
@@ -33,6 +38,7 @@ public class StudyRecord {
     public StudyRecord(Long id, int time, Member member) {
         this.id = id;
         this.time = time;
+        this.date = date;
         this.member = member;
     }
 }
