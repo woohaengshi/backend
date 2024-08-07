@@ -43,4 +43,8 @@ public class StudyRecord {
         this.date = date;
         this.member = member;
     }
+
+    public void updateTime(int time) {
+        this.time += time;
+    }
 }
