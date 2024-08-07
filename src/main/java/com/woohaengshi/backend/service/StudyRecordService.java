@@ -1,6 +1,6 @@
 package com.woohaengshi.backend.service;
 
-import com.woohaengshi.backend.SaveRecordRequest;
+import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.Subject;
 import com.woohaengshi.backend.domain.member.Member;
@@ -40,7 +40,7 @@ public class StudyRecordService {
             studyRecord.updateTime(request.getTime());
             return studyRecord;
         }
-        return createStudyRecord(request, findMemberById(memberId));
+        return studyRecordRepository.save(createStudyRecord(request, findMemberById(memberId)));
     }
 
     private void saveSubjects(List<String> subjects, StudyRecord studyRecord) {
@@ -56,7 +56,7 @@ public class StudyRecordService {
     }
 
     private Subject createSubject(StudyRecord studyRecord, String subject) {
-        return Subject.builder().name(subject).studyRecord(studyRecord).build();
+        return Subject.builder().name(subject).studyRecord(studyRecord).member(studyRecord.getMember()).build();
     }
 
     private Member findMemberById(Long memberId) {
