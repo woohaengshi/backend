@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -35,7 +36,8 @@ public class StudyRecord {
 
     protected StudyRecord() {}
 
-    public StudyRecord(Long id, int time, Member member) {
+    @Builder
+    public StudyRecord(Long id, int time, LocalDate date, Member member) {
         this.id = id;
         this.time = time;
         this.date = date;
