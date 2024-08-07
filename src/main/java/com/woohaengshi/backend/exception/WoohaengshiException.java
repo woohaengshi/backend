@@ -1,6 +1,6 @@
 package com.woohaengshi.backend.exception;
 
-public class WoohaengshiException extends RuntimeException{
+public class WoohaengshiException extends RuntimeException {
 
     private final ErrorCode errorCode;
 
