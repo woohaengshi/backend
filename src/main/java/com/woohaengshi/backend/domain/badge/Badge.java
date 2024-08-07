@@ -1,10 +1,14 @@
 package com.woohaengshi.backend.domain.badge;
 
 import com.woohaengshi.backend.domain.member.Member;
+
 import jakarta.persistence.*;
+
 import lombok.Getter;
+
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import java.time.LocalDateTime;
 
 @Entity
