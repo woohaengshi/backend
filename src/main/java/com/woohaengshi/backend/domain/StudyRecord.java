@@ -10,7 +10,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
-import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -21,7 +20,7 @@ public class StudyRecord {
     private Long id;
 
     @Column(name = "time", nullable = false)
-    private LocalTime time;
+    private int time;
 
     @JoinColumn(name = "member_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,7 +28,7 @@ public class StudyRecord {
 
     protected StudyRecord() {}
 
-    public StudyRecord(Long id, LocalTime time, Member member) {
+    public StudyRecord(Long id, int time, Member member) {
         this.id = id;
         this.time = time;
         this.member = member;
