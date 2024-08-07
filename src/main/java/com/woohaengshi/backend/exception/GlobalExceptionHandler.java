@@ -8,10 +8,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(WoohaengshiException.class)
-    public ResponseEntity<ErrorResponse> handleWoohaengshiException(WoohaengshiException exception) {
+    public ResponseEntity<ErrorResponse> handleWoohaengshiException(
+            WoohaengshiException exception) {
         ErrorCode errorCode = exception.getErrorCode();
-        ErrorResponse errorResponse = new ErrorResponse(errorCode.getStatus().value(), errorCode.getMessage());
+        ErrorResponse errorResponse =
+                new ErrorResponse(errorCode.getStatus().value(), errorCode.getMessage());
         return ResponseEntity.status(errorCode.getStatus()).body(errorResponse);
     }
-
 }
