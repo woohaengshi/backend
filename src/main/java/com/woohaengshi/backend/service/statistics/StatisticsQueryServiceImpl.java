@@ -31,7 +31,6 @@ public class StatisticsQueryServiceImpl implements StatisticsQueryService {
                 statisticsRepository
                         .findByMemberId(memberId)
                         .orElseThrow(() -> new WoohaengshiException(ErrorCode.STATISTICS_NOT_FOUND));
-
         int rank;
         switch (statisticsType) {
             case DAILY:
@@ -47,7 +46,7 @@ public class StatisticsQueryServiceImpl implements StatisticsQueryService {
                 throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
         }
 
-        return rank;
+        return rank + 1;
     }
 
     @Override
@@ -62,7 +61,7 @@ public class StatisticsQueryServiceImpl implements StatisticsQueryService {
             case MONTHLY:
                 return statisticsRepository.findAllByMonthlyTimeRanking(pageable);
             default:
-                throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);;
+                throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
         }
     }
 

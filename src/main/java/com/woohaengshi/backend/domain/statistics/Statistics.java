@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
+import lombok.Builder;
 import lombok.Getter;
 
 @Entity
@@ -39,6 +40,7 @@ public class Statistics {
 
     protected Statistics() {}
 
+    @Builder
     public Statistics(
             Long id, int monthlyTime, int weeklyTime, int dailyTime, int totalTime, Member member) {
         this.id = id;

@@ -43,7 +43,7 @@ public class StatisticsReadDto {
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
-    private static class MemberDto {
+    public static class MemberDto {
         private String course;
         private String name;
         private String image;
@@ -68,7 +68,7 @@ public class StatisticsReadDto {
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
-    private static class InfiniteScrollingDto {
+    public static class InfiniteScrollingDto {
         private boolean hasNext;
         private List<MemberRankDto> ranks;
 
