@@ -23,8 +23,8 @@ public class MemberFixture {
         return this;
     }
 
-    public MemberFixture name(String nickname) {
-        this.name = nickname;
+    public MemberFixture name(String name) {
+        this.name = name;
         return this;
     }
 
