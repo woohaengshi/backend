@@ -125,7 +125,7 @@ public class StatisticsQueryServiceImpl implements StatisticsQueryService {
                                     member.getId(),
                                     member.getName(),
                                     member.getImage(),
-                                    member.getCourse().toString(),
+                                    member.getCourse().getName(),
                                     startRank + index,
                                     getTimeByStatisticsType(statisticsType, statistics),
                                     statistics.getTotalTime());

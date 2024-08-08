@@ -26,7 +26,7 @@ public class StatisticsReadDto {
             List<MemberRankDto> ranks) {
         MemberDto memberDto =
                 MemberDto.of(
-                        member.getCourse().toString(),
+                        member.getCourse().getName(),
                         member.getName(),
                         member.getImage(),
                         rank,
