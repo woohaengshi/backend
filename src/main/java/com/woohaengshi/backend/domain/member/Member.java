@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import lombok.Builder;
 import lombok.Getter;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -60,6 +61,7 @@ public class Member {
 
     protected Member() {}
 
+    @Builder
     public Member(
             Long id,
             String name,
