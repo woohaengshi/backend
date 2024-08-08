@@ -1,5 +1,7 @@
 package com.woohaengshi.backend.dto.request.studyrecord;
 
+import com.woohaengshi.backend.domain.StudyRecord;
+import com.woohaengshi.backend.domain.member.Member;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.Getter;
@@ -18,4 +20,15 @@ public class SaveRecordRequest {
     private List<String> subjects = new ArrayList<>();
 
     private SaveRecordRequest() {}
+
+    public SaveRecordRequest(LocalDate date, int time, List<String> subjects) {
+        this.date = date;
+        this.time = time;
+        this.subjects = subjects;
+    }
+
+    public StudyRecord toStudyRecord(Member member) {
+        return StudyRecord.builder().date(date).time(time).member(member).build();
+    }
+
 }
