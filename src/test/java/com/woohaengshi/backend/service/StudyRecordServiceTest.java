@@ -1,6 +1,7 @@
 package com.woohaengshi.backend.service;
 
 import com.woohaengshi.backend.domain.StudyRecord;
+import com.woohaengshi.backend.domain.Subject;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 import com.woohaengshi.backend.repository.MemberRepository;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
@@ -78,8 +80,8 @@ class StudyRecordServiceTest {
                 .forEach(
                         subject -> {
                             given(
-                                    subjectRepository.existsByNameAndStudyRecordId(
-                                            subject, newStudyRecord.getId()))
+                                            subjectRepository.existsByNameAndStudyRecordId(
+                                                    subject, newStudyRecord.getId()))
                                     .willReturn(false);
                         });
         assertAll(
@@ -92,5 +94,23 @@ class StudyRecordServiceTest {
                         verify(subjectRepository, times(2))
                                 .existsByNameAndStudyRecordId(
                                         any(String.class), eq(newStudyRecord.getId())));
+    }
+
+    @Test
+    void 이미_학습한_과목일_경우_저장되지_않는다() {
+        String DUPLICATED_SUBJECT = "HTML";
+        Member member = MemberFixture.builder().id(1L).build();
+        StudyRecord EXIST_RECORD = StudyRecordFixture.builder().member(member).time(20).build();
+        SaveRecordRequest request =
+                new SaveRecordRequest(LocalDate.now(), 10, List.of(DUPLICATED_SUBJECT));
+        StudyRecord newStudyRecord = request.toStudyRecord(member);
+        given(studyRecordRepository.findByDateAndMemberId(request.getDate(), member.getId()))
+                .willReturn(Optional.of(EXIST_RECORD));
+        given(
+                        subjectRepository.existsByNameAndStudyRecordId(
+                                DUPLICATED_SUBJECT, newStudyRecord.getId()))
+                .willReturn(true);
+        studyRecordService.save(request, member.getId());
+        assertAll(() -> verify(subjectRepository, never()).save(any(Subject.class)));
     }
 }
