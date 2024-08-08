@@ -4,6 +4,7 @@ import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.Subject;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
+import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.StudyRecordRepository;
 import com.woohaengshi.backend.repository.SubjectRepository;
@@ -19,7 +20,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static com.woohaengshi.backend.exception.ErrorCode.MEMBER_NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -112,5 +115,23 @@ class StudyRecordServiceTest {
                 .willReturn(true);
         studyRecordService.save(request, member.getId());
         assertAll(() -> verify(subjectRepository, never()).save(any(Subject.class)));
+    }
+
+    @Test
+    void 회원이_존재하지_않을_경우_예외를_던진다() {
+        Member member = MemberFixture.builder().build();
+        SaveRecordRequest request =
+                new SaveRecordRequest(LocalDate.now(), 10, List.of("HTML", "CSS"));
+        given(studyRecordRepository.findByDateAndMemberId(request.getDate(), member.getId()))
+                .willReturn(Optional.empty());
+        given(memberRepository.findById(member.getId())).willReturn(Optional.empty());
+        assertAll(
+                () ->
+                        assertThatThrownBy(() -> studyRecordService.save(request, member.getId()))
+                                .isExactlyInstanceOf(WoohaengshiException.class),
+                () ->
+                        verify(studyRecordRepository, times(1))
+                                .findByDateAndMemberId(request.getDate(), member.getId()),
+                () -> verify(memberRepository, times(1)).findById(member.getId()));
     }
 }
