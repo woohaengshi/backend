@@ -23,14 +23,11 @@ import static org.hamcrest.Matchers.equalTo;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class StatisticsControllerTest {
 
-    @LocalServerPort
-    private int port;
+    @LocalServerPort private int port;
 
-    @Autowired
-    private MemberRepository memberRepository;
+    @Autowired private MemberRepository memberRepository;
 
-    @Autowired
-    private StatisticsRepository statisticsRepository;
+    @Autowired private StatisticsRepository statisticsRepository;
 
     private Member member1;
     private Member member2;
@@ -45,7 +42,8 @@ class StatisticsControllerTest {
     @Test
     void getRanking_정상_요청() {
         RestAssured.given()
-                .log().all()
+                .log()
+                .all()
                 .param("page", 0)
                 .param("type", "DAILY")
                 .param("size", 10)
@@ -53,6 +51,59 @@ class StatisticsControllerTest {
                 .when()
                 .get("/api/v1/rank")
                 .then()
-                .log().all().statusCode(200);
+                .log()
+                .all()
+                .statusCode(200);
+    }
+
+    @Test
+    void 페이지가_잘_못_온_경우() {
+        RestAssured.given()
+                .log()
+                .all()
+                .param("page", -1)
+                .param("type", "DAILY")
+                .param("size", 10)
+                .contentType(ContentType.JSON)
+                .when()
+                .get("/api/v1/rank")
+                .then()
+                .log()
+                .all()
+                .statusCode(400);
+    }
+
+    @Test
+    void 타입이_잘_못_온_경우() {
+        RestAssured.given()
+                .log()
+                .all()
+                .param("page", -1)
+                .param("type", "asd")
+                .param("size", 10)
+                .contentType(ContentType.JSON)
+                .when()
+                .get("/api/v1/rank")
+                .then()
+                .log()
+                .all()
+                .statusCode(400);
+    }
+
+    @Test
+    void 사이즈가_너무_작은_경우() {
+        RestAssured.given()
+                .log()
+                .all()
+                .param("page", 0)
+                .param("type", "asd")
+                .param("size", 0)
+                .contentType(ContentType.JSON)
+                .when()
+                .get("/api/v1/rank")
+                .then()
+                .log()
+                .all()
+                .statusCode(400);
     }
 }

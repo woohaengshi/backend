@@ -78,10 +78,6 @@ public class StatisticsQueryServiceImpl implements StatisticsQueryService {
                         .orElseThrow(() -> new WoohaengshiException(ErrorCode.STATISTICS_NOT_FOUND));
 
 
-        if (pageable.getPageNumber() < 0) {
-            throw new WoohaengshiException(ErrorCode._PAGE_OVER_RANGE);
-        }
-
         int memberRanking = getMemberRanking(memberId, statisticsType);
         Slice<Statistics> statisticsRankingData =
                 getStatisticsRankingData(statisticsType, pageable);
