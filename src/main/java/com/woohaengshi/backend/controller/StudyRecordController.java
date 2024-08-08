@@ -17,12 +17,12 @@ import java.net.URI;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/study-record")
 public class StudyRecordController {
 
     private final StudyRecordService studyRecordService;
 
-    @PostMapping("/timers")
+    @PostMapping
     public ResponseEntity<Void> saveStudyRecord(@Valid @RequestBody SaveRecordRequest request) {
         studyRecordService.save(request, 1L);
         return ResponseEntity.created(URI.create("/api/v1/timers")).build();
