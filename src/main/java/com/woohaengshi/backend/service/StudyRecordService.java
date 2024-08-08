@@ -30,7 +30,7 @@ public class StudyRecordService {
         Optional<StudyRecord> optionalStudyRecord =
                 studyRecordRepository.findByDateAndMemberId(request.getDate(), memberId);
         StudyRecord studyRecord = saveStudyRecord(request, memberId, optionalStudyRecord);
-        saveSubjects(request.getSubjects(), studyRecord, memberId);
+        saveSubjects(request.getSubjects(), studyRecord);
     }
 
     private StudyRecord saveStudyRecord(
@@ -43,9 +43,9 @@ public class StudyRecordService {
         return studyRecordRepository.save(request.toStudyRecord(findMemberById(memberId)));
     }
 
-    private void saveSubjects(List<String> subjects, StudyRecord studyRecord, Long memberId) {
+    private void saveSubjects(List<String> subjects, StudyRecord studyRecord) {
         subjects.forEach(subject -> {
-                if(!subjectRepository.existsByMemberIdAndName(memberId, subject))
+                if(!subjectRepository.existsByNameAndStudyRecordId(subject, studyRecord.getId()))
                 subjectRepository.save(createSubject(studyRecord, subject));
         });
     }
