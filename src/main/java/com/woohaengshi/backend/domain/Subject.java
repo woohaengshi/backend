@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
+import lombok.Builder;
 import lombok.Getter;
 
 @Entity
@@ -34,6 +35,7 @@ public class Subject {
 
     protected Subject() {}
 
+    @Builder
     public Subject(Long id, String name, Member member, StudyRecord studyRecord) {
         this.id = id;
         this.name = name;
