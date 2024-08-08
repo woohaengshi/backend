@@ -1,11 +1,11 @@
 package com.woohaengshi.backend.exception;
 
+import static com.woohaengshi.backend.exception.ErrorCode.INVALID_INPUT;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import static com.woohaengshi.backend.exception.ErrorCode.INVALID_INPUT;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {

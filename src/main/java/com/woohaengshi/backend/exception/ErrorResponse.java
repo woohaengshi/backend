@@ -1,8 +1,10 @@
 package com.woohaengshi.backend.exception;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.Builder;
 import lombok.Getter;
+
 import org.springframework.validation.FieldError;
 
 import java.util.List;
