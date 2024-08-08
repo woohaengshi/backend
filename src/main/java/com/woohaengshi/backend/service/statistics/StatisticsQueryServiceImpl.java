@@ -36,18 +36,15 @@ public class StatisticsQueryServiceImpl implements StatisticsQueryService {
                         .findByMemberId(memberId)
                         .orElseThrow(() -> new WoohaengshiException(ErrorCode.STATISTICS_NOT_FOUND));
         int rank;
-        switch (statisticsType) {
-            case DAILY:
-                rank = statisticsRepository.countByDailyTimeGreaterThan(statistics.getDailyTime());
-                break;
-            case WEEKLY:
-                rank = statisticsRepository.countByWeeklyTimeGreaterThan(statistics.getWeeklyTime());
-                break;
-            case MONTHLY:
-                rank = statisticsRepository.countByMonthlyTimeGreaterThan(statistics.getMonthlyTime());
-                break;
-            default:
-                throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
+
+        if (statisticsType == StatisticsType.DAILY) {
+            rank = statisticsRepository.countByDailyTimeGreaterThan(statistics.getDailyTime());
+        } else if (statisticsType == StatisticsType.WEEKLY) {
+            rank = statisticsRepository.countByWeeklyTimeGreaterThan(statistics.getWeeklyTime());
+        } else if (statisticsType == StatisticsType.MONTHLY) {
+            rank = statisticsRepository.countByMonthlyTimeGreaterThan(statistics.getMonthlyTime());
+        } else {
+            throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
         }
 
         return rank + 1;
@@ -100,16 +97,9 @@ public class StatisticsQueryServiceImpl implements StatisticsQueryService {
     }
 
     private int getTimeByStatisticsType(StatisticsType statisticsType, Statistics statistics) {
-        switch (statisticsType) {
-            case DAILY:
-                return statistics.getDailyTime();
-            case WEEKLY:
-                return statistics.getWeeklyTime();
-            case MONTHLY:
-                return statistics.getMonthlyTime();
-            default:
-                throw new IllegalArgumentException("Invalid StatisticsType: " + statisticsType);
-        }
+        if (statisticsType == StatisticsType.DAILY)  return statistics.getDailyTime();
+        else if (statisticsType == StatisticsType.WEEKLY) return statistics.getWeeklyTime();
+        else return statistics.getMonthlyTime();
     }
 
     private List<StatisticsReadDto.MemberRankDto> createMemberRankDtos(
