@@ -29,10 +29,16 @@ public class StudyRecordService {
 
     @Transactional
     public void save(SaveRecordRequest request, Long memberId) {
+        validateExistMember(memberId);
         Optional<StudyRecord> optionalStudyRecord =
                 studyRecordRepository.findByDateAndMemberId(request.getDate(), memberId);
         StudyRecord studyRecord = saveStudyRecord(request, memberId, optionalStudyRecord);
         saveSubjects(request.getSubjects(), studyRecord);
+    }
+
+    private void validateExistMember(Long memberId) {
+        if (!memberRepository.existsById(memberId))
+            throw new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND);
     }
 
     private StudyRecord saveStudyRecord(
