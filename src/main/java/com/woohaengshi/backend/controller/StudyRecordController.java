@@ -21,8 +21,8 @@ public class StudyRecordController {
 
     @PostMapping("/timers")
     public ResponseEntity<Void> saveStudyRecord(
-            @Valid @RequestBody SaveRecordRequest request, Long memberId) {
-        studyRecordService.save(request, memberId);
+            @Valid @RequestBody SaveRecordRequest request) {
+        studyRecordService.save(request, 1L);
         return ResponseEntity.created(URI.create("/api/v1/timers")).build();
     }
 }
