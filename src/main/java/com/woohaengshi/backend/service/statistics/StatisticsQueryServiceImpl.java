@@ -35,19 +35,7 @@ public class StatisticsQueryServiceImpl implements StatisticsQueryService {
                 statisticsRepository
                         .findByMemberId(memberId)
                         .orElseThrow(() -> new WoohaengshiException(ErrorCode.STATISTICS_NOT_FOUND));
-        int rank;
-
-        if (statisticsType == StatisticsType.DAILY) {
-            rank = statisticsRepository.countByDailyTimeGreaterThan(statistics.getDailyTime());
-        } else if (statisticsType == StatisticsType.WEEKLY) {
-            rank = statisticsRepository.countByWeeklyTimeGreaterThan(statistics.getWeeklyTime());
-        } else if (statisticsType == StatisticsType.MONTHLY) {
-            rank = statisticsRepository.countByMonthlyTimeGreaterThan(statistics.getMonthlyTime());
-        } else {
-            throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
-        }
-
-        return rank + 1;
+        return countByTimeGreaterThan(statisticsType, statistics) + 1;
     }
 
     @Override
@@ -94,6 +82,18 @@ public class StatisticsQueryServiceImpl implements StatisticsQueryService {
                 statistics.getTotalTime(),
                 statisticsRankingData.hasNext(),
                 memberRankDtos);
+    }
+
+    private int countByTimeGreaterThan(StatisticsType statisticsType, Statistics statistics) {
+        if (statisticsType == StatisticsType.DAILY) {
+            return statisticsRepository.countByDailyTimeGreaterThan(statistics.getDailyTime());
+        } else if (statisticsType == StatisticsType.WEEKLY) {
+            return statisticsRepository.countByWeeklyTimeGreaterThan(statistics.getWeeklyTime());
+        } else if (statisticsType == StatisticsType.MONTHLY) {
+            return statisticsRepository.countByMonthlyTimeGreaterThan(statistics.getMonthlyTime());
+        } else {
+            throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
+        }
     }
 
     private int getTimeByStatisticsType(StatisticsType statisticsType, Statistics statistics) {
