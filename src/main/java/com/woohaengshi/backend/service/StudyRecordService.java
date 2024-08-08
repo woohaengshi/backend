@@ -40,7 +40,7 @@ public class StudyRecordService {
             studyRecord.updateTime(request.getTime());
             return studyRecord;
         }
-        return studyRecordRepository.save(createStudyRecord(request, findMemberById(memberId)));
+        return studyRecordRepository.save(request.toStudyRecord(findMemberById(memberId)));
     }
 
     private void saveSubjects(List<String> subjects, StudyRecord studyRecord, Long memberId) {
@@ -48,14 +48,6 @@ public class StudyRecordService {
                 if(!subjectRepository.existsByMemberIdAndName(memberId, subject))
                 subjectRepository.save(createSubject(studyRecord, subject));
         });
-    }
-
-    private StudyRecord createStudyRecord(SaveRecordRequest request, Member member) {
-        return StudyRecord.builder()
-                .date(request.getDate())
-                .time(request.getTime())
-                .member(member)
-                .build();
     }
 
     private Subject createSubject(StudyRecord studyRecord, String subject) {
