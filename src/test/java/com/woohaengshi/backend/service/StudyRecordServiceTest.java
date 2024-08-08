@@ -7,6 +7,7 @@ import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.StudyRecordRepository;
 import com.woohaengshi.backend.repository.SubjectRepository;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
+import com.woohaengshi.backend.support.fixture.StudyRecordFixture;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,6 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -61,5 +63,34 @@ class StudyRecordServiceTest {
                         verify(subjectRepository, times(2))
                                 .existsByNameAndStudyRecordId(
                                         any(String.class), eq(studyRecord.getId())));
+    }
+
+    @Test
+    void 공부_기록을_누적해_저장할_수_있다() {
+        Member member = MemberFixture.builder().id(1L).build();
+        StudyRecord existStudyRecord = StudyRecordFixture.builder().member(member).time(20).build();
+        SaveRecordRequest request =
+                new SaveRecordRequest(LocalDate.now(), 10, List.of("HTML", "CSS"));
+        StudyRecord newStudyRecord = request.toStudyRecord(member);
+        given(studyRecordRepository.findByDateAndMemberId(request.getDate(), member.getId()))
+                .willReturn(Optional.of(existStudyRecord));
+        request.getSubjects()
+                .forEach(
+                        subject -> {
+                            given(
+                                    subjectRepository.existsByNameAndStudyRecordId(
+                                            subject, newStudyRecord.getId()))
+                                    .willReturn(false);
+                        });
+        assertAll(
+                () -> studyRecordService.save(request, member.getId()),
+                () -> assertThat(existStudyRecord.getTime()).isEqualTo(30),
+                () ->
+                        verify(studyRecordRepository, times(1))
+                                .findByDateAndMemberId(request.getDate(), member.getId()),
+                () ->
+                        verify(subjectRepository, times(2))
+                                .existsByNameAndStudyRecordId(
+                                        any(String.class), eq(newStudyRecord.getId())));
     }
 }
