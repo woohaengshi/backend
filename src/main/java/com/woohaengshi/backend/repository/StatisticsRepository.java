@@ -13,11 +13,5 @@ import java.util.Optional;
 public interface StatisticsRepository extends JpaRepository<Statistics, Long>, JpaSpecificationExecutor<Statistics> {
 
     Optional<Statistics> findByMemberId(Long memberId);
-
-    int countByDailyTimeGreaterThan(int dailyTime);
-
-    int countByWeeklyTimeGreaterThan(int weeklyTime);
-
-    int countByMonthlyTimeGreaterThan(int monthlyTime);
 }
 

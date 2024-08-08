@@ -35,7 +35,8 @@ public class StatisticsQueryServiceImpl implements StatisticsQueryService {
                 statisticsRepository
                         .findByMemberId(memberId)
                         .orElseThrow(() -> new WoohaengshiException(ErrorCode.STATISTICS_NOT_FOUND));
-        return countByTimeGreaterThan(statisticsType, statistics) + 1;
+        int time = getTimeByStatisticsType(statisticsType, statistics);
+        return getCountByTimeGreaterThan(statisticsType, time) + 1;
     }
 
     @Override
@@ -84,16 +85,22 @@ public class StatisticsQueryServiceImpl implements StatisticsQueryService {
                 memberRankDtos);
     }
 
-    private int countByTimeGreaterThan(StatisticsType statisticsType, Statistics statistics) {
-        if (statisticsType == StatisticsType.DAILY) {
-            return statisticsRepository.countByDailyTimeGreaterThan(statistics.getDailyTime());
-        } else if (statisticsType == StatisticsType.WEEKLY) {
-            return statisticsRepository.countByWeeklyTimeGreaterThan(statistics.getWeeklyTime());
-        } else if (statisticsType == StatisticsType.MONTHLY) {
-            return statisticsRepository.countByMonthlyTimeGreaterThan(statistics.getMonthlyTime());
-        } else {
-            throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
-        }
+
+    public int getCountByTimeGreaterThan(StatisticsType statisticsType, int time) {
+        Specification<Statistics> specification =
+                (root, query, cb) -> {
+                    if (statisticsType == StatisticsType.DAILY) {
+                        return cb.greaterThan(root.get("dailyTime"), time);
+                    } else if (statisticsType == StatisticsType.WEEKLY) {
+                        return cb.greaterThan(root.get("weeklyTime"), time);
+                    } else if (statisticsType == StatisticsType.MONTHLY) {
+                        return cb.greaterThan(root.get("monthlyTime"), time);
+                    } else {
+                        throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
+                    }
+                };
+
+        return (int) statisticsRepository.count(specification);
     }
 
     private int getTimeByStatisticsType(StatisticsType statisticsType, Statistics statistics) {
