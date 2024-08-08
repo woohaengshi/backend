@@ -1,6 +1,7 @@
 package com.woohaengshi.backend.repository;
 
 import com.woohaengshi.backend.domain.StudyRecord;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;

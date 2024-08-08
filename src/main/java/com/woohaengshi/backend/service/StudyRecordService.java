@@ -1,15 +1,17 @@
 package com.woohaengshi.backend.service;
 
-import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.Subject;
 import com.woohaengshi.backend.domain.member.Member;
+import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.StudyRecordRepository;
 import com.woohaengshi.backend.repository.SubjectRepository;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,10 +46,12 @@ public class StudyRecordService {
     }
 
     private void saveSubjects(List<String> subjects, StudyRecord studyRecord) {
-        subjects.forEach(subject -> {
-                if(!subjectRepository.existsByNameAndStudyRecordId(subject, studyRecord.getId()))
-                subjectRepository.save(createSubject(studyRecord, subject));
-        });
+        subjects.forEach(
+                subject -> {
+                    if (!subjectRepository.existsByNameAndStudyRecordId(
+                            subject, studyRecord.getId()))
+                        subjectRepository.save(createSubject(studyRecord, subject));
+                });
     }
 
     private Subject createSubject(StudyRecord studyRecord, String subject) {
