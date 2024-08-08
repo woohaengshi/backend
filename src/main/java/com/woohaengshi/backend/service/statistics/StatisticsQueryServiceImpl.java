@@ -8,9 +8,13 @@ import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.StatisticsRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,13 +38,13 @@ public class StatisticsQueryServiceImpl implements StatisticsQueryService {
         int rank;
         switch (statisticsType) {
             case DAILY:
-                rank = statisticsRepository.checkByDailyTimeRanking(statistics.getDailyTime());
+                rank = statisticsRepository.countByDailyTimeGreaterThan(statistics.getDailyTime());
                 break;
             case WEEKLY:
-                rank = statisticsRepository.checkByWeeklyTimeRanking(statistics.getWeeklyTime());
+                rank = statisticsRepository.countByWeeklyTimeGreaterThan(statistics.getWeeklyTime());
                 break;
             case MONTHLY:
-                rank = statisticsRepository.checkByMonthlyTimeRanking(statistics.getMonthlyTime());
+                rank = statisticsRepository.countByMonthlyTimeGreaterThan(statistics.getMonthlyTime());
                 break;
             default:
                 throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
@@ -51,19 +55,20 @@ public class StatisticsQueryServiceImpl implements StatisticsQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Slice<Statistics> getStatisticsRankingData(
-            StatisticsType statisticsType, Pageable pageable) {
-        switch (statisticsType) {
-            case DAILY:
-                return statisticsRepository.findAllByDailyTimeTimeRanking(pageable);
-            case WEEKLY:
-                return statisticsRepository.findAllByWeeklyTimeRanking(pageable);
-            case MONTHLY:
-                return statisticsRepository.findAllByMonthlyTimeRanking(pageable);
-            default:
-                throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
-        }
+    public Slice<Statistics> getStatisticsRankingData(StatisticsType statisticsType, Pageable pageable) {
+        Specification<Statistics> specification = (Root<Statistics> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
+            if ("daily".equalsIgnoreCase(statisticsType.toString())) {
+                query.orderBy(cb.desc(root.get("dailyTime")));
+            } else if ("weekly".equalsIgnoreCase(statisticsType.toString())) {
+                query.orderBy(cb.desc(root.get("weeklyTime")));
+            } else if ("monthly".equalsIgnoreCase(statisticsType.toString())) {
+                query.orderBy(cb.desc(root.get("monthlyTime")));
+            }
+            return query.getRestriction();
+        };
+        return statisticsRepository.findAll(specification, pageable);
     }
+
 
     @Override
     @Transactional(readOnly = true)
