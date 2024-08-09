@@ -24,7 +24,7 @@ import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
-public class StatisticsQueryServiceImpl implements StatisticsQueryService {
+public class StatisticsServiceImpl implements StatisticsService {
     private final StatisticsRepository statisticsRepository;
     private final MemberRepository memberRepository;
 

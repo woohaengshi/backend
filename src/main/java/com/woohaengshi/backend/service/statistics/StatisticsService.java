@@ -6,7 +6,7 @@ import com.woohaengshi.backend.dto.response.StatisticsReadDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
-public interface StatisticsQueryService {
+public interface StatisticsService {
     int getMemberRanking(long memberId, StatisticsType statisticsType);
 
     Slice<Statistics> getStatisticsRankingData(StatisticsType statisticsType, Pageable pageable);
