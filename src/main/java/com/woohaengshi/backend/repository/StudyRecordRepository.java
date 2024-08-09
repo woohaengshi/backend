@@ -9,4 +9,6 @@ import java.util.Optional;
 
 public interface StudyRecordRepository extends JpaRepository<StudyRecord, Long> {
     Optional<StudyRecord> findByDateAndMemberId(LocalDate date, Long memberId);
+
+    int findTimeByDateAndMemberId(LocalDate date, Long memberId);
 }
