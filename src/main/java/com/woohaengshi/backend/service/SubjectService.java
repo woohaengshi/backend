@@ -2,7 +2,7 @@ package com.woohaengshi.backend.service;
 
 import com.woohaengshi.backend.domain.Subject;
 import com.woohaengshi.backend.domain.member.Member;
-import com.woohaengshi.backend.dto.request.SubjectRequestDTO;
+import com.woohaengshi.backend.dto.request.subject.SubjectRequest;
 import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
@@ -20,7 +20,7 @@ public class SubjectService {
   @Autowired private SubjectRepository subjectRepository;
   @Autowired private MemberRepository memberRepository;
 
-  public void editSubjects(Long memberId, SubjectRequestDTO requestDTO) {
+  public void editSubjects(Long memberId, SubjectRequest requestDTO) {
     if (!memberRepository.existsById(memberId))
       throw new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND);
 

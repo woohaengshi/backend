@@ -1,8 +1,8 @@
-package com.woohaengshi.backend.dto.request;
+package com.woohaengshi.backend.dto.request.subject;
 
 import java.util.List;
 
-public class SubjectRequestDTO {
+public class SubjectRequest {
     private List<String> addSubjects;
     private List<Long> deleteSubjects;
 
