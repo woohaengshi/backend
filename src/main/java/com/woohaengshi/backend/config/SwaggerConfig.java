@@ -30,13 +30,6 @@ public class SwaggerConfig {
         prodServer.setUrl(prodUrl);
         prodServer.setDescription("Server URL in Production environment");
 
-        //        Contact contact = new Contact();
-        //        contact.setEmail("temp@gmail.com");
-        //        contact.setName("temp");
-        //        contact.setUrl("https://www.temp.com");
-        //        License mitLicense = new License().name("MIT
-        // License").url("https://choosealicense.com/licenses/mit/");
-
         Info info =
                 new Info()
                         .title("Woohaengshi API")
