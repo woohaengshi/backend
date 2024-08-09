@@ -13,4 +13,12 @@ public class SubjectRequest {
     public List<Long> getDeleteSubjects () {
         return deleteSubjects;
     }
+
+    public void setSubjectsForAddition(List<String> subjects) {
+        this.addSubjects = subjects;
+    }
+
+    public void setSubjectsForDeletion(List<Long> subjectIds) {
+        this.deleteSubjects = subjectIds;
+    }
 }
