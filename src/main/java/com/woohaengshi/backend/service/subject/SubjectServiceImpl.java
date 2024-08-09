@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,9 +28,9 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     @Transactional
-    public FindTimerResponse findTimer(Long memberId, LocalDate date) {
+    public FindTimerResponse findTimer(Long memberId) {
         List<FindSubjectsResponse> subjectsResponses = findSubjectsResponses(memberId);
-        int todayStudyTime = findTodayStudyTime(memberId, date);
+        int todayStudyTime = findTodayStudyTime(memberId, findTodayDate());
         return new FindTimerResponse(todayStudyTime, subjectsResponses);
     }
 
@@ -44,5 +46,13 @@ public class SubjectServiceImpl implements SubjectService {
                 studyRecordRepository.findByDateAndMemberId(date, memberId);
         if (studyRecordOptional.isPresent()) return studyRecordOptional.get().getTime();
         else return 0;
+    }
+
+    private LocalDate findTodayDate() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalTime standardTime = LocalTime.of(5, 0);
+
+        if (now.toLocalTime().isBefore(standardTime)) return now.toLocalDate().minusDays(1);
+        else return now.toLocalDate();
     }
 }
