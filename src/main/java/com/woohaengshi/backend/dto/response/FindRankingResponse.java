@@ -12,12 +12,12 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FindRakingResponse {
+public class FindRankingResponse {
 
     private MemberDto member;
     private InfiniteScrollingDto infiniteScrolling;
 
-    public static FindRakingResponse of(
+    public static FindRankingResponse of(
             Member member,
             Integer rank,
             Integer time,
@@ -31,7 +31,7 @@ public class FindRakingResponse {
                         time,
                         totalTime);
         InfiniteScrollingDto infiniteScrolling = InfiniteScrollingDto.of(hasNext, ranks);
-        return FindRakingResponse.builder()
+        return FindRankingResponse.builder()
                 .member(memberDto)
                 .infiniteScrolling(infiniteScrolling)
                 .build();

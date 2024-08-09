@@ -3,7 +3,7 @@ package com.woohaengshi.backend.service.statistics;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.statistics.Statistics;
 import com.woohaengshi.backend.domain.statistics.StatisticsType;
-import com.woohaengshi.backend.dto.response.FindRakingResponse;
+import com.woohaengshi.backend.dto.response.FindRankingResponse;
 import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
@@ -59,7 +59,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     @Transactional(readOnly = true)
-    public FindRakingResponse getRankingDataWithMember(
+    public FindRankingResponse getRankingDataWithMember(
             long memberId, StatisticsType statisticsType, Pageable pageable) {
         Member member =
                 memberRepository.findById(memberId).orElseThrow(() -> new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND));
@@ -74,10 +74,10 @@ public class StatisticsServiceImpl implements StatisticsService {
         Slice<Statistics> statisticsRankingData =
                 getStatisticsRankingData(statisticsType, pageable);
 
-        List<FindRakingResponse.MemberRankDto> memberRankDtos =
+        List<FindRankingResponse.MemberRankDto> memberRankDtos =
                 createMemberRankDtos(statisticsRankingData, pageable, statisticsType);
 
-        return FindRakingResponse.of(
+        return FindRankingResponse.of(
                 member,
                 memberRanking,
                 statistics.getDailyTime(),
@@ -110,7 +110,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         else return statistics.getMonthlyTime();
     }
 
-    private List<FindRakingResponse.MemberRankDto> createMemberRankDtos(
+    private List<FindRankingResponse.MemberRankDto> createMemberRankDtos(
             Slice<Statistics> statisticsSlice, Pageable pageable, StatisticsType statisticsType) {
         int startRank = pageable.getPageNumber() * pageable.getPageSize() + 1;
 
@@ -120,7 +120,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                             Statistics statistics = statisticsSlice.getContent().get(index);
                             Member member = statistics.getMember();
 
-                            return FindRakingResponse.MemberRankDto.of(
+                            return FindRankingResponse.MemberRankDto.of(
                                     member.getId(),
                                     member.getName(),
                                     member.getImage(),
