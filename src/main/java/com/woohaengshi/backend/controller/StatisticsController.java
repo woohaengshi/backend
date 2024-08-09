@@ -1,7 +1,7 @@
 package com.woohaengshi.backend.controller;
 
 import com.woohaengshi.backend.domain.statistics.StatisticsType;
-import com.woohaengshi.backend.dto.response.FindRankingResponse;
+import com.woohaengshi.backend.dto.response.RankingSnapshotResponse;
 import com.woohaengshi.backend.service.statistics.StatisticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +19,7 @@ public class StatisticsController {
     private final StatisticsService statisticsService;
 
     @GetMapping("/rank")
-    public FindRankingResponse getRanking(
+    public RankingSnapshotResponse getRanking(
             @PageableDefault(size = 10, page = 0) Pageable pageable,
             @RequestParam(value = "type", defaultValue = "WEEKLY") StatisticsType statisticsType) {
 
