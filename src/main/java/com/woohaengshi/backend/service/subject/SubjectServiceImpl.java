@@ -1,5 +1,6 @@
 package com.woohaengshi.backend.service.subject;
 
+import com.woohaengshi.backend.constant.StandardTimeConstant;
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.Subject;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowTimerResponse;
@@ -17,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -61,9 +61,9 @@ public class SubjectServiceImpl implements SubjectService {
 
     private LocalDate getTodayDate() {
         LocalDateTime now = LocalDateTime.now();
-        LocalTime standardTime = LocalTime.of(5, 0);
 
-        if (now.toLocalTime().isBefore(standardTime)) return now.toLocalDate().minusDays(1);
+        if (now.toLocalTime().isBefore(StandardTimeConstant.STANDARD_TIME))
+            return now.toLocalDate().minusDays(1);
         else return now.toLocalDate();
     }
 }
