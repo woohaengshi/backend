@@ -1,4 +1,4 @@
-package com.woohaengshi.backend.controller;
+package com.woohaengshi.backend.config;
 
 
 import org.springframework.beans.factory.annotation.Value;
