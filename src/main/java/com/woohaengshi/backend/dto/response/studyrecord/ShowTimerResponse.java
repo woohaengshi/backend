@@ -11,10 +11,10 @@ public class ShowTimerResponse {
 
     private int time;
 
-    private List<ShowSubjectsResponse> subjectsList;
+    private List<ShowSubjectsResponse> subjects;
 
-    public ShowTimerResponse(int time, List<ShowSubjectsResponse> subjectsList) {
+    public ShowTimerResponse(int time, List<ShowSubjectsResponse> subjects) {
         this.time = time;
-        this.subjectsList = subjectsList;
+        this.subjects = subjects;
     }
 }

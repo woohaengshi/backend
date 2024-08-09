@@ -54,7 +54,7 @@ public class SubjectServiceTest {
         ShowTimerResponse response = subjectService.getTimer(member.getId());
 
         List<ShowSubjectsResponse> expectedSubjects = Collections.singletonList(subjectResponse);
-        List<ShowSubjectsResponse> actualSubjects = response.getSubjectsList();
+        List<ShowSubjectsResponse> actualSubjects = response.getSubjects();
 
         assertAll(
                 "response",
@@ -91,7 +91,7 @@ public class SubjectServiceTest {
         ShowTimerResponse response = subjectService.getTimer(member.getId());
 
         List<ShowSubjectsResponse> expectedSubjects = Collections.singletonList(subjectResponse);
-        List<ShowSubjectsResponse> actualSubjects = response.getSubjectsList();
+        List<ShowSubjectsResponse> actualSubjects = response.getSubjects();
 
         assertAll(
                 "response",
