@@ -2,7 +2,7 @@ package com.woohaengshi.backend.service.statistics;
 
 import com.woohaengshi.backend.domain.statistics.Statistics;
 import com.woohaengshi.backend.domain.statistics.StatisticsType;
-import com.woohaengshi.backend.dto.response.StatisticsReadDto;
+import com.woohaengshi.backend.dto.response.FindRakingResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
@@ -11,6 +11,6 @@ public interface StatisticsService {
 
     Slice<Statistics> getStatisticsRankingData(StatisticsType statisticsType, Pageable pageable);
 
-    StatisticsReadDto getRankingDataWithMember(
+    FindRakingResponse getRankingDataWithMember(
             long memberId, StatisticsType statisticsType, Pageable pageable);
 }

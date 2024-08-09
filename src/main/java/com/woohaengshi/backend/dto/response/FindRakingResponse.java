@@ -12,28 +12,26 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class StatisticsReadDto {
+public class FindRakingResponse {
 
     private MemberDto member;
     private InfiniteScrollingDto infiniteScrolling;
 
-    public static StatisticsReadDto of(
+    public static FindRakingResponse of(
             Member member,
-            int rank,
-            int dailyTime,
-            int totalTime,
-            boolean hasNext,
+            Integer rank,
+            Integer time,
+            Integer totalTime,
+            Boolean hasNext,
             List<MemberRankDto> ranks) {
         MemberDto memberDto =
                 MemberDto.of(
-                        member.getCourse().getName(),
-                        member.getName(),
-                        member.getImage(),
+                        member,
                         rank,
-                        dailyTime,
+                        time,
                         totalTime);
         InfiniteScrollingDto infiniteScrolling = InfiniteScrollingDto.of(hasNext, ranks);
-        return StatisticsReadDto.builder()
+        return FindRakingResponse.builder()
                 .member(memberDto)
                 .infiniteScrolling(infiniteScrolling)
                 .build();
@@ -47,18 +45,17 @@ public class StatisticsReadDto {
         private String course;
         private String name;
         private String image;
-        private int rank;
-        private int dailyTime;
-        private int totalTime;
+        private Integer rank;
+        private Integer time;
+        private Integer totalTime;
 
-        public static MemberDto of(
-                String course, String name, String image, int rank, int dailyTime, int totalTime) {
+        public static MemberDto of(Member member, int rank, int time, int totalTime) {
             return MemberDto.builder()
-                    .course(course)
-                    .name(name)
-                    .image(image)
+                    .course(member.getCourse().getName())
+                    .name(member.getName())
+                    .image(member.getImage())
                     .rank(rank)
-                    .dailyTime(dailyTime)
+                    .time(time)
                     .totalTime(totalTime)
                     .build();
         }
@@ -69,7 +66,7 @@ public class StatisticsReadDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class InfiniteScrollingDto {
-        private boolean hasNext;
+        private Boolean hasNext;
         private List<MemberRankDto> ranks;
 
         public static InfiniteScrollingDto of(boolean hasNext, List<MemberRankDto> ranks) {
@@ -86,9 +83,9 @@ public class StatisticsReadDto {
         private String name;
         private String image;
         private String group;
-        private int rank;
-        private int time;
-        private int totalTime;
+        private Integer rank;
+        private Integer time;
+        private Integer totalTime;
 
         public static MemberRankDto of(
                 Long id,
