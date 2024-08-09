@@ -8,6 +8,7 @@ import com.woohaengshi.backend.service.statistics.StatisticsQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,15 +24,10 @@ public class StatisticsController {
 
     @GetMapping("/rank")
     public StatisticsReadDto getRanking(
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "type", defaultValue = "WEEKLY") String type,
-            @RequestParam(value = "size", defaultValue = "10") int size) {
-
-        if (page < 0) throw new WoohaengshiException(ErrorCode._PAGE_OVER_RANGE);
-        if (size <= 0) throw new WoohaengshiException(ErrorCode._PAGE_SIZE_MIN);
-        Pageable pageable = PageRequest.of(page, size);
-        StatisticsType statisticsType = StatisticsType.fromString(type);
+            @PageableDefault(size = 10, page = 0) Pageable pageable,
+            @RequestParam(value = "type", defaultValue = "WEEKLY") StatisticsType statisticsType) {
 
         return statisticsQueryService.getRankingDataWithMember(1, statisticsType, pageable);
     }
 }
+
