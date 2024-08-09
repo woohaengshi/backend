@@ -25,34 +25,32 @@ public class SubjectService {
       throw new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND);
 
     List<String> addSubjects = requestDTO.getAddSubjects();
-    if (!addSubjects.isEmpty()) {
+    if (addSubjects != null && !addSubjects.isEmpty()) {
       insertSubjects(memberId, addSubjects);
     }
 
     List<Long> deleteSubjects = requestDTO.getDeleteSubjects();
-    if (!deleteSubjects.isEmpty()) {
-      deleteSubjects(memberId, deleteSubjects);
+    if (deleteSubjects != null && !deleteSubjects.isEmpty()) {
+      deleteSubjects(deleteSubjects);
     }
   }
 
   private void insertSubjects(Long memberId, List<String> addSubjects) {
     Member member = memberRepository.findById(memberId).get();
     addSubjects.stream()
-            .forEach(
-                    s -> {
-                      validateAlreadyExistSubject(memberId, s);
-                      subjectRepository.save(Subject.builder().name(s).member(member).build());
-                    });
-
+        .forEach(
+            s -> {
+              validateAlreadyExistSubject(memberId, s);
+              subjectRepository.save(Subject.builder().name(s).member(member).build());
+            });
   }
 
-  private void deleteSubjects(Long memberId, List<Long> deleteSubjects) {
-    deleteSubjects.stream()
-            .forEach(
-                    i -> {
-                      validateNotExistSubject(memberId, i);
-                      subjectRepository.deleteById(i);
-                    });
+  private void deleteSubjects(List<Long> deleteSubjects) {
+    deleteSubjects.forEach(
+        i -> {
+          validateNotExistSubject(i);
+          subjectRepository.deleteById(i);
+        });
   }
 
   private void validateAlreadyExistSubject(Long member_id, String s) {
@@ -61,8 +59,8 @@ public class SubjectService {
     }
   }
 
-  private void validateNotExistSubject(Long member_id, Long i) {
-    if (!subjectRepository.existsByMemberIdAndId(member_id, i)) {
+  private void validateNotExistSubject(Long i) {
+    if (!subjectRepository.existsById(i)) {
       throw new WoohaengshiException(ErrorCode.SUBJECT_NOT_EXISTS);
     }
   }

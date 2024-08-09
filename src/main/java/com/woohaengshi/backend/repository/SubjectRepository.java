@@ -7,5 +7,4 @@ import java.util.Optional;
 
 public interface SubjectRepository extends JpaRepository<Subject, Long> {
   boolean existsByMemberIdAndName(Long memberId, String name);
-  boolean existsByMemberIdAndId(Long memberId, Long id);
 }
