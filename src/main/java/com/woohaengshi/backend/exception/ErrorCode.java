@@ -5,9 +5,6 @@ import org.springframework.http.HttpStatus;
 import static org.springframework.http.HttpStatus.*;
 
 public enum ErrorCode {
-    _PAGE_OVER_RANGE(BAD_REQUEST, "페이징 범위를 넘었습니다. 페이징 0 부터 시작합니다."),
-    _PAGE_SIZE_MIN(BAD_REQUEST, "페이징 사이즈가 너무 작습니다. 사이즈가 0보다 커야 합니다"),
-
     MEMBER_NOT_FOUND(NOT_FOUND, "회원을 찾을 수 없습니다."),
     STATISTICS_TYPE_NOT_FOUND(BAD_REQUEST, "랭킹 조회에서 찾을 수 없는 유형 타입입니다."),
     STATISTICS_NOT_FOUND(BAD_REQUEST, "통계를 찾을 수 없습니다");
