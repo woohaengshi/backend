@@ -71,3 +71,15 @@ CREATE TABLE IF NOT EXISTS `statistics`
     DEFAULT charset = utf8mb4
     COLLATE = utf8mb4_0900_ai_ci;
 
+CREATE TABLE IF NOT EXISTS `study_subject`
+(
+    `id`              BIGINT NOT NULL auto_increment,
+    `study_record_id` BIGINT NOT NULL,
+    `subject_id`      BIGINT NOT NULL,
+    PRIMARY KEY (`id`)
+)
+    engine = innodb
+    auto_increment = 1
+    DEFAULT charset = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
+
