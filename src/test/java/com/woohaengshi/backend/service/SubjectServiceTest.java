@@ -108,4 +108,25 @@ public class SubjectServiceTest {
                                                 .equals(actualSubjects.get(0).getName()),
                                 "Subjects list should match"));
     }
+
+    @Test
+    void 회원이_존재하지_않으면_예외를_던진다() {
+        Member member = MemberFixture.builder().build();
+
+        given(memberRepository.existsById(member.getId())).willReturn(false);
+
+        SubjectServiceImpl subjectService =
+                new SubjectServiceImpl(studyRecordRepository, subjectRepository, memberRepository);
+
+        WoohaengshiException thrown =
+                assertThrows(
+                        WoohaengshiException.class, () -> subjectService.findTimer(member.getId()));
+        assertAll(
+                "exception",
+                () ->
+                        assertEquals(
+                                ErrorCode.MEMBER_NOT_FOUND,
+                                thrown.getErrorCode(),
+                                "Error code should match"));
+    }
 }
