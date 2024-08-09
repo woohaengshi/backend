@@ -17,7 +17,7 @@ public class SubjectController {
     private final SubjectService subjectService;
 
     @GetMapping
-    public FindTimerResponse getTimer() {
-        return subjectService.findTimer(1L);
+    public FindTimerResponse showTimer() {
+        return subjectService.getTimer(1L);
     }
 }

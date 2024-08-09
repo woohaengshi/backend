@@ -51,7 +51,7 @@ public class SubjectServiceTest {
         SubjectServiceImpl subjectService =
                 new SubjectServiceImpl(studyRecordRepository, subjectRepository, memberRepository);
 
-        FindTimerResponse response = subjectService.findTimer(member.getId());
+        FindTimerResponse response = subjectService.getTimer(member.getId());
 
         List<FindSubjectsResponse> expectedSubjects = Collections.singletonList(subjectResponse);
         List<FindSubjectsResponse> actualSubjects = response.getSubjectsList();
@@ -88,7 +88,7 @@ public class SubjectServiceTest {
         SubjectServiceImpl subjectService =
                 new SubjectServiceImpl(studyRecordRepository, subjectRepository, memberRepository);
 
-        FindTimerResponse response = subjectService.findTimer(member.getId());
+        FindTimerResponse response = subjectService.getTimer(member.getId());
 
         List<FindSubjectsResponse> expectedSubjects = Collections.singletonList(subjectResponse);
         List<FindSubjectsResponse> actualSubjects = response.getSubjectsList();
@@ -121,7 +121,7 @@ public class SubjectServiceTest {
 
         WoohaengshiException thrown =
                 assertThrows(
-                        WoohaengshiException.class, () -> subjectService.findTimer(member.getId()));
+                        WoohaengshiException.class, () -> subjectService.getTimer(member.getId()));
         assertAll(
                 "exception",
                 () ->

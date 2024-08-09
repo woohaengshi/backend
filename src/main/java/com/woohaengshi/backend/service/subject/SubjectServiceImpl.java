@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class SubjectServiceImpl implements SubjectService {
 
@@ -33,33 +34,33 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     @Transactional(readOnly = true)
-    public FindTimerResponse findTimer(Long memberId) {
-        checkExistMember(memberId);
-        List<FindSubjectsResponse> subjectsResponses = findSubjectsResponses(memberId);
-        int todayStudyTime = findTodayStudyTime(memberId, findTodayDate());
+    public FindTimerResponse getTimer(Long memberId) {
+        validateExistMember(memberId);
+        List<FindSubjectsResponse> subjectsResponses = getSubjectsResponses(memberId);
+        int todayStudyTime = getTodayStudyTime(memberId, getTodayDate());
         return new FindTimerResponse(todayStudyTime, subjectsResponses);
     }
 
-    private void checkExistMember(Long memberId) {
+    private void validateExistMember(Long memberId) {
         if (!memberRepository.existsById(memberId))
             throw new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND);
     }
 
-    private List<FindSubjectsResponse> findSubjectsResponses(Long memberId) {
+    private List<FindSubjectsResponse> getSubjectsResponses(Long memberId) {
         Stream<Subject> subjectStream = subjectRepository.findAllByMemberIdOrderByNameAsc(memberId);
         return subjectStream
                 .map(subject -> new FindSubjectsResponse(subject.getId(), subject.getName()))
                 .collect(Collectors.toList());
     }
 
-    private int findTodayStudyTime(Long memberId, LocalDate date) {
+    private int getTodayStudyTime(Long memberId, LocalDate date) {
         Optional<StudyRecord> studyRecordOptional =
                 studyRecordRepository.findByDateAndMemberId(date, memberId);
         if (studyRecordOptional.isPresent()) return studyRecordOptional.get().getTime();
         else return 0;
     }
 
-    private LocalDate findTodayDate() {
+    private LocalDate getTodayDate() {
         LocalDateTime now = LocalDateTime.now();
         LocalTime standardTime = LocalTime.of(5, 0);
 
