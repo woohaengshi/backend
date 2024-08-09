@@ -1,6 +1,6 @@
 package com.woohaengshi.backend.controller;
 
-import com.woohaengshi.backend.dto.request.SubjectRequestDTO;
+import com.woohaengshi.backend.dto.request.subject.SubjectRequest;
 import com.woohaengshi.backend.service.SubjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ public class SubjectController {
   @Autowired
   private SubjectService subjectService;
   @PostMapping("/api/v1/subjects")
-  public ResponseEntity<Void> edit(@RequestBody SubjectRequestDTO requestDTO) {
+  public ResponseEntity<Void> edit(@RequestBody SubjectRequest requestDTO) {
     Long memberId = 1L;
     subjectService.editSubjects(memberId, requestDTO);
     return ResponseEntity.created(URI.create("/api/v1/subjects")).build();
