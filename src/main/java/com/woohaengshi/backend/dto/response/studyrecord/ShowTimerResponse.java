@@ -13,8 +13,12 @@ public class ShowTimerResponse {
 
     private List<ShowSubjectsResponse> subjects;
 
-    public ShowTimerResponse(int time, List<ShowSubjectsResponse> subjects) {
+    private ShowTimerResponse(int time, List<ShowSubjectsResponse> subjects) {
         this.time = time;
         this.subjects = subjects;
+    }
+
+    public static ShowTimerResponse of(int time, List<ShowSubjectsResponse> subjects) {
+        return new ShowTimerResponse(time, subjects);
     }
 }

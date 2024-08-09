@@ -9,8 +9,12 @@ public class ShowSubjectsResponse {
 
     private String name;
 
-    public ShowSubjectsResponse(Long id, String name) {
+    private ShowSubjectsResponse(Long id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public static ShowSubjectsResponse of(Long id, String name) {
+        return new ShowSubjectsResponse(id, name);
     }
 }
