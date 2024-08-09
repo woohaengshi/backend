@@ -1,4 +1,4 @@
-package com.woohaengshi.backend.service.subject;
+package com.woohaengshi.backend.service.timer;
 
 import com.woohaengshi.backend.constant.StandardTimeConstant;
 import com.woohaengshi.backend.domain.StudyRecord;
@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class SubjectServiceImpl implements SubjectService {
+public class TimerServiceImpl implements TimerService {
 
     private final StudyRecordRepository studyRecordRepository;
     private final SubjectRepository subjectRepository;

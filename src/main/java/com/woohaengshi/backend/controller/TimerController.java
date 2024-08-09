@@ -1,7 +1,7 @@
 package com.woohaengshi.backend.controller;
 
 import com.woohaengshi.backend.dto.response.studyrecord.ShowTimerResponse;
-import com.woohaengshi.backend.service.subject.SubjectService;
+import com.woohaengshi.backend.service.timer.TimerService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/subject")
-public class SubjectController {
+@RequestMapping("/api/v1/timer")
+public class TimerController {
 
-    private final SubjectService subjectService;
+    private final TimerService timerService;
 
     @GetMapping
     public ShowTimerResponse showTimer() {
-        return subjectService.getTimer(1L);
+        return timerService.getTimer(1L);
     }
 }

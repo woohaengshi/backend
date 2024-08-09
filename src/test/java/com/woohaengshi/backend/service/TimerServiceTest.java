@@ -14,7 +14,7 @@ import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.StudyRecordRepository;
 import com.woohaengshi.backend.repository.SubjectRepository;
-import com.woohaengshi.backend.service.subject.SubjectServiceImpl;
+import com.woohaengshi.backend.service.timer.TimerServiceImpl;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
 
 import org.junit.jupiter.api.Test;
@@ -29,11 +29,11 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @ExtendWith(MockitoExtension.class)
-public class SubjectServiceTest {
+public class TimerServiceTest {
     @Mock private MemberRepository memberRepository;
     @Mock private StudyRecordRepository studyRecordRepository;
     @Mock private SubjectRepository subjectRepository;
-    @InjectMocks private SubjectServiceImpl subjectService;
+    @InjectMocks private TimerServiceImpl subjectService;
 
     @Test
     void 타이머를_조회_한다() {
