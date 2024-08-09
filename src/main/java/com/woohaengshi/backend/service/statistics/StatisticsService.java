@@ -7,10 +7,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 public interface StatisticsService {
-    int getMemberRanking(long memberId, StatisticsType statisticsType);
+    int findMemberRanking(long memberId, StatisticsType statisticsType);
 
-    Slice<Statistics> getStatisticsRankingData(StatisticsType statisticsType, Pageable pageable);
+    Slice<Statistics> findStatisticsRankingData(StatisticsType statisticsType, Pageable pageable);
 
-    RankingSnapshotResponse getRankingDataWithMember(
+    RankingSnapshotResponse findRankingDataWithMember(
             long memberId, StatisticsType statisticsType, Pageable pageable);
 }

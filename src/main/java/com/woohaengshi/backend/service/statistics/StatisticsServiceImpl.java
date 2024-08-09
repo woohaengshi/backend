@@ -32,7 +32,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     @Transactional(readOnly = true)
-    public int getMemberRanking(long memberId, StatisticsType statisticsType) {
+    public int findMemberRanking(long memberId, StatisticsType statisticsType) {
         Statistics statistics =
                 statisticsRepository
                         .findByMemberId(memberId)
@@ -43,7 +43,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     @Transactional(readOnly = true)
-    public Slice<Statistics> getStatisticsRankingData(StatisticsType statisticsType, Pageable pageable) {
+    public Slice<Statistics> findStatisticsRankingData(StatisticsType statisticsType, Pageable pageable) {
         Specification<Statistics> specification = (Root<Statistics> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
             if ("daily".equalsIgnoreCase(statisticsType.toString())) {
                 query.orderBy(cb.desc(root.get("dailyTime")));
@@ -60,7 +60,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     @Transactional(readOnly = true)
-    public RankingSnapshotResponse getRankingDataWithMember(
+    public RankingSnapshotResponse findRankingDataWithMember(
             long memberId, StatisticsType statisticsType, Pageable pageable) {
         Member member =
                 memberRepository.findById(memberId).orElseThrow(() -> new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND));
@@ -71,10 +71,10 @@ public class StatisticsServiceImpl implements StatisticsService {
                         .orElseThrow(() -> new WoohaengshiException(ErrorCode.STATISTICS_NOT_FOUND));
 
 
-        int memberRanking = getMemberRanking(memberId, statisticsType);
+        int memberRanking = findMemberRanking(memberId, statisticsType);
 
         Slice<Statistics> statisticsRankingData =
-                getStatisticsRankingData(statisticsType, pageable);
+                findStatisticsRankingData(statisticsType, pageable);
 
         return RankingSnapshotResponse.of(
                 member,

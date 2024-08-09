@@ -23,7 +23,7 @@ public class StatisticsController {
             @PageableDefault(size = 10, page = 0) Pageable pageable,
             @RequestParam(value = "type", defaultValue = "WEEKLY") StatisticsType statisticsType) {
 
-        return statisticsService.getRankingDataWithMember(1, statisticsType, pageable);
+        return statisticsService.findRankingDataWithMember(1, statisticsType, pageable);
     }
 }
 
