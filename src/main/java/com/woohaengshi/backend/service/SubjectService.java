@@ -28,6 +28,11 @@ public class SubjectService {
     if (!addSubjects.isEmpty()) {
       insertSubjects(memberId, addSubjects);
     }
+
+    List<Long> deleteSubjects = requestDTO.getDeleteSubjects();
+    if (!deleteSubjects.isEmpty()) {
+      deleteSubjects(memberId, deleteSubjects);
+    }
   }
 
   private void insertSubjects(Long memberId, List<String> addSubjects) {
@@ -38,27 +43,16 @@ public class SubjectService {
                       validateAlreadyExistSubject(memberId, s);
                       subjectRepository.save(Subject.builder().name(s).member(member).build());
                     });
+
   }
 
-  public void deleteSubjects(Long member_id, SubjectRequestDTO requestDTO) {
-    List<Long> deleteSubjects = requestDTO.getDeleteSubjects();
-    Member member = validateAlreadyExistMember(member_id);
-    removeSubjects(member_id, deleteSubjects);
-  }
-
-  private void removeSubjects(Long member_id, List<Long> deleteSubjects) {
+  private void deleteSubjects(Long memberId, List<Long> deleteSubjects) {
     deleteSubjects.stream()
             .forEach(
                     i -> {
-                      validateNotExistSubject(member_id, i);
+                      validateNotExistSubject(memberId, i);
                       subjectRepository.deleteById(i);
                     });
-  }
-
-  private Member validateAlreadyExistMember(Long member_id) {
-    return memberRepository
-            .findById(member_id)
-            .orElseThrow(() -> new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND));
   }
 
   private void validateAlreadyExistSubject(Long member_id, String s) {
