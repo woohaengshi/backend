@@ -2,8 +2,8 @@ package com.woohaengshi.backend.service.subject;
 
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.Subject;
-import com.woohaengshi.backend.dto.response.studyrecord.FindTimerResponse;
-import com.woohaengshi.backend.dto.response.subject.FindSubjectsResponse;
+import com.woohaengshi.backend.dto.response.studyrecord.ShowTimerResponse;
+import com.woohaengshi.backend.dto.response.subject.ShowSubjectsResponse;
 import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
@@ -19,7 +19,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -34,11 +33,11 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     @Transactional(readOnly = true)
-    public FindTimerResponse getTimer(Long memberId) {
+    public ShowTimerResponse getTimer(Long memberId) {
         validateExistMember(memberId);
-        List<FindSubjectsResponse> subjectsResponses = getSubjectsResponses(memberId);
+        List<ShowSubjectsResponse> subjectsResponses = getSubjectsResponses(memberId);
         int todayStudyTime = getTodayStudyTime(memberId, getTodayDate());
-        return new FindTimerResponse(todayStudyTime, subjectsResponses);
+        return new ShowTimerResponse(todayStudyTime, subjectsResponses);
     }
 
     private void validateExistMember(Long memberId) {
@@ -46,18 +45,18 @@ public class SubjectServiceImpl implements SubjectService {
             throw new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND);
     }
 
-    private List<FindSubjectsResponse> getSubjectsResponses(Long memberId) {
+    private List<ShowSubjectsResponse> getSubjectsResponses(Long memberId) {
         Stream<Subject> subjectStream = subjectRepository.findAllByMemberIdOrderByNameAsc(memberId);
         return subjectStream
-                .map(subject -> new FindSubjectsResponse(subject.getId(), subject.getName()))
+                .map(subject -> new ShowSubjectsResponse(subject.getId(), subject.getName()))
                 .collect(Collectors.toList());
     }
 
     private int getTodayStudyTime(Long memberId, LocalDate date) {
-        Optional<StudyRecord> studyRecordOptional =
-                studyRecordRepository.findByDateAndMemberId(date, memberId);
-        if (studyRecordOptional.isPresent()) return studyRecordOptional.get().getTime();
-        else return 0;
+        return studyRecordRepository
+                .findByDateAndMemberId(date, memberId)
+                .map(StudyRecord::getTime)
+                .orElse(0);
     }
 
     private LocalDate getTodayDate() {
