@@ -72,11 +72,9 @@ public class StatisticsServiceImpl implements StatisticsService {
 
 
         int memberRanking = getMemberRanking(memberId, statisticsType);
+
         Slice<Statistics> statisticsRankingData =
                 getStatisticsRankingData(statisticsType, pageable);
-
-        List<RankingDataResponse> memberRankDtos =
-                createMemberRankDtos(statisticsRankingData, pageable, statisticsType);
 
         return RankingSnapshotResponse.of(
                 member,
@@ -84,7 +82,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 statistics.getDailyTime(),
                 statistics.getTotalTime(),
                 statisticsRankingData.hasNext(),
-                memberRankDtos);
+                createRankingDatas(statisticsRankingData, pageable, statisticsType));
     }
 
 
@@ -111,7 +109,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         else return statistics.getMonthlyTime();
     }
 
-    private List<RankingDataResponse> createMemberRankDtos(
+    private List<RankingDataResponse> createRankingDatas(
             Slice<Statistics> statisticsSlice, Pageable pageable, StatisticsType statisticsType) {
         int startRank = pageable.getPageNumber() * pageable.getPageSize() + 1;
 
