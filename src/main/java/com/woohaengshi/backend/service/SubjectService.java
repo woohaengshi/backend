@@ -22,7 +22,11 @@ public class SubjectService {
 
   public void saveSubjects(Long member_id, SubjectRequestDTO requestDTO) {
     List<String> addSubjects = requestDTO.getAddSubjects();
-    Member member = memberRepository.findById(member_id)
-            .orElseThrow(() -> new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND));
+    Member member = validateAlreadyExistMember(member_id);
   }
+
+    private Member validateAlreadyExistMember(Long member_id) {
+        return memberRepository.findById(member_id)
+                .orElseThrow(() -> new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND));
+    }
 }
