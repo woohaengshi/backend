@@ -37,7 +37,7 @@ public class SubjectServiceImpl implements SubjectService {
         validateExistMember(memberId);
         List<ShowSubjectsResponse> subjectsResponses = getSubjectsResponses(memberId);
         int todayStudyTime = getTodayStudyTime(memberId, getTodayDate());
-        return new ShowTimerResponse(todayStudyTime, subjectsResponses);
+        return ShowTimerResponse.of(todayStudyTime, subjectsResponses);
     }
 
     private void validateExistMember(Long memberId) {
@@ -48,7 +48,7 @@ public class SubjectServiceImpl implements SubjectService {
     private List<ShowSubjectsResponse> getSubjectsResponses(Long memberId) {
         Stream<Subject> subjectStream = subjectRepository.findAllByMemberIdOrderByNameAsc(memberId);
         return subjectStream
-                .map(subject -> new ShowSubjectsResponse(subject.getId(), subject.getName()))
+                .map(subject -> ShowSubjectsResponse.of(subject.getId(), subject.getName()))
                 .collect(Collectors.toList());
     }
 
