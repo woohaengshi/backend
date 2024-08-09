@@ -6,8 +6,8 @@ import static org.mockito.BDDMockito.given;
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.Subject;
 import com.woohaengshi.backend.domain.member.Member;
-import com.woohaengshi.backend.dto.response.studyrecord.FindTimerResponse;
-import com.woohaengshi.backend.dto.response.subject.FindSubjectsResponse;
+import com.woohaengshi.backend.dto.response.studyrecord.ShowTimerResponse;
+import com.woohaengshi.backend.dto.response.subject.ShowSubjectsResponse;
 import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
@@ -39,8 +39,8 @@ public class SubjectServiceTest {
         LocalDate todayDate = LocalDate.of(2024, 8, 9);
         int todayStudyTime = 30;
         Subject subject = Subject.builder().id(1L).name("HTML").member(member).build();
-        FindSubjectsResponse subjectResponse =
-                new FindSubjectsResponse(subject.getId(), subject.getName());
+        ShowSubjectsResponse subjectResponse =
+                new ShowSubjectsResponse(subject.getId(), subject.getName());
 
         given(memberRepository.existsById(member.getId())).willReturn(true);
         given(subjectRepository.findAllByMemberIdOrderByNameAsc(member.getId()))
@@ -51,10 +51,10 @@ public class SubjectServiceTest {
         SubjectServiceImpl subjectService =
                 new SubjectServiceImpl(studyRecordRepository, subjectRepository, memberRepository);
 
-        FindTimerResponse response = subjectService.getTimer(member.getId());
+        ShowTimerResponse response = subjectService.getTimer(member.getId());
 
-        List<FindSubjectsResponse> expectedSubjects = Collections.singletonList(subjectResponse);
-        List<FindSubjectsResponse> actualSubjects = response.getSubjectsList();
+        List<ShowSubjectsResponse> expectedSubjects = Collections.singletonList(subjectResponse);
+        List<ShowSubjectsResponse> actualSubjects = response.getSubjectsList();
 
         assertAll(
                 "response",
@@ -78,8 +78,8 @@ public class SubjectServiceTest {
         Member member = MemberFixture.builder().build();
         LocalDate todayDate = LocalDate.of(2024, 8, 9);
         Subject subject = Subject.builder().id(1L).name("HTML").member(member).build();
-        FindSubjectsResponse subjectResponse =
-                new FindSubjectsResponse(subject.getId(), subject.getName());
+        ShowSubjectsResponse subjectResponse =
+                new ShowSubjectsResponse(subject.getId(), subject.getName());
 
         given(memberRepository.existsById(member.getId())).willReturn(true);
         given(subjectRepository.findAllByMemberIdOrderByNameAsc(member.getId()))
@@ -88,10 +88,10 @@ public class SubjectServiceTest {
         SubjectServiceImpl subjectService =
                 new SubjectServiceImpl(studyRecordRepository, subjectRepository, memberRepository);
 
-        FindTimerResponse response = subjectService.getTimer(member.getId());
+        ShowTimerResponse response = subjectService.getTimer(member.getId());
 
-        List<FindSubjectsResponse> expectedSubjects = Collections.singletonList(subjectResponse);
-        List<FindSubjectsResponse> actualSubjects = response.getSubjectsList();
+        List<ShowSubjectsResponse> expectedSubjects = Collections.singletonList(subjectResponse);
+        List<ShowSubjectsResponse> actualSubjects = response.getSubjectsList();
 
         assertAll(
                 "response",

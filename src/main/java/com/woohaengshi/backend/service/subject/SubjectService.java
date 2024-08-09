@@ -1,7 +1,7 @@
 package com.woohaengshi.backend.service.subject;
 
-import com.woohaengshi.backend.dto.response.studyrecord.FindTimerResponse;
+import com.woohaengshi.backend.dto.response.studyrecord.ShowTimerResponse;
 
 public interface SubjectService {
-    FindTimerResponse getTimer(Long memberId);
+    ShowTimerResponse getTimer(Long memberId);
 }

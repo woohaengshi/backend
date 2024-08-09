@@ -1,6 +1,6 @@
 package com.woohaengshi.backend.controller;
 
-import com.woohaengshi.backend.dto.response.studyrecord.FindTimerResponse;
+import com.woohaengshi.backend.dto.response.studyrecord.ShowTimerResponse;
 import com.woohaengshi.backend.service.subject.SubjectService;
 
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ public class SubjectController {
     private final SubjectService subjectService;
 
     @GetMapping
-    public FindTimerResponse showTimer() {
+    public ShowTimerResponse showTimer() {
         return subjectService.getTimer(1L);
     }
 }
