@@ -4,6 +4,9 @@ import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.Subject;
 import com.woohaengshi.backend.dto.response.studyrecord.FindTimerResponse;
 import com.woohaengshi.backend.dto.response.subject.FindSubjectsResponse;
+import com.woohaengshi.backend.exception.ErrorCode;
+import com.woohaengshi.backend.exception.WoohaengshiException;
+import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.StudyRecordRepository;
 import com.woohaengshi.backend.repository.SubjectRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,13 +28,20 @@ public class SubjectServiceImpl implements SubjectService {
 
     private final StudyRecordRepository studyRecordRepository;
     private final SubjectRepository subjectRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     @Transactional
     public FindTimerResponse findTimer(Long memberId) {
+        checkExistMember(memberId);
         List<FindSubjectsResponse> subjectsResponses = findSubjectsResponses(memberId);
         int todayStudyTime = findTodayStudyTime(memberId, findTodayDate());
         return new FindTimerResponse(todayStudyTime, subjectsResponses);
+    }
+
+    private void checkExistMember(Long memberId) {
+        if (!memberRepository.existsById(memberId))
+            throw new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND);
     }
 
     private List<FindSubjectsResponse> findSubjectsResponses(Long memberId) {
