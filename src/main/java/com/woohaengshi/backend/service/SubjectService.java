@@ -20,30 +20,56 @@ public class SubjectService {
   @Autowired private SubjectRepository subjectRepository;
   @Autowired private MemberRepository memberRepository;
 
-  public void saveSubjects(Long member_id, SubjectRequestDTO requestDTO) {
+  public void editSubjects(Long memberId, SubjectRequestDTO requestDTO) {
+    if (!memberRepository.existsById(memberId))
+      throw new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND);
+
     List<String> addSubjects = requestDTO.getAddSubjects();
-    Member member = validateAlreadyExistMember(member_id);
-    insertSubjects(member_id, addSubjects, member);
+    if (!addSubjects.isEmpty()) {
+      insertSubjects(memberId, addSubjects);
+    }
   }
 
-  private void insertSubjects(Long member_id, List<String> addSubjects, Member member) {
+  private void insertSubjects(Long memberId, List<String> addSubjects) {
+    Member member = memberRepository.findById(memberId).get();
     addSubjects.stream()
-        .forEach(
-            s -> {
-              validateAlreadyExistSubject(member_id, s);
-              subjectRepository.save(Subject.builder().name(s).member(member).build());
-            });
+            .forEach(
+                    s -> {
+                      validateAlreadyExistSubject(memberId, s);
+                      subjectRepository.save(Subject.builder().name(s).member(member).build());
+                    });
+  }
+
+  public void deleteSubjects(Long member_id, SubjectRequestDTO requestDTO) {
+    List<Long> deleteSubjects = requestDTO.getDeleteSubjects();
+    Member member = validateAlreadyExistMember(member_id);
+    removeSubjects(member_id, deleteSubjects);
+  }
+
+  private void removeSubjects(Long member_id, List<Long> deleteSubjects) {
+    deleteSubjects.stream()
+            .forEach(
+                    i -> {
+                      validateNotExistSubject(member_id, i);
+                      subjectRepository.deleteById(i);
+                    });
   }
 
   private Member validateAlreadyExistMember(Long member_id) {
     return memberRepository
-        .findById(member_id)
-        .orElseThrow(() -> new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND));
+            .findById(member_id)
+            .orElseThrow(() -> new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND));
   }
 
   private void validateAlreadyExistSubject(Long member_id, String s) {
     if (subjectRepository.existsByMemberIdAndName(member_id, s)) {
       throw new WoohaengshiException(ErrorCode.SUBJECT_ALREADY_EXISTS);
+    }
+  }
+
+  private void validateNotExistSubject(Long member_id, Long i) {
+    if (!subjectRepository.existsByMemberIdAndId(member_id, i)) {
+      throw new WoohaengshiException(ErrorCode.SUBJECT_NOT_EXISTS);
     }
   }
 }

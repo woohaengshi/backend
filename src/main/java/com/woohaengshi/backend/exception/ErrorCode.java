@@ -7,7 +7,8 @@ import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {
     MEMBER_NOT_FOUND(NOT_FOUND, "회원을 찾을 수 없습니다."),
-    SUBJECT_ALREADY_EXISTS(CONFLICT, "이미 존재하는 과목입니다.");
+    SUBJECT_ALREADY_EXISTS(CONFLICT, "이미 존재하는 과목입니다."),
+    SUBJECT_NOT_EXISTS(NOT_FOUND, "존재하지 않는 과목입니다.");
 
     private final HttpStatus status;
     private final String message;
