@@ -23,7 +23,6 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class SubjectServiceImpl implements SubjectService {
 
     private final StudyRecordRepository studyRecordRepository;
@@ -31,7 +30,7 @@ public class SubjectServiceImpl implements SubjectService {
     private final MemberRepository memberRepository;
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public FindTimerResponse findTimer(Long memberId) {
         checkExistMember(memberId);
         List<FindSubjectsResponse> subjectsResponses = findSubjectsResponses(memberId);
