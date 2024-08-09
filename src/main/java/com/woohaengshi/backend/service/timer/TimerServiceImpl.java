@@ -64,6 +64,6 @@ public class TimerServiceImpl implements TimerService {
 
         if (now.toLocalTime().isBefore(StandardTimeConstant.STANDARD_TIME))
             return now.toLocalDate().minusDays(1);
-        else return now.toLocalDate();
+        return now.toLocalDate();
     }
 }
