@@ -27,7 +27,8 @@ public class StudyRecordController {
     }
 
     @GetMapping("/monthly")
-    public ShowMonthlyRecordResponse getMonthlyRecords(int year, int month) {
+    public ShowMonthlyRecordResponse getMonthlyRecords(
+            @RequestParam("year") int year, @RequestParam("month") int month) {
         return studyRecordService.showMonthlyRecord(year, month, 1L);
     }
 }
