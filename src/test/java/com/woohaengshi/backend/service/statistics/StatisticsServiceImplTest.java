@@ -3,6 +3,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.given;
 
 import com.woohaengshi.backend.dto.response.RankingSnapshotResponse;
+
+import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
 import com.woohaengshi.backend.support.fixture.StatisticsFixture;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +24,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.List;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class StatisticsServiceImplTest {
@@ -54,6 +57,21 @@ public class StatisticsServiceImplTest {
                 () -> assertEquals(1, response.getMember().getRank(), "순위가 올바르게 계산되어야 함"),
                 () -> assertFalse(response.getInfiniteScrolling().getHasNext(), "다음 페이지 존재 여부 확인")
         );
+    }
+
+    @Test
+    void 회원이_존재하지_않으면_예외를_던진다() {
+        Pageable pageable = PageRequest.of(0, 10);
+        long nonExistentMemberId = 999L;
+        StatisticsType statisticsType = StatisticsType.DAILY;
+
+        when(statisticsRepository.findByMemberId(nonExistentMemberId))
+                .thenReturn(Optional.empty());
+
+        // 실행 & 검증
+        assertThrows(WoohaengshiException.class, () -> {
+            statisticsService.showRankData(nonExistentMemberId, statisticsType, pageable);
+        });
     }
 
 }
