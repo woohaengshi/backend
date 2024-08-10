@@ -33,11 +33,11 @@ import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
-class StudyRecordServiceImplTest {
+class StudyRecordServiceTest {
     @Mock private MemberRepository memberRepository;
     @Mock private StudyRecordRepository studyRecordRepository;
     @Mock private SubjectRepository subjectRepository;
-    @InjectMocks private StudyRecordServiceImpl studyRecordServiceImpl;
+    @InjectMocks private StudyRecordServiceImpl studyRecordService;
 
     @Test
     void 첫_공부_기록을_저장할_수_있다() {
@@ -59,7 +59,7 @@ class StudyRecordServiceImplTest {
                         });
 
         assertAll(
-                () -> studyRecordServiceImpl.save(request, member.getId()),
+                () -> studyRecordService.save(request, member.getId()),
                 () ->
                         verify(studyRecordRepository, times(1))
                                 .findByDateAndMemberId(request.getDate(), member.getId()),
@@ -89,7 +89,7 @@ class StudyRecordServiceImplTest {
                                     .willReturn(false);
                         });
         assertAll(
-                () -> studyRecordServiceImpl.save(request, member.getId()),
+                () -> studyRecordService.save(request, member.getId()),
                 () -> assertThat(existStudyRecord.getTime()).isEqualTo(30),
                 () ->
                         verify(studyRecordRepository, times(1))
@@ -114,7 +114,7 @@ class StudyRecordServiceImplTest {
                         subjectRepository.existsByNameAndStudyRecordId(
                                 DUPLICATED_SUBJECT, newStudyRecord.getId()))
                 .willReturn(true);
-        studyRecordServiceImpl.save(request, member.getId());
+        studyRecordService.save(request, member.getId());
         assertAll(() -> verify(subjectRepository, never()).save(any(Subject.class)));
     }
 
@@ -128,7 +128,7 @@ class StudyRecordServiceImplTest {
         given(memberRepository.findById(member.getId())).willReturn(Optional.empty());
         assertAll(
                 () ->
-                        assertThatThrownBy(() -> studyRecordServiceImpl.save(request, member.getId()))
+                        assertThatThrownBy(() -> studyRecordService.save(request, member.getId()))
                                 .isExactlyInstanceOf(WoohaengshiException.class),
                 () ->
                         verify(studyRecordRepository, times(1))
