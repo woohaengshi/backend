@@ -1,7 +1,6 @@
 package com.woohaengshi.backend.dto.request.subject;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -16,7 +15,7 @@ public class SubjectRequest {
         return addSubjects;
     }
 
-    public List<Long> getDeleteSubjects () {
+    public List<Long> getDeleteSubjects() {
         return deleteSubjects;
     }
 
