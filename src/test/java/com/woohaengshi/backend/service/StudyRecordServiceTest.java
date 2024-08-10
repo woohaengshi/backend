@@ -103,4 +103,41 @@ class StudyRecordServiceTest {
                                         any(Long.class), any(Long.class)),
                 () -> verify(studySubjectRepository, never()).save(any(StudySubject.class)));
     }
+
+    @Test
+    void 처음_공부한_과목의_기록을_누적해_저장할_수_있다() {
+        Member member = MemberFixture.builder().id(1L).build();
+        StudyRecord existStudyRecord =
+                StudyRecordFixture.builder().member(member).id(1L).time(20).build();
+        SaveRecordRequest request = new SaveRecordRequest(LocalDate.now(), 10, List.of(1L, 2L));
+
+        given(memberRepository.existsById(member.getId())).willReturn(true);
+        given(studyRecordRepository.findByDateAndMemberId(request.getDate(), member.getId()))
+                .willReturn(Optional.of(existStudyRecord));
+        request.getSubjects()
+                .forEach(
+                        subjectId -> {
+                            given(
+                                            studySubjectRepository
+                                                    .existsBySubjectIdAndStudyRecordId(
+                                                            subjectId, existStudyRecord.getId()))
+                                    .willReturn(false);
+                            given(subjectRepository.findById(subjectId))
+                                    .willReturn(
+                                            Optional.of(Subject.builder().id(subjectId).build()));
+                        });
+
+        assertAll(
+                () -> studyRecordService.save(request, member.getId()),
+                () -> assertThat(existStudyRecord.getTime()).isEqualTo(30),
+                () ->
+                        verify(studyRecordRepository, times(1))
+                                .findByDateAndMemberId(request.getDate(), member.getId()),
+                () ->
+                        verify(studySubjectRepository, times(2))
+                                .existsBySubjectIdAndStudyRecordId(
+                                        any(Long.class), any(Long.class)),
+                () -> verify(subjectRepository,times(2)).findById(any(Long.class)),
+                () -> verify(studySubjectRepository, times(2)).save(any(StudySubject.class)));
+    }
 }
