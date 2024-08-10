@@ -18,6 +18,7 @@ import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.StudyRecordRepository;
 import com.woohaengshi.backend.repository.SubjectRepository;
+import com.woohaengshi.backend.service.studyrecord.StudyRecordServiceImpl;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
 import com.woohaengshi.backend.support.fixture.StudyRecordFixture;
 
@@ -32,11 +33,11 @@ import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
-class StudyRecordServiceTest {
+class StudyRecordServiceImplTest {
     @Mock private MemberRepository memberRepository;
     @Mock private StudyRecordRepository studyRecordRepository;
     @Mock private SubjectRepository subjectRepository;
-    @InjectMocks private StudyRecordService studyRecordService;
+    @InjectMocks private StudyRecordServiceImpl studyRecordServiceImpl;
 
     @Test
     void 첫_공부_기록을_저장할_수_있다() {
@@ -58,7 +59,7 @@ class StudyRecordServiceTest {
                         });
 
         assertAll(
-                () -> studyRecordService.save(request, member.getId()),
+                () -> studyRecordServiceImpl.save(request, member.getId()),
                 () ->
                         verify(studyRecordRepository, times(1))
                                 .findByDateAndMemberId(request.getDate(), member.getId()),
@@ -88,7 +89,7 @@ class StudyRecordServiceTest {
                                     .willReturn(false);
                         });
         assertAll(
-                () -> studyRecordService.save(request, member.getId()),
+                () -> studyRecordServiceImpl.save(request, member.getId()),
                 () -> assertThat(existStudyRecord.getTime()).isEqualTo(30),
                 () ->
                         verify(studyRecordRepository, times(1))
@@ -113,7 +114,7 @@ class StudyRecordServiceTest {
                         subjectRepository.existsByNameAndStudyRecordId(
                                 DUPLICATED_SUBJECT, newStudyRecord.getId()))
                 .willReturn(true);
-        studyRecordService.save(request, member.getId());
+        studyRecordServiceImpl.save(request, member.getId());
         assertAll(() -> verify(subjectRepository, never()).save(any(Subject.class)));
     }
 
@@ -127,7 +128,7 @@ class StudyRecordServiceTest {
         given(memberRepository.findById(member.getId())).willReturn(Optional.empty());
         assertAll(
                 () ->
-                        assertThatThrownBy(() -> studyRecordService.save(request, member.getId()))
+                        assertThatThrownBy(() -> studyRecordServiceImpl.save(request, member.getId()))
                                 .isExactlyInstanceOf(WoohaengshiException.class),
                 () ->
                         verify(studyRecordRepository, times(1))
