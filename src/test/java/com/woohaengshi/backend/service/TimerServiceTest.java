@@ -36,9 +36,8 @@ public class TimerServiceTest {
     @Test
     void 타이머를_조회_한다() {
         Member member = MemberFixture.builder().build();
-        Subject subject1 = Subject.builder().id(1L).name("HTML").member(member).build();
-        Subject subject2 = Subject.builder().id(2L).name("CSS").member(member).build();
-        List<Subject> subjects = List.of(subject1, subject2);
+        Subject subject = Subject.builder().id(1L).name("HTML").member(member).build();
+        List<Subject> subjects = List.of(subject);
 
         given(memberRepository.existsById(member.getId())).willReturn(true);
         given(subjectRepository.findAllByMemberIdOrderByNameAsc(member.getId()))
@@ -63,9 +62,8 @@ public class TimerServiceTest {
     @Test
     void 오늘의_공부_기록이_없는_경우에_타이머를_조회_한다() {
         Member member = MemberFixture.builder().build();
-        Subject subject1 = Subject.builder().id(1L).name("HTML").member(member).build();
-        Subject subject2 = Subject.builder().id(2L).name("CSS").member(member).build();
-        List<Subject> subjects = List.of(subject1, subject2);
+        Subject subject = Subject.builder().id(1L).name("HTML").member(member).build();
+        List<Subject> subjects = List.of(subject);
 
         given(memberRepository.existsById(member.getId())).willReturn(true);
         given(subjectRepository.findAllByMemberIdOrderByNameAsc(member.getId()))
