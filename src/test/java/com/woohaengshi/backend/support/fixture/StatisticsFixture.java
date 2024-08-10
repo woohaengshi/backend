@@ -35,21 +35,25 @@ public class StatisticsFixture {
         this.monthlyTime = time;
         return this;
     }
+
     public StatisticsFixture totalTime(int time) {
         this.totalTime = time;
         return this;
     }
+
     public StatisticsFixture member(Member member) {
         this.member = member;
         return this;
     }
 
     public Statistics build() {
-        return Statistics.builder().id(id)
+        return Statistics.builder()
+                .id(id)
                 .dailyTime(dailyTime)
                 .weeklyTime(weeklyTime)
                 .monthlyTime(monthlyTime)
                 .totalTime(totalTime)
-                .member(member).build();
+                .member(member)
+                .build();
     }
 }

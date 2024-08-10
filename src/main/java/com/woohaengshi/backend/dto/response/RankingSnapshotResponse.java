@@ -1,6 +1,7 @@
 package com.woohaengshi.backend.dto.response;
 
 import com.woohaengshi.backend.domain.member.Member;
+
 import lombok.Getter;
 
 import java.util.List;
@@ -11,7 +12,8 @@ public class RankingSnapshotResponse {
     private MemberRankingResponse member;
     private RankingResultsResponse infiniteScrolling;
 
-    private RankingSnapshotResponse(MemberRankingResponse member, RankingResultsResponse rankingResultsResponse) {
+    private RankingSnapshotResponse(
+            MemberRankingResponse member, RankingResultsResponse rankingResultsResponse) {
         this.member = member;
         this.infiniteScrolling = rankingResultsResponse;
     }
@@ -28,4 +30,3 @@ public class RankingSnapshotResponse {
         return new RankingSnapshotResponse(memberDto, infiniteScrolling);
     }
 }
-

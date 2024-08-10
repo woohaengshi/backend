@@ -3,15 +3,18 @@ package com.woohaengshi.backend.service.statistics;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.statistics.Statistics;
 import com.woohaengshi.backend.domain.statistics.StatisticsType;
-import com.woohaengshi.backend.dto.response.RankingSnapshotResponse;
 import com.woohaengshi.backend.dto.response.RankingDataResponse;
+import com.woohaengshi.backend.dto.response.RankingSnapshotResponse;
 import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.StatisticsRepository;
+
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.domain.Specification;
@@ -51,21 +54,26 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         Specification<Statistics> specification =
                 (Root<Statistics> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
-                    if (statisticsType == StatisticsType.DAILY) return cb.greaterThan(root.get("dailyTime"), time);
-                    else if (statisticsType == StatisticsType.WEEKLY) return cb.greaterThan(root.get("weeklyTime"), time);
-                    else if (statisticsType == StatisticsType.MONTHLY)return cb.greaterThan(root.get("monthlyTime"), time);
+                    if (statisticsType == StatisticsType.DAILY)
+                        return cb.greaterThan(root.get("dailyTime"), time);
+                    else if (statisticsType == StatisticsType.WEEKLY)
+                        return cb.greaterThan(root.get("weeklyTime"), time);
+                    else if (statisticsType == StatisticsType.MONTHLY)
+                        return cb.greaterThan(root.get("monthlyTime"), time);
                     else throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
                 };
         return (int) statisticsRepository.count(specification) + 1;
     }
 
-    private Slice<Statistics> getRankDataSlice(
-            StatisticsType statisticsType, Pageable pageable) {
+    private Slice<Statistics> getRankDataSlice(StatisticsType statisticsType, Pageable pageable) {
         Specification<Statistics> specification =
                 (Root<Statistics> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
-                    if (statisticsType == StatisticsType.DAILY) query.orderBy(cb.desc(root.get("dailyTime")));
-                    else if (statisticsType == StatisticsType.WEEKLY) query.orderBy(cb.desc(root.get("weeklyTime")));
-                    else if (statisticsType == StatisticsType.MONTHLY) query.orderBy(cb.desc(root.get("monthlyTime")));
+                    if (statisticsType == StatisticsType.DAILY)
+                        query.orderBy(cb.desc(root.get("dailyTime")));
+                    else if (statisticsType == StatisticsType.WEEKLY)
+                        query.orderBy(cb.desc(root.get("weeklyTime")));
+                    else if (statisticsType == StatisticsType.MONTHLY)
+                        query.orderBy(cb.desc(root.get("monthlyTime")));
                     return query.getRestriction();
                 };
         return statisticsRepository.findAll(specification, pageable);

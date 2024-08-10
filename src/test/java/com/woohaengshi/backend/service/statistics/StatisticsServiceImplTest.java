@@ -1,39 +1,38 @@
 package com.woohaengshi.backend.service.statistics;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.BDDMockito.given;
-
-import com.woohaengshi.backend.dto.response.RankingSnapshotResponse;
-
-import com.woohaengshi.backend.exception.WoohaengshiException;
-import com.woohaengshi.backend.support.fixture.MemberFixture;
-import com.woohaengshi.backend.support.fixture.StatisticsFixture;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.Mock;
-import org.mockito.InjectMocks;
-import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import com.woohaengshi.backend.repository.StatisticsRepository;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
+
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.statistics.Statistics;
 import com.woohaengshi.backend.domain.statistics.StatisticsType;
+import com.woohaengshi.backend.dto.response.RankingSnapshotResponse;
+import com.woohaengshi.backend.exception.WoohaengshiException;
+import com.woohaengshi.backend.repository.StatisticsRepository;
+import com.woohaengshi.backend.support.fixture.MemberFixture;
+import com.woohaengshi.backend.support.fixture.StatisticsFixture;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class StatisticsServiceImplTest {
 
-    @Mock
-    private StatisticsRepository statisticsRepository;
+    @Mock private StatisticsRepository statisticsRepository;
 
-    @InjectMocks
-    private StatisticsServiceImpl statisticsService;
+    @InjectMocks private StatisticsServiceImpl statisticsService;
 
     @Test
     void 랭킹을_조회한다() {
@@ -41,11 +40,11 @@ public class StatisticsServiceImplTest {
         Statistics statistics = StatisticsFixture.builder().id(1L).member(member).build();
         StatisticsType statisticsType = StatisticsType.DAILY;
         Pageable pageable = PageRequest.of(0, 10);
-        given(statisticsRepository.findByMemberId(member.getId())).willReturn(Optional.of(statistics));
+        given(statisticsRepository.findByMemberId(member.getId()))
+                .willReturn(Optional.of(statistics));
         given(statisticsRepository.count(any(Specification.class))).willReturn(0L);
         given(statisticsRepository.findAll(any(Specification.class), eq(pageable)))
                 .willReturn(new PageImpl<>(List.of(statistics)));
-
 
         RankingSnapshotResponse response =
                 statisticsService.showRankData(member.getId(), statisticsType, pageable);
@@ -55,8 +54,7 @@ public class StatisticsServiceImplTest {
                 "응답 전체 확인",
                 () -> assertNotNull(response, "응답은 null이 아니어야 함"),
                 () -> assertEquals(1, response.getMember().getRank(), "순위가 올바르게 계산되어야 함"),
-                () -> assertFalse(response.getInfiniteScrolling().getHasNext(), "다음 페이지 존재 여부 확인")
-        );
+                () -> assertFalse(response.getInfiniteScrolling().getHasNext(), "다음 페이지 존재 여부 확인"));
     }
 
     @Test
@@ -65,13 +63,13 @@ public class StatisticsServiceImplTest {
         long nonExistentMemberId = 999L;
         StatisticsType statisticsType = StatisticsType.DAILY;
 
-        when(statisticsRepository.findByMemberId(nonExistentMemberId))
-                .thenReturn(Optional.empty());
+        when(statisticsRepository.findByMemberId(nonExistentMemberId)).thenReturn(Optional.empty());
 
         // 실행 & 검증
-        assertThrows(WoohaengshiException.class, () -> {
-            statisticsService.showRankData(nonExistentMemberId, statisticsType, pageable);
-        });
+        assertThrows(
+                WoohaengshiException.class,
+                () -> {
+                    statisticsService.showRankData(nonExistentMemberId, statisticsType, pageable);
+                });
     }
-
 }

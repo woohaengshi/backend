@@ -3,6 +3,7 @@ package com.woohaengshi.backend.dto.response;
 import lombok.Getter;
 
 import java.util.List;
+
 @Getter
 public class RankingResultsResponse {
     private Boolean hasNext;
@@ -17,4 +18,3 @@ public class RankingResultsResponse {
         return new RankingResultsResponse(hasNext, ranks);
     }
 }
-

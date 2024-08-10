@@ -1,6 +1,7 @@
 package com.woohaengshi.backend.dto.response;
 
 import com.woohaengshi.backend.domain.member.Member;
+
 import lombok.Getter;
 
 @Getter
@@ -12,7 +13,13 @@ public class RankingDataResponse {
     private Integer time;
     private Integer totalTime;
 
-    private RankingDataResponse(String course, String name, String image, Integer rank, Integer time, Integer totalTime) {
+    private RankingDataResponse(
+            String course,
+            String name,
+            String image,
+            Integer rank,
+            Integer time,
+            Integer totalTime) {
         this.course = course;
         this.name = name;
         this.image = image;
