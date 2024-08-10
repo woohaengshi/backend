@@ -1,6 +1,7 @@
 package com.woohaengshi.backend.controller;
 
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
+import com.woohaengshi.backend.dto.response.studyrecord.ShowMonthlyRecordResponse;
 import com.woohaengshi.backend.service.studyrecord.StudyRecordService;
 import com.woohaengshi.backend.service.studyrecord.StudyRecordServiceImpl;
 
@@ -24,5 +25,10 @@ public class StudyRecordController {
     public ResponseEntity<Void> saveStudyRecord(@Valid @RequestBody SaveRecordRequest request) {
         studyRecordService.save(request, 1L);
         return ResponseEntity.created(URI.create("/api/v1/timers")).build();
+    }
+
+    @GetMapping("/monthly")
+    public ShowMonthlyRecordResponse getMonthlyRecords(int year, int month) {
+        return studyRecordService.showMonthlyRecord(year, month, 1L);
     }
 }
