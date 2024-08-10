@@ -1,6 +1,7 @@
 package com.woohaengshi.backend.support.fixture;
 
 import com.woohaengshi.backend.domain.member.Member;
+import com.woohaengshi.backend.domain.statistics.Statistics;
 
 public class StatisticsFixture {
 
@@ -43,8 +44,8 @@ public class StatisticsFixture {
         return this;
     }
 
-    public StatisticsFixture build() {
-        return StatisticsFixture.builder().id(id)
+    public Statistics build() {
+        return Statistics.builder().id(id)
                 .dailyTime(dailyTime)
                 .weeklyTime(weeklyTime)
                 .monthlyTime(monthlyTime)
