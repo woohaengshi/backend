@@ -4,7 +4,6 @@ import com.woohaengshi.backend.domain.Subject;
 import lombok.Getter;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 public class ShowMonthlyRecordResponse {
@@ -33,6 +32,6 @@ public class ShowMonthlyRecordResponse {
                                                                 .id((Long) record[2])
                                                                 .name((String) record[3])
                                                                 .build())))
-                        .collect(Collectors.toList()));
+                        .toList());
     }
 }
