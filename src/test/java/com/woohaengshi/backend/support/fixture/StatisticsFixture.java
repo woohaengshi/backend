@@ -6,10 +6,10 @@ import com.woohaengshi.backend.domain.statistics.Statistics;
 public class StatisticsFixture {
 
     private Long id;
-    private int monthlyTime;
-    private int weeklyTime;
-    private int dailyTime;
-    private int totalTime;
+    private int monthlyTime = 100;
+    private int weeklyTime = 12;
+    private int dailyTime = 4;
+    private int totalTime = 104;
     private Member member;
 
     public static StatisticsFixture builder() {
