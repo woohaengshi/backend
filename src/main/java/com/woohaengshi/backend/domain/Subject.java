@@ -28,18 +28,12 @@ public class Subject {
     @JoinColumn(name = "member_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
-
-    @JoinColumn(name = "study_record_id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private StudyRecord studyRecord;
-
     protected Subject() {}
 
     @Builder
-    public Subject(Long id, String name, Member member, StudyRecord studyRecord) {
+    public Subject(Long id, String name, Member member) {
         this.id = id;
         this.name = name;
         this.member = member;
-        this.studyRecord = studyRecord;
     }
 }
