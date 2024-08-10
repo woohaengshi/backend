@@ -72,4 +72,57 @@ class StudyRecordControllerTest {
                 .all()
                 .statusCode(400);
     }
+
+    @Test
+    void 연도와_월을_통해_공부_기록을_조회할_수_있다() {
+        int year = 2024;
+        int month = 8;
+
+        RestAssured.given()
+                .log()
+                .all()
+                .contentType(ContentType.JSON)
+                .queryParam("year", year)
+                .queryParam("month", month)
+                .when()
+                .get("/api/v1/study-record/monthly")
+                .then()
+                .log()
+                .all()
+                .statusCode(200);
+    }
+
+    @Test
+    void 월이_전달되지_않으면_공부_기록을_조회할_수_없다() {
+        int year = 2024;
+
+        RestAssured.given()
+                .log()
+                .all()
+                .contentType(ContentType.JSON)
+                .queryParam("year", year)
+                .when()
+                .get("/api/v1/study-record/monthly")
+                .then()
+                .log()
+                .all()
+                .statusCode(400);
+    }
+
+    @Test
+    void 연도가_전달되지_않으면_공부_기록을_조회할_수_없다() {
+        int month = 8;
+
+        RestAssured.given()
+                .log()
+                .all()
+                .contentType(ContentType.JSON)
+                .queryParam("month", month)
+                .when()
+                .get("/api/v1/study-record/monthly")
+                .then()
+                .log()
+                .all()
+                .statusCode(400);
+    }
 }
