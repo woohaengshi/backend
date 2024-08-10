@@ -13,6 +13,9 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.woohaengshi.backend.exception.ErrorCode.INVALID_INPUT;
+import static org.springframework.http.HttpStatus.CREATED;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class StudyRecordControllerTest {
     @LocalServerPort private int port;
@@ -24,8 +27,7 @@ class StudyRecordControllerTest {
 
     @Test
     void 공부를_기록할_수_있다() {
-        SaveRecordRequest request =
-                new SaveRecordRequest(LocalDate.now(), 10, List.of("HTML", "CSS"));
+        SaveRecordRequest request = new SaveRecordRequest(LocalDate.now(), 10, List.of(1L, 2L));
         RestAssured.given()
                 .log()
                 .all()
@@ -36,13 +38,12 @@ class StudyRecordControllerTest {
                 .then()
                 .log()
                 .all()
-                .statusCode(201);
+                .statusCode(CREATED.value());
     }
 
     @Test
     void 시간이_0일경우_공부를_기록할_수_없다() {
-        SaveRecordRequest request =
-                new SaveRecordRequest(LocalDate.now(), 0, List.of("HTML", "CSS"));
+        SaveRecordRequest request = new SaveRecordRequest(LocalDate.now(), 0, List.of(1L, 2L));
         RestAssured.given()
                 .log()
                 .all()
@@ -53,13 +54,13 @@ class StudyRecordControllerTest {
                 .then()
                 .log()
                 .all()
-                .statusCode(400);
+                .statusCode(INVALID_INPUT.getStatus().value());
     }
 
     @Test
     void 날짜가_미래일_경우_공부를_기록할_수_없다() {
         SaveRecordRequest request =
-                new SaveRecordRequest(LocalDate.now().plusDays(2), 0, List.of("HTML", "CSS"));
+                new SaveRecordRequest(LocalDate.now().plusDays(2), 0, List.of(1L, 2L));
         RestAssured.given()
                 .log()
                 .all()
@@ -70,6 +71,6 @@ class StudyRecordControllerTest {
                 .then()
                 .log()
                 .all()
-                .statusCode(400);
+                .statusCode(INVALID_INPUT.getStatus().value());
     }
 }
