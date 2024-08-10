@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -34,12 +33,12 @@ import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
-class StudyRecordServiceTest {
+class StudyRecordServiceImplTest {
     @Mock private MemberRepository memberRepository;
     @Mock private StudyRecordRepository studyRecordRepository;
     @Mock private SubjectRepository subjectRepository;
     @Mock private StudySubjectRepository studySubjectRepository;
-    @InjectMocks private StudyRecordService studyRecordService;
+    @InjectMocks private StudyRecordServiceImpl studyRecordServiceImpl;
 
     @Test
     void 첫_공부_기록을_저장할_수_있다() {
@@ -62,7 +61,7 @@ class StudyRecordServiceTest {
         }
 
         assertAll(
-                () -> studyRecordService.save(request, member.getId()),
+                () -> studyRecordServiceImpl.save(request, member.getId()),
                 () ->
                         verify(studyRecordRepository, times(1))
                                 .findByDateAndMemberId(request.getDate(), member.getId()),
@@ -93,7 +92,7 @@ class StudyRecordServiceTest {
                         });
 
         assertAll(
-                () -> studyRecordService.save(request, member.getId()),
+                () -> studyRecordServiceImpl.save(request, member.getId()),
                 () -> assertThat(existStudyRecord.getTime()).isEqualTo(30),
                 () ->
                         verify(studyRecordRepository, times(1))
@@ -129,7 +128,7 @@ class StudyRecordServiceTest {
                         });
 
         assertAll(
-                () -> studyRecordService.save(request, member.getId()),
+                () -> studyRecordServiceImpl.save(request, member.getId()),
                 () -> assertThat(existStudyRecord.getTime()).isEqualTo(30),
                 () ->
                         verify(studyRecordRepository, times(1))
@@ -154,7 +153,7 @@ class StudyRecordServiceTest {
 
         assertAll(
                 () ->
-                        assertThatThrownBy(() -> studyRecordService.save(request, member.getId()))
+                        assertThatThrownBy(() -> studyRecordServiceImpl.save(request, member.getId()))
                                 .isExactlyInstanceOf(WoohaengshiException.class),
                 () ->
                         verify(studyRecordRepository, times(1))
