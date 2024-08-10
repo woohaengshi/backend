@@ -1,4 +1,4 @@
-package com.woohaengshi.backend.fixture;
+package com.woohaengshi.backend.support.fixture;
 
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.statistics.Statistics;
