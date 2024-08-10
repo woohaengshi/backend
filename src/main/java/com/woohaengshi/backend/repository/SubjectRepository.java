@@ -4,11 +4,11 @@ import com.woohaengshi.backend.domain.Subject;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.stream.Stream;
+import java.util.List;
 
 public interface SubjectRepository extends JpaRepository<Subject, Long> {
 
     boolean existsByNameAndStudyRecordId(String name, Long studyRecordId);
 
-    Stream<Subject> findAllByMemberIdOrderByNameAsc(Long memberId);
+    List<Subject> findAllByMemberIdOrderByNameAsc(Long memberId);
 }

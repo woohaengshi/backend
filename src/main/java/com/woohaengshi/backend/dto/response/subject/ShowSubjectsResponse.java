@@ -1,5 +1,6 @@
 package com.woohaengshi.backend.dto.response.subject;
 
+import com.woohaengshi.backend.domain.Subject;
 import lombok.Getter;
 
 @Getter
@@ -14,7 +15,7 @@ public class ShowSubjectsResponse {
         this.name = name;
     }
 
-    public static ShowSubjectsResponse of(Long id, String name) {
-        return new ShowSubjectsResponse(id, name);
+    public static ShowSubjectsResponse from(Subject subject) {
+        return new ShowSubjectsResponse(subject.getId(), subject.getName());
     }
 }

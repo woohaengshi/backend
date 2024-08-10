@@ -35,21 +35,14 @@ public class TimerServiceImpl implements TimerService {
     @Transactional(readOnly = true)
     public ShowTimerResponse getTimer(Long memberId) {
         validateExistMember(memberId);
-        List<ShowSubjectsResponse> subjectsResponses = getSubjectsResponses(memberId);
+        List<Subject> subjects = subjectRepository.findAllByMemberIdOrderByNameAsc(memberId);
         int todayStudyTime = getTodayStudyTime(memberId, getTodayDate());
-        return ShowTimerResponse.of(todayStudyTime, subjectsResponses);
+        return ShowTimerResponse.of(todayStudyTime, subjects);
     }
 
     private void validateExistMember(Long memberId) {
         if (!memberRepository.existsById(memberId))
             throw new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND);
-    }
-
-    private List<ShowSubjectsResponse> getSubjectsResponses(Long memberId) {
-        Stream<Subject> subjectStream = subjectRepository.findAllByMemberIdOrderByNameAsc(memberId);
-        return subjectStream
-                .map(subject -> ShowSubjectsResponse.of(subject.getId(), subject.getName()))
-                .collect(Collectors.toList());
     }
 
     private int getTodayStudyTime(Long memberId, LocalDate date) {
