@@ -33,13 +33,11 @@ public class StatisticsServiceImpl implements StatisticsService {
     public RankingSnapshotResponse showRankData(
             long memberId, StatisticsType statisticsType, Pageable pageable) {
         Statistics statistics = getStatisticsByMemberId(memberId);
-        int memberRank = getMemberRank(statisticsType, statistics);
-
         Slice<Statistics> rankSlice = getRankDataSlice(statisticsType, pageable);
 
         return RankingSnapshotResponse.of(
                 statistics.getMember(),
-                memberRank,
+                getMemberRank(statisticsType, statistics),
                 statistics.getDailyTime(),
                 statistics.getTotalTime(),
                 rankSlice.hasNext(),
