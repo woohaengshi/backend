@@ -32,61 +32,26 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     @Transactional(readOnly = true)
-    public int findMemberRanking(long memberId, StatisticsType statisticsType) {
-        Statistics statistics =
-                statisticsRepository
-                        .findByMemberId(memberId)
-                        .orElseThrow(() -> new WoohaengshiException(ErrorCode.STATISTICS_NOT_FOUND));
-        int time = getTimeByStatisticsType(statisticsType, statistics);
-        return getCountByTimeGreaterThan(statisticsType, time) + 1;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Slice<Statistics> findStatisticsRankingData(StatisticsType statisticsType, Pageable pageable) {
-        Specification<Statistics> specification = (Root<Statistics> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
-            if ("daily".equalsIgnoreCase(statisticsType.toString())) {
-                query.orderBy(cb.desc(root.get("dailyTime")));
-            } else if ("weekly".equalsIgnoreCase(statisticsType.toString())) {
-                query.orderBy(cb.desc(root.get("weeklyTime")));
-            } else if ("monthly".equalsIgnoreCase(statisticsType.toString())) {
-                query.orderBy(cb.desc(root.get("monthlyTime")));
-            }
-            return query.getRestriction();
-        };
-        return statisticsRepository.findAll(specification, pageable);
-    }
-
-
-    @Override
-    @Transactional(readOnly = true)
-    public RankingSnapshotResponse findRankingDataWithMember(
+    public RankingSnapshotResponse showRankData(
             long memberId, StatisticsType statisticsType, Pageable pageable) {
-        Member member =
-                memberRepository.findById(memberId).orElseThrow(() -> new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND));
+        Member member = getMember(memberId);
+        Statistics statistics = getStatisticsByMemberId(memberId);
+        int memberRank = getMemberRank(statisticsType, statistics);
 
-        Statistics statistics =
-                statisticsRepository
-                        .findByMemberId(memberId)
-                        .orElseThrow(() -> new WoohaengshiException(ErrorCode.STATISTICS_NOT_FOUND));
-
-
-        int memberRanking = findMemberRanking(memberId, statisticsType);
-
-        Slice<Statistics> statisticsRankingData =
-                findStatisticsRankingData(statisticsType, pageable);
+        Slice<Statistics> statisticsRankingData = getStatisticsRankData(statisticsType, pageable);
 
         return RankingSnapshotResponse.of(
                 member,
-                memberRanking,
+                memberRank,
                 statistics.getDailyTime(),
                 statistics.getTotalTime(),
                 statisticsRankingData.hasNext(),
-                createRankingDatas(statisticsRankingData, pageable, statisticsType));
+                createRankDatas(statisticsRankingData, pageable, statisticsType));
     }
 
+    public int getMemberRank(StatisticsType statisticsType, Statistics statistics) {
+        int time = getTimeByStatisticsType(statisticsType, statistics);
 
-    public int getCountByTimeGreaterThan(StatisticsType statisticsType, int time) {
         Specification<Statistics> specification =
                 (root, query, cb) -> {
                     if (statisticsType == StatisticsType.DAILY) {
@@ -99,17 +64,26 @@ public class StatisticsServiceImpl implements StatisticsService {
                         throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
                     }
                 };
-
-        return (int) statisticsRepository.count(specification);
+        return  (int)statisticsRepository.count(specification) + 1;
     }
 
-    private int getTimeByStatisticsType(StatisticsType statisticsType, Statistics statistics) {
-        if (statisticsType == StatisticsType.DAILY)  return statistics.getDailyTime();
-        else if (statisticsType == StatisticsType.WEEKLY) return statistics.getWeeklyTime();
-        else return statistics.getMonthlyTime();
+    public Slice<Statistics> getStatisticsRankData(
+            StatisticsType statisticsType, Pageable pageable) {
+        Specification<Statistics> specification =
+                (Root<Statistics> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
+                    if ("daily".equalsIgnoreCase(statisticsType.toString())) {
+                        query.orderBy(cb.desc(root.get("dailyTime")));
+                    } else if ("weekly".equalsIgnoreCase(statisticsType.toString())) {
+                        query.orderBy(cb.desc(root.get("weeklyTime")));
+                    } else if ("monthly".equalsIgnoreCase(statisticsType.toString())) {
+                        query.orderBy(cb.desc(root.get("monthlyTime")));
+                    }
+                    return query.getRestriction();
+                };
+        return statisticsRepository.findAll(specification, pageable);
     }
 
-    private List<RankingDataResponse> createRankingDatas(
+    private List<RankingDataResponse> createRankDatas(
             Slice<Statistics> statisticsSlice, Pageable pageable, StatisticsType statisticsType) {
         int startRank = pageable.getPageNumber() * pageable.getPageSize() + 1;
 
@@ -126,5 +100,23 @@ public class StatisticsServiceImpl implements StatisticsService {
                                     statistics.getTotalTime());
                         })
                 .collect(Collectors.toList());
+    }
+
+    private int getTimeByStatisticsType(StatisticsType statisticsType, Statistics statistics) {
+        if (statisticsType == StatisticsType.DAILY) return statistics.getDailyTime();
+        else if (statisticsType == StatisticsType.WEEKLY) return statistics.getWeeklyTime();
+        else return statistics.getMonthlyTime();
+    }
+
+    private Statistics getStatisticsByMemberId(Long memberId) {
+        return statisticsRepository
+                .findByMemberId(memberId)
+                .orElseThrow(() -> new WoohaengshiException(ErrorCode.STATISTICS_NOT_FOUND));
+    }
+
+    private Member getMember(Long memberId) {
+        return memberRepository
+                .findById(memberId)
+                .orElseThrow(() -> new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND));
     }
 }
