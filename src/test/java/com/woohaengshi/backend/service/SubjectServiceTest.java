@@ -1,5 +1,51 @@
 package com.woohaengshi.backend.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import com.woohaengshi.backend.domain.member.Member;
+import com.woohaengshi.backend.dto.request.subject.SubjectRequest;
+import com.woohaengshi.backend.repository.MemberRepository;
+import com.woohaengshi.backend.repository.SubjectRepository;
+import com.woohaengshi.backend.support.fixture.MemberFixture;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-class SubjectServiceTest {}
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
+
+@ExtendWith(MockitoExtension.class)
+class SubjectServiceTest {
+
+    @Mock private MemberRepository memberRepository;
+    @Mock private SubjectRepository subjectRepository;
+    @InjectMocks
+    private SubjectService subjectService;
+
+    @Test
+    void 과목을_저장한다() {
+        // Given
+        Member member = MemberFixture.builder().build();
+        SubjectRequest request = new SubjectRequest();
+        request.setSubjectsForAddition(List.of("Java", "Spring"));
+
+        given(memberRepository.existsById(member.getId())).willReturn(true);
+        given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+        given(subjectRepository.existsByMemberIdAndName(member.getId(), "Java")).willReturn(false);
+        given(subjectRepository.existsByMemberIdAndName(member.getId(), "Spring")).willReturn(false);
+
+        // When
+        subjectService.editSubjects(member.getId(), request);
+
+        // Then
+        assertAll(
+                () -> verify(subjectRepository).save(argThat(subject -> subject.getName().equals("Java") && subject.getMember().equals(member))),
+                () -> verify(subjectRepository).save(argThat(subject -> subject.getName().equals("Spring") && subject.getMember().equals(member)))
+        );
+    }
+}
