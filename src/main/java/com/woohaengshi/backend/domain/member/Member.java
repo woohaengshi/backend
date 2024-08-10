@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import lombok.Builder;
 import lombok.Getter;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -39,9 +40,9 @@ public class Member {
     @Column(name = "image")
     private String image;
 
-    @Column(name = "group", nullable = false)
+    @Column(name = "course", nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private Group group;
+    private Course course;
 
     @Column(name = "state", nullable = false)
     @Enumerated(value = EnumType.STRING)
@@ -60,13 +61,14 @@ public class Member {
 
     protected Member() {}
 
+    @Builder
     public Member(
             Long id,
             String name,
             String email,
             String password,
             String image,
-            Group group,
+            Course course,
             State state,
             LocalDate sleepDate,
             LocalDateTime createdAt,
@@ -76,7 +78,7 @@ public class Member {
         this.email = email;
         this.password = password;
         this.image = image;
-        this.group = group;
+        this.course = course;
         this.state = state;
         this.sleepDate = sleepDate;
         this.createdAt = createdAt;
