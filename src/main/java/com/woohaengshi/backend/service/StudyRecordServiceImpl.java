@@ -1,5 +1,8 @@
 package com.woohaengshi.backend.service;
 
+import static com.woohaengshi.backend.exception.ErrorCode.MEMBER_NOT_FOUND;
+import static com.woohaengshi.backend.exception.ErrorCode.SUBJECT_NOT_FOUND;
+
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.StudySubject;
 import com.woohaengshi.backend.domain.Subject;
@@ -19,13 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static com.woohaengshi.backend.exception.ErrorCode.MEMBER_NOT_FOUND;
-import static com.woohaengshi.backend.exception.ErrorCode.SUBJECT_NOT_FOUND;
-
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class StudyRecordServiceImpl implements StudyRecordService{
+public class StudyRecordServiceImpl implements StudyRecordService {
 
     private final MemberRepository memberRepository;
     private final StudyRecordRepository studyRecordRepository;
