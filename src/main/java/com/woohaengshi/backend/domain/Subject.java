@@ -28,6 +28,7 @@ public class Subject {
     @JoinColumn(name = "member_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
+
     protected Subject() {}
 
     @Builder

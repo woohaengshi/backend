@@ -1,5 +1,9 @@
 package com.woohaengshi.backend.controller;
 
+import static com.woohaengshi.backend.exception.ErrorCode.INVALID_INPUT;
+
+import static org.springframework.http.HttpStatus.OK;
+
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 
 import io.restassured.RestAssured;
@@ -12,9 +16,6 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 
 import java.time.LocalDate;
 import java.util.List;
-
-import static com.woohaengshi.backend.exception.ErrorCode.INVALID_INPUT;
-import static org.springframework.http.HttpStatus.OK;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class StudyRecordControllerTest {
