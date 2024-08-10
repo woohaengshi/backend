@@ -11,12 +11,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.woohaengshi.backend.domain.StudyRecord;
+import com.woohaengshi.backend.domain.StudySubject;
 import com.woohaengshi.backend.domain.Subject;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
-import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.StudyRecordRepository;
+import com.woohaengshi.backend.repository.StudySubjectRepository;
 import com.woohaengshi.backend.repository.SubjectRepository;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
 import com.woohaengshi.backend.support.fixture.StudyRecordFixture;
@@ -36,26 +37,28 @@ class StudyRecordServiceTest {
     @Mock private MemberRepository memberRepository;
     @Mock private StudyRecordRepository studyRecordRepository;
     @Mock private SubjectRepository subjectRepository;
+    @Mock private StudySubjectRepository studySubjectRepository;
     @InjectMocks private StudyRecordService studyRecordService;
 
     @Test
     void 첫_공부_기록을_저장할_수_있다() {
         Member member = MemberFixture.builder().build();
-        SaveRecordRequest request =
-                new SaveRecordRequest(LocalDate.now(), 10, List.of("HTML", "CSS"));
-        StudyRecord studyRecord = request.toStudyRecord(member);
+        SaveRecordRequest request = new SaveRecordRequest(LocalDate.now(), 10, List.of(1L, 2L));
+        StudyRecord studyRecord = StudyRecordFixture.from(request, 1L);
+
+        given(memberRepository.existsById(member.getId())).willReturn(true);
         given(studyRecordRepository.findByDateAndMemberId(request.getDate(), member.getId()))
                 .willReturn(Optional.empty());
-        given(studyRecordRepository.save(any(StudyRecord.class))).willReturn(studyRecord);
         given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
-        request.getSubjects()
-                .forEach(
-                        subject -> {
-                            given(
-                                            subjectRepository.existsByNameAndStudyRecordId(
-                                                    subject, studyRecord.getId()))
-                                    .willReturn(false);
-                        });
+        given(studyRecordRepository.save(any(StudyRecord.class))).willReturn(studyRecord);
+        for (Long subjectId : request.getSubjects()) {
+            given(
+                            studySubjectRepository.existsBySubjectIdAndStudyRecordId(
+                                    subjectId, studyRecord.getId()))
+                    .willReturn(false);
+            given(subjectRepository.findById(subjectId))
+                    .willReturn(Optional.of(Subject.builder().id(subjectId).build()));
+        }
 
         assertAll(
                 () -> studyRecordService.save(request, member.getId()),
@@ -64,39 +67,8 @@ class StudyRecordServiceTest {
                                 .findByDateAndMemberId(request.getDate(), member.getId()),
                 () -> verify(memberRepository, times(1)).findById(member.getId()),
                 () -> verify(studyRecordRepository, times(1)).save(any(StudyRecord.class)),
-                () ->
-                        verify(subjectRepository, times(2))
-                                .existsByNameAndStudyRecordId(
-                                        any(String.class), eq(studyRecord.getId())));
-    }
-
-    @Test
-    void 공부_기록을_누적해_저장할_수_있다() {
-        Member member = MemberFixture.builder().id(1L).build();
-        StudyRecord existStudyRecord = StudyRecordFixture.builder().member(member).time(20).build();
-        SaveRecordRequest request =
-                new SaveRecordRequest(LocalDate.now(), 10, List.of("HTML", "CSS"));
-        StudyRecord newStudyRecord = request.toStudyRecord(member);
-        given(studyRecordRepository.findByDateAndMemberId(request.getDate(), member.getId()))
-                .willReturn(Optional.of(existStudyRecord));
-        request.getSubjects()
-                .forEach(
-                        subject -> {
-                            given(
-                                            subjectRepository.existsByNameAndStudyRecordId(
-                                                    subject, newStudyRecord.getId()))
-                                    .willReturn(false);
-                        });
-        assertAll(
-                () -> studyRecordService.save(request, member.getId()),
-                () -> assertThat(existStudyRecord.getTime()).isEqualTo(30),
-                () ->
-                        verify(studyRecordRepository, times(1))
-                                .findByDateAndMemberId(request.getDate(), member.getId()),
-                () ->
-                        verify(subjectRepository, times(2))
-                                .existsByNameAndStudyRecordId(
-                                        any(String.class), eq(newStudyRecord.getId())));
+                () -> verify(subjectRepository, times(2)).findById(any(Long.class)),
+                () -> verify(studySubjectRepository, times(2)).save(any(StudySubject.class)));
     }
 
     @Test
