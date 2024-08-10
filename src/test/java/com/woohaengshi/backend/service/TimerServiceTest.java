@@ -8,7 +8,6 @@ import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.Subject;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowTimerResponse;
-import com.woohaengshi.backend.dto.response.subject.ShowSubjectsResponse;
 import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
@@ -26,7 +25,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @ExtendWith(MockitoExtension.class)
 public class TimerServiceTest {
@@ -38,83 +36,67 @@ public class TimerServiceTest {
     @Test
     void 타이머를_조회_한다() {
         Member member = MemberFixture.builder().build();
-        LocalDate todayDate = LocalDate.of(2024, 8, 9);
-        int todayStudyTime = 30;
-        Subject subject = Subject.builder().id(1L).name("HTML").member(member).build();
-        ShowSubjectsResponse subjectResponse =
-                ShowSubjectsResponse.of(subject.getId(), subject.getName());
+        Subject subject1 = Subject.builder().id(1L).name("HTML").member(member).build();
+        Subject subject2 = Subject.builder().id(2L).name("CSS").member(member).build();
+        List<Subject> subjects = List.of(subject1, subject2);
 
         given(memberRepository.existsById(member.getId())).willReturn(true);
         given(subjectRepository.findAllByMemberIdOrderByNameAsc(member.getId()))
-                .willReturn(Stream.of(subject));
-        given(studyRecordRepository.findByDateAndMemberId(todayDate, member.getId()))
-                .willReturn(Optional.of(new StudyRecord(1L, todayStudyTime, todayDate, null)));
+                .willReturn(subjects);
+        given(studyRecordRepository.findByDateAndMemberId(LocalDate.now(), member.getId()))
+                .willReturn(Optional.of(new StudyRecord(1L, 30, LocalDate.now(), member)));
 
         ShowTimerResponse response = subjectService.getTimer(member.getId());
 
-        List<ShowSubjectsResponse> expectedSubjects = List.of(subjectResponse);
-        List<ShowSubjectsResponse> actualSubjects = response.getSubjects();
-
         assertAll(
                 "response",
-                () -> assertThat(response.getTime()).isEqualTo(todayStudyTime),
-                () -> assertTrue(expectedSubjects.size() == actualSubjects.size()),
+                () -> assertThat(response.getTime()).isEqualTo(30),
+                () -> assertTrue(response.getSubjects().size() == subjects.size()),
                 () ->
-                        assertThat(actualSubjects.get(0).getId())
-                                .isEqualTo(expectedSubjects.get(0).getId()),
+                        assertThat(response.getSubjects().get(0).getId())
+                                .isEqualTo(subjects.get(0).getId()),
                 () ->
-                        assertThat(actualSubjects.get(0).getName())
-                                .isEqualTo(expectedSubjects.get(0).getName()));
+                        assertThat(response.getSubjects().get(0).getName())
+                                .isEqualTo(subjects.get(0).getName()));
     }
 
     @Test
-    void 타이머를_처음_조회_한다() {
+    void 오늘의_공부_기록이_없는_경우에_타이머를_조회_한다() {
         Member member = MemberFixture.builder().build();
-        LocalDate todayDate = LocalDate.of(2024, 8, 9);
-        int todayStudyTime = 0;
-
-        Subject subject = Subject.builder().id(1L).name("HTML").member(member).build();
-        ShowSubjectsResponse subjectResponse =
-                ShowSubjectsResponse.of(subject.getId(), subject.getName());
+        Subject subject1 = Subject.builder().id(1L).name("HTML").member(member).build();
+        Subject subject2 = Subject.builder().id(2L).name("CSS").member(member).build();
+        List<Subject> subjects = List.of(subject1, subject2);
 
         given(memberRepository.existsById(member.getId())).willReturn(true);
         given(subjectRepository.findAllByMemberIdOrderByNameAsc(member.getId()))
-                .willReturn(Stream.of(subject));
-        given(studyRecordRepository.findByDateAndMemberId(todayDate, member.getId()))
-                .willReturn(Optional.of(new StudyRecord(1L, todayStudyTime, todayDate, null)));
+                .willReturn(subjects);
 
         ShowTimerResponse response = subjectService.getTimer(member.getId());
 
-        List<ShowSubjectsResponse> expectedSubjects = List.of(subjectResponse);
-        List<ShowSubjectsResponse> actualSubjects = response.getSubjects();
-
         assertAll(
                 "response",
-                () -> assertThat(response.getTime()).isEqualTo(todayStudyTime),
-                () -> assertTrue(expectedSubjects.size() == actualSubjects.size()),
+                () -> assertThat(response.getTime()).isEqualTo(0),
+                () -> assertTrue(response.getSubjects().size() == subjects.size()),
                 () ->
-                        assertThat(actualSubjects.get(0).getId())
-                                .isEqualTo(expectedSubjects.get(0).getId()),
+                        assertThat(response.getSubjects().get(0).getId())
+                                .isEqualTo(subjects.get(0).getId()),
                 () ->
-                        assertThat(actualSubjects.get(0).getName())
-                                .isEqualTo(expectedSubjects.get(0).getName()));
+                        assertThat(response.getSubjects().get(0).getName())
+                                .isEqualTo(subjects.get(0).getName()));
     }
 
     @Test
     void 회원이_존재하지_않으면_예외를_던진다() {
-        Member member = MemberFixture.builder().build();
-
-        given(memberRepository.existsById(member.getId())).willReturn(false);
+        given(memberRepository.existsById(10L)).willReturn(false);
 
         WoohaengshiException thrown =
                 assertThrows(
-                        WoohaengshiException.class, () -> subjectService.getTimer(member.getId()));
+                        WoohaengshiException.class, () -> subjectService.getTimer(10L));
         assertAll(
                 "exception",
                 () ->
                         assertEquals(
                                 ErrorCode.MEMBER_NOT_FOUND,
-                                thrown.getErrorCode(),
-                                "Error code should match"));
+                                thrown.getErrorCode()));
     }
 }
