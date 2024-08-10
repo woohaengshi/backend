@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/rank")
 public class StatisticsController {
 
     private final StatisticsService statisticsService;
 
-    @GetMapping("/rank")
+    @GetMapping
     public RankingSnapshotResponse getRanking(
             @PageableDefault(size = 10, page = 0) Pageable pageable,
             @RequestParam(value = "type", defaultValue = "WEEKLY") StatisticsType statisticsType) {
