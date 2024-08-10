@@ -115,7 +115,23 @@ class SubjectServiceTest {
         request.setSubjectsForAddition(List.of("Spring", "Java"));
         request.setSubjectsForDeletion(List.of());
 
-        // When && Then
+        // When & Then
+        assertThatThrownBy(() -> subjectService.editSubjects(member.getId(), request)).isExactlyInstanceOf(WoohaengshiException.class);
+    }
+
+    @Test
+    void 존재하지_않는_과목이면_예외를_던진다() {
+        //Given
+        Member member = MemberFixture.builder().build();
+
+        given(memberRepository.existsById(member.getId())).willReturn(true);
+        given(subjectRepository.existsById(2L)).willReturn(false);
+
+        SubjectRequest request = new SubjectRequest();
+        request.setSubjectsForAddition(List.of());
+        request.setSubjectsForDeletion(List.of(2L));
+
+        //When $ Then
         assertThatThrownBy(() -> subjectService.editSubjects(member.getId(), request)).isExactlyInstanceOf(WoohaengshiException.class);
     }
 }
