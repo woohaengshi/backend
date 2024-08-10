@@ -7,7 +7,7 @@ import static org.mockito.BDDMockito.given;
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.Subject;
 import com.woohaengshi.backend.domain.member.Member;
-import com.woohaengshi.backend.dto.response.studyrecord.ShowTimerResponse;
+import com.woohaengshi.backend.dto.response.timer.ShowTimerResponse;
 import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
