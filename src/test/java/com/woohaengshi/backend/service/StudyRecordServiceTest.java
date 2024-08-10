@@ -14,6 +14,8 @@ import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.Subject;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
+import com.woohaengshi.backend.dto.response.studyrecord.ShowDailyRecordResponse;
+import com.woohaengshi.backend.dto.response.studyrecord.ShowMonthlyRecordResponse;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.StudyRecordRepository;
@@ -29,6 +31,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -116,6 +119,72 @@ class StudyRecordServiceTest {
                 .willReturn(true);
         studyRecordService.save(request, member.getId());
         assertAll(() -> verify(subjectRepository, never()).save(any(Subject.class)));
+    }
+
+    @Test
+    void 연도와_월을_통해_공부_기록을_조회_한다() {
+        Member member = MemberFixture.builder().build();
+        List<Object[]> records = new ArrayList<>();
+        records.add(new Object[] {1, 36000, 2L, "CSS"});
+        records.add(new Object[] {1, 36000, 1L, "HTML"});
+        records.add(new Object[] {6, 58000, 3L, "JS"});
+        records.add(new Object[] {9, 47000, 3L, "JS"});
+        records.add(new Object[] {9, 47000, 2L, "CSS"});
+
+        ShowMonthlyRecordResponse expected = ShowMonthlyRecordResponse.of(2024, 8, records);
+
+        given(memberRepository.existsById(member.getId())).willReturn(true);
+        given(studyRecordRepository.findByYearAndMonthAndMemberId(2024, 8, member.getId()))
+                .willReturn(records);
+
+        ShowMonthlyRecordResponse response =
+                studyRecordService.showMonthlyRecord(
+                        expected.getYear(), expected.getMonth(), member.getId());
+
+        assertAll(
+                "response",
+                () -> assertThat(response.getYear()).isEqualTo(expected.getYear()),
+                () -> assertThat(response.getMonth()).isEqualTo(expected.getMonth()),
+                () -> {
+                    for (int i = 0; i < response.getDaily().size(); i++) {
+                        ShowDailyRecordResponse daily = response.getDaily().get(i);
+                        ShowDailyRecordResponse expectedDaily = expected.getDaily().get(i);
+
+                        assertThat(daily.getDay()).isEqualTo(expectedDaily.getDay());
+                        assertThat(daily.getTime()).isEqualTo(expectedDaily.getTime());
+
+                        for (int j = 0; j < daily.getSubjects().size(); j++) {
+                            assertThat(daily.getSubjects().get(j).getId())
+                                    .isEqualTo(expectedDaily.getSubjects().get(j).getId());
+                            assertThat(daily.getSubjects().get(j).getName())
+                                    .isEqualTo(expectedDaily.getSubjects().get(j).getName());
+                        }
+                    }
+                });
+    }
+
+    @Test
+    void 기록이_없는_월을_조회_한다() {
+        Member member = MemberFixture.builder().build();
+        List<Object[]> records = new ArrayList<>();
+
+        ShowMonthlyRecordResponse expected = ShowMonthlyRecordResponse.of(2024, 8, records);
+
+        given(memberRepository.existsById(member.getId())).willReturn(true);
+        given(studyRecordRepository.findByYearAndMonthAndMemberId(2024, 8, member.getId()))
+                .willReturn(records);
+
+        ShowMonthlyRecordResponse response =
+                studyRecordService.showMonthlyRecord(
+                        expected.getYear(), expected.getMonth(), member.getId());
+
+        assertAll(
+                "response",
+                () -> assertThat(response.getYear()).isEqualTo(expected.getYear()),
+                () -> assertThat(response.getMonth()).isEqualTo(expected.getMonth()),
+                () -> assertThat(response.getDaily()).isEqualTo(expected.getDaily()),
+                () -> assertThat(response.getDaily()).isNotNull()
+        );
     }
 
     @Test
