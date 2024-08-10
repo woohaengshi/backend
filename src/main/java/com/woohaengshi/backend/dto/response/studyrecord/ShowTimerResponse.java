@@ -6,7 +6,6 @@ import com.woohaengshi.backend.dto.response.subject.ShowSubjectsResponse;
 import lombok.Getter;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 @Getter
 public class ShowTimerResponse {

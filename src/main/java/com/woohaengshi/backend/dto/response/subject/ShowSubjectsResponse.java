@@ -1,6 +1,7 @@
 package com.woohaengshi.backend.dto.response.subject;
 
 import com.woohaengshi.backend.domain.Subject;
+
 import lombok.Getter;
 
 @Getter

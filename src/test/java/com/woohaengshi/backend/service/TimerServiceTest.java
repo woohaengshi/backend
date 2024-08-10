@@ -90,13 +90,8 @@ public class TimerServiceTest {
         given(memberRepository.existsById(10L)).willReturn(false);
 
         WoohaengshiException thrown =
-                assertThrows(
-                        WoohaengshiException.class, () -> subjectService.getTimer(10L));
+                assertThrows(WoohaengshiException.class, () -> subjectService.getTimer(10L));
         assertAll(
-                "exception",
-                () ->
-                        assertEquals(
-                                ErrorCode.MEMBER_NOT_FOUND,
-                                thrown.getErrorCode()));
+                "exception", () -> assertEquals(ErrorCode.MEMBER_NOT_FOUND, thrown.getErrorCode()));
     }
 }
