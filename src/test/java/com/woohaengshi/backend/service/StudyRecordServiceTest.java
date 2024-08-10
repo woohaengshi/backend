@@ -15,6 +15,7 @@ import com.woohaengshi.backend.domain.StudySubject;
 import com.woohaengshi.backend.domain.Subject;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
+import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.StudyRecordRepository;
 import com.woohaengshi.backend.repository.StudySubjectRepository;
@@ -137,7 +138,27 @@ class StudyRecordServiceTest {
                         verify(studySubjectRepository, times(2))
                                 .existsBySubjectIdAndStudyRecordId(
                                         any(Long.class), any(Long.class)),
-                () -> verify(subjectRepository,times(2)).findById(any(Long.class)),
+                () -> verify(subjectRepository, times(2)).findById(any(Long.class)),
                 () -> verify(studySubjectRepository, times(2)).save(any(StudySubject.class)));
+    }
+
+    @Test
+    void 회원이_존재하지_않을_경우_예외를_던진다() {
+        Member member = MemberFixture.builder().build();
+        SaveRecordRequest request = new SaveRecordRequest(LocalDate.now(), 10, List.of(1L, 2L));
+
+        given(memberRepository.existsById(member.getId())).willReturn(true);
+        given(studyRecordRepository.findByDateAndMemberId(request.getDate(), member.getId()))
+                .willReturn(Optional.empty());
+        given(memberRepository.findById(member.getId())).willReturn(Optional.empty());
+
+        assertAll(
+                () ->
+                        assertThatThrownBy(() -> studyRecordService.save(request, member.getId()))
+                                .isExactlyInstanceOf(WoohaengshiException.class),
+                () ->
+                        verify(studyRecordRepository, times(1))
+                                .findByDateAndMemberId(request.getDate(), member.getId()),
+                () -> verify(memberRepository, times(1)).findById(member.getId()));
     }
 }
