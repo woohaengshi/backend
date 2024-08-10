@@ -61,7 +61,7 @@ public class SubjectService {
 
   private void validateNotExistSubject(Long i) {
     if (!subjectRepository.existsById(i)) {
-      throw new WoohaengshiException(ErrorCode.SUBJECT_NOT_EXISTS);
+      throw new WoohaengshiException(ErrorCode.SUBJECT_NOT_FOUND);
     }
   }
 }
