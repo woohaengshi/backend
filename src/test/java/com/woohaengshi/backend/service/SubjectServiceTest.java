@@ -1,7 +1,9 @@
 package com.woohaengshi.backend.service;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.request.subject.SubjectRequest;
+import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.SubjectRepository;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
@@ -98,5 +100,22 @@ class SubjectServiceTest {
                 () -> verify(subjectRepository).save(argThat(subject -> subject.getName().equals("Spring"))),
                 () -> verify(subjectRepository).deleteById(1L)
         );
+    }
+
+    @Test
+    void 이미_존재하는_과목이면_예외를_던진다() {
+        //Given
+        Member member = MemberFixture.builder().build();
+
+        given(memberRepository.existsById(member.getId())).willReturn(true);
+        given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+        given(subjectRepository.existsByMemberIdAndName(member.getId(), "Spring")).willReturn(true);
+
+        SubjectRequest request = new SubjectRequest();
+        request.setSubjectsForAddition(List.of("Spring", "Java"));
+        request.setSubjectsForDeletion(List.of());
+
+        // When && Then
+        assertThatThrownBy(() -> subjectService.editSubjects(member.getId(), request)).isExactlyInstanceOf(WoohaengshiException.class);
     }
 }
