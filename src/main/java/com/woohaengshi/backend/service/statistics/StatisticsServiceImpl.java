@@ -35,15 +35,15 @@ public class StatisticsServiceImpl implements StatisticsService {
         Statistics statistics = getStatisticsByMemberId(memberId);
         int memberRank = getMemberRank(statisticsType, statistics);
 
-        Slice<Statistics> rankingDatas = getRankDataSlice(statisticsType, pageable);
+        Slice<Statistics> rankSlice = getRankDataSlice(statisticsType, pageable);
 
         return RankingSnapshotResponse.of(
                 statistics.getMember(),
                 memberRank,
                 statistics.getDailyTime(),
                 statistics.getTotalTime(),
-                rankingDatas.hasNext(),
-                getRankDatas(rankingDatas, pageable, statisticsType));
+                rankSlice.hasNext(),
+                calculationRank(rankSlice, pageable, statisticsType));
     }
 
     private int getMemberRank(StatisticsType statisticsType, Statistics statistics) {
@@ -71,7 +71,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         return statisticsRepository.findAll(specification, pageable);
     }
 
-    private List<RankingDataResponse> getRankDatas(
+    private List<RankingDataResponse> calculationRank(
             Slice<Statistics> statisticsSlice, Pageable pageable, StatisticsType statisticsType) {
         int startRank = pageable.getPageNumber() * pageable.getPageSize() + 1;
 
