@@ -36,8 +36,9 @@ public class TimerServiceTest {
     @Test
     void 타이머를_조회_한다() {
         Member member = MemberFixture.builder().build();
-        Subject subject = Subject.builder().id(1L).name("HTML").member(member).build();
-        List<Subject> subjects = List.of(subject);
+        Subject subject1 = Subject.builder().id(1L).name("CSS").member(member).build();
+        Subject subject2 = Subject.builder().id(2L).name("HTML").member(member).build();
+        List<Subject> subjects = List.of(subject1, subject2);
 
         given(memberRepository.existsById(member.getId())).willReturn(true);
         given(subjectRepository.findAllByMemberIdOrderByNameAsc(member.getId()))
@@ -51,23 +52,28 @@ public class TimerServiceTest {
                 "response",
                 () -> assertThat(response.getTime()).isEqualTo(30),
                 () -> assertTrue(response.getSubjects().size() == subjects.size()),
-                () ->
-                        assertThat(response.getSubjects().get(0).getId())
-                                .isEqualTo(subjects.get(0).getId()),
-                () ->
-                        assertThat(response.getSubjects().get(0).getName())
-                                .isEqualTo(subjects.get(0).getName()));
+                () -> {
+                    for (int i = 0; i < subjects.size(); i++) {
+                        assertThat(response.getSubjects().get(i).getId())
+                                .isEqualTo(subjects.get(i).getId());
+                        assertThat(response.getSubjects().get(i).getName())
+                                .isEqualTo(subjects.get(i).getName());
+                    }
+                });
     }
 
     @Test
     void 오늘의_공부_기록이_없는_경우에_타이머를_조회_한다() {
         Member member = MemberFixture.builder().build();
-        Subject subject = Subject.builder().id(1L).name("HTML").member(member).build();
-        List<Subject> subjects = List.of(subject);
+        Subject subject1 = Subject.builder().id(1L).name("CSS").member(member).build();
+        Subject subject2 = Subject.builder().id(2L).name("HTML").member(member).build();
+        List<Subject> subjects = List.of(subject1, subject2);
 
         given(memberRepository.existsById(member.getId())).willReturn(true);
         given(subjectRepository.findAllByMemberIdOrderByNameAsc(member.getId()))
                 .willReturn(subjects);
+        given(studyRecordRepository.findByDateAndMemberId(LocalDate.now(), member.getId()))
+                .willReturn(Optional.empty());
 
         ShowTimerResponse response = subjectService.getTimer(member.getId());
 
@@ -75,12 +81,14 @@ public class TimerServiceTest {
                 "response",
                 () -> assertThat(response.getTime()).isEqualTo(0),
                 () -> assertTrue(response.getSubjects().size() == subjects.size()),
-                () ->
-                        assertThat(response.getSubjects().get(0).getId())
-                                .isEqualTo(subjects.get(0).getId()),
-                () ->
-                        assertThat(response.getSubjects().get(0).getName())
-                                .isEqualTo(subjects.get(0).getName()));
+                () -> {
+                    for (int i = 0; i < subjects.size(); i++) {
+                        assertThat(response.getSubjects().get(i).getId())
+                                .isEqualTo(subjects.get(i).getId());
+                        assertThat(response.getSubjects().get(i).getName())
+                                .isEqualTo(subjects.get(i).getName());
+                    }
+                });
     }
 
     @Test
