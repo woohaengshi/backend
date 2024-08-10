@@ -4,4 +4,8 @@ import com.woohaengshi.backend.domain.Subject;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface SubjectRepository extends JpaRepository<Subject, Long> {}
+import java.util.List;
+
+public interface SubjectRepository extends JpaRepository<Subject, Long> {
+    List<Subject> findAllByMemberIdOrderByNameAsc(Long memberId);
+}
