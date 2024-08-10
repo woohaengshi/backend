@@ -24,7 +24,7 @@ class TimerControllerTest {
                 .all()
                 .contentType(ContentType.JSON)
                 .when()
-                .get("/api/v1/subject")
+                .get("/api/v1/timer")
                 .then()
                 .log()
                 .all()
