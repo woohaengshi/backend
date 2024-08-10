@@ -1,0 +1,59 @@
+package com.woohaengshi.backend.service.statistics;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.BDDMockito.given;
+
+import com.woohaengshi.backend.dto.response.RankingSnapshotResponse;
+import com.woohaengshi.backend.support.fixture.MemberFixture;
+import com.woohaengshi.backend.support.fixture.StatisticsFixture;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.Mock;
+import org.mockito.InjectMocks;
+import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import com.woohaengshi.backend.repository.StatisticsRepository;
+import com.woohaengshi.backend.domain.member.Member;
+import com.woohaengshi.backend.domain.statistics.Statistics;
+import com.woohaengshi.backend.domain.statistics.StatisticsType;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
+
+import java.util.List;
+import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.*;
+
+@ExtendWith(MockitoExtension.class)
+public class StatisticsServiceImplTest {
+
+    @Mock
+    private StatisticsRepository statisticsRepository;
+
+    @InjectMocks
+    private StatisticsServiceImpl statisticsService;
+
+    @Test
+    void 랭킹을_조회한다() {
+        Member member = MemberFixture.builder().id(1L).build();
+        Statistics statistics = StatisticsFixture.builder().id(1L).member(member).build();
+        StatisticsType statisticsType = StatisticsType.DAILY;
+        Pageable pageable = PageRequest.of(0, 10);
+        given(statisticsRepository.findByMemberId(member.getId())).willReturn(Optional.of(statistics));
+        given(statisticsRepository.count(any(Specification.class))).willReturn(0L);
+        given(statisticsRepository.findAll(any(Specification.class), eq(pageable)))
+                .willReturn(new PageImpl<>(List.of(statistics)));
+
+
+        RankingSnapshotResponse response =
+                statisticsService.showRankData(member.getId(), statisticsType, pageable);
+
+        // 응답 검증
+        assertAll(
+                "응답 전체 확인",
+                () -> assertNotNull(response, "응답은 null이 아니어야 함"),
+                () -> assertEquals(1, response.getMember().getRank(), "순위가 올바르게 계산되어야 함"),
+                () -> assertFalse(response.getInfiniteScrolling().getHasNext(), "다음 페이지 존재 여부 확인")
+        );
+    }
+
+}
