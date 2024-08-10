@@ -21,6 +21,6 @@ public class SubjectController {
   public ResponseEntity<Void> edit(@RequestBody SubjectRequest requestDTO) {
     Long memberId = 1L;
     subjectService.editSubjects(memberId, requestDTO);
-    return ResponseEntity.created(URI.create("/api/v1/subjects")).build();
+    return ResponseEntity.ok().build();
   }
 }
