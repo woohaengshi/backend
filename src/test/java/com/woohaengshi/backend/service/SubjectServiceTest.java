@@ -17,35 +17,36 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class SubjectServiceTest {
 
-    @Mock private MemberRepository memberRepository;
-    @Mock private SubjectRepository subjectRepository;
-    @InjectMocks
-    private SubjectService subjectService;
+  @Mock private MemberRepository memberRepository;
+  @Mock private SubjectRepository subjectRepository;
+  @InjectMocks private SubjectService subjectService;
 
-    @Test
-    void 과목을_저장한다() {
-        // Given
-        Member member = MemberFixture.builder().build();
-        SubjectRequest request = new SubjectRequest();
-        request.setSubjectsForAddition(List.of("Java", "Spring"));
+  @Test
+  void 과목을_저장한다() {
+    // Given
+    Member member = MemberFixture.builder().build();
+    SubjectRequest request = new SubjectRequest();
+    request.setSubjectsForAddition(List.of("Java", "Spring"));
+    request.setSubjectsForDeletion(List.of());
 
-        given(memberRepository.existsById(member.getId())).willReturn(true);
-        given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
-        given(subjectRepository.existsByMemberIdAndName(member.getId(), "Java")).willReturn(false);
-        given(subjectRepository.existsByMemberIdAndName(member.getId(), "Spring")).willReturn(false);
 
-        // When
-        subjectService.editSubjects(member.getId(), request);
+    given(memberRepository.existsById(member.getId())).willReturn(true);
+    given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+    given(subjectRepository.existsByMemberIdAndName(member.getId(), "Java")).willReturn(false);
+    given(subjectRepository.existsByMemberIdAndName(member.getId(), "Spring")).willReturn(false);
 
-        // Then
-        assertAll(
-                () -> verify(subjectRepository).save(argThat(subject -> subject.getName().equals("Java") && subject.getMember().equals(member))),
-                () -> verify(subjectRepository).save(argThat(subject -> subject.getName().equals("Spring") && subject.getMember().equals(member)))
-        );
-    }
+    // When
+    subjectService.editSubjects(member.getId(), request);
+
+    // Then
+    assertAll(
+            () -> verify(subjectRepository).save(argThat(subject -> subject.getName().equals("Java") && subject.getMember().equals(member))),
+            () -> verify(subjectRepository).save(argThat(subject -> subject.getName().equals("Spring") && subject.getMember().equals(member)))
+    );
+  }
 }
