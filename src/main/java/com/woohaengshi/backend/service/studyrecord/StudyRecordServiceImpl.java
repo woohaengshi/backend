@@ -28,7 +28,7 @@ public class StudyRecordServiceImpl implements StudyRecordService {
     private final StudyRecordRepository studyRecordRepository;
     private final SubjectRepository subjectRepository;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public void save(SaveRecordRequest request, Long memberId) {
         validateExistMember(memberId);
         Optional<StudyRecord> optionalStudyRecord =
