@@ -19,15 +19,15 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class StudyRecordServiceImpl implements StudyRecordService {
 
     private final MemberRepository memberRepository;
     private final StudyRecordRepository studyRecordRepository;
     private final SubjectRepository subjectRepository;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public void save(SaveRecordRequest request, Long memberId) {
         validateExistMember(memberId);
         Optional<StudyRecord> optionalStudyRecord =
