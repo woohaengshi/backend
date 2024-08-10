@@ -23,7 +23,7 @@ public class SubjectControllerTest {
     void 과목을_편집할_수_있다() {
         SubjectRequest request = new SubjectRequest();
         request.setSubjectsForAddition(List.of("Java", "Spring"));
-        request.setSubjectsForDeletion(List.of(1L));
+        request.setSubjectsForDeletion(List.of(4L, 5L));
 
         RestAssured.given()
                 .log()
@@ -35,6 +35,6 @@ public class SubjectControllerTest {
                 .then()
                 .log()
                 .all()
-                .statusCode(201);
+                .statusCode(200);
     }
 }
