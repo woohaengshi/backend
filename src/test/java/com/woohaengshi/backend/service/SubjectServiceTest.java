@@ -32,10 +32,7 @@ class SubjectServiceTest {
     void 과목을_저장한다() {
         // Given
         Member member = MemberFixture.builder().build();
-        SubjectRequest request = new SubjectRequest();
-        request.setSubjectsForAddition(List.of("Java", "Spring"));
-        request.setSubjectsForDeletion(List.of());
-
+        SubjectRequest request = new SubjectRequest(List.of("Java", "Spring"), List.of());
 
         given(memberRepository.existsById(member.getId())).willReturn(true);
         given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
@@ -62,9 +59,7 @@ class SubjectServiceTest {
         given(subjectRepository.existsById(2L)).willReturn(true);
         given(subjectRepository.existsById(3L)).willReturn(true);
 
-        SubjectRequest request = new SubjectRequest();
-        request.setSubjectsForAddition(List.of());
-        request.setSubjectsForDeletion(List.of(1L, 3L));
+        SubjectRequest request = new SubjectRequest(List.of(), List.of(1L, 3L));
 
         // When
         subjectService.editSubjects(member.getId(), request);
@@ -87,9 +82,7 @@ class SubjectServiceTest {
         given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
         given(subjectRepository.existsById(1L)).willReturn(true);
 
-        SubjectRequest request = new SubjectRequest();
-        request.setSubjectsForAddition(List.of("Java", "Spring"));
-        request.setSubjectsForDeletion(List.of(1L));
+        SubjectRequest request = new SubjectRequest(List.of("Java", "Spring"), List.of(1L));
 
         // When
         subjectService.editSubjects(member.getId(), request);
@@ -111,9 +104,7 @@ class SubjectServiceTest {
         given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
         given(subjectRepository.existsByMemberIdAndName(member.getId(), "Spring")).willReturn(true);
 
-        SubjectRequest request = new SubjectRequest();
-        request.setSubjectsForAddition(List.of("Spring", "Java"));
-        request.setSubjectsForDeletion(List.of());
+        SubjectRequest request = new SubjectRequest(List.of("Spring", "Java"), List.of());
 
         // When & Then
         assertThatThrownBy(() -> subjectService.editSubjects(member.getId(), request)).isExactlyInstanceOf(WoohaengshiException.class);
@@ -127,9 +118,7 @@ class SubjectServiceTest {
         given(memberRepository.existsById(member.getId())).willReturn(true);
         given(subjectRepository.existsById(2L)).willReturn(false);
 
-        SubjectRequest request = new SubjectRequest();
-        request.setSubjectsForAddition(List.of());
-        request.setSubjectsForDeletion(List.of(2L));
+        SubjectRequest request = new SubjectRequest(List.of(), List.of(2L));
 
         //When $ Then
         assertThatThrownBy(() -> subjectService.editSubjects(member.getId(), request)).isExactlyInstanceOf(WoohaengshiException.class);

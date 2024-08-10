@@ -21,9 +21,7 @@ public class SubjectControllerTest {
 
     @Test
     void 과목을_편집할_수_있다() {
-        SubjectRequest request = new SubjectRequest();
-        request.setSubjectsForAddition(List.of("Java", "Spring"));
-        request.setSubjectsForDeletion(List.of(4L, 5L));
+        SubjectRequest request = new SubjectRequest(List.of("Java", "Spring"), List.of(4L, 5L));
 
         RestAssured.given()
                 .log()
