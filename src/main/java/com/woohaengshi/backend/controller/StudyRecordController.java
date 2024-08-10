@@ -3,7 +3,6 @@ package com.woohaengshi.backend.controller;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowMonthlyRecordResponse;
 import com.woohaengshi.backend.service.studyrecord.StudyRecordService;
-import com.woohaengshi.backend.service.studyrecord.StudyRecordServiceImpl;
 
 import jakarta.validation.Valid;
 
