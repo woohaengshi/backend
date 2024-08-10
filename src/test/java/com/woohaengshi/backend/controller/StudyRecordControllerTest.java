@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static com.woohaengshi.backend.exception.ErrorCode.INVALID_INPUT;
-import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class StudyRecordControllerTest {
@@ -38,7 +38,7 @@ class StudyRecordControllerTest {
                 .then()
                 .log()
                 .all()
-                .statusCode(CREATED.value());
+                .statusCode(OK.value());
     }
 
     @Test

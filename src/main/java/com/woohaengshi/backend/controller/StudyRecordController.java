@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URI;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/study-record")
@@ -25,6 +23,6 @@ public class StudyRecordController {
     @PostMapping
     public ResponseEntity<Void> saveStudyRecord(@Valid @RequestBody SaveRecordRequest request) {
         studyRecordService.save(request, 1L);
-        return ResponseEntity.created(URI.create("/api/v1/timers")).build();
+        return ResponseEntity.ok().build();
     }
 }
