@@ -49,4 +49,30 @@ class SubjectServiceTest {
             () -> verify(subjectRepository).save(argThat(subject -> subject.getName().equals("Spring") && subject.getMember().equals(member)))
     );
   }
+
+  @Test
+  void 과목을_삭제한다() {
+    // Given
+    Member member = MemberFixture.builder().build();
+
+    given(memberRepository.existsById(member.getId())).willReturn(true);
+    given(subjectRepository.existsById(1L)).willReturn(true);
+    given(subjectRepository.existsById(2L)).willReturn(true);
+    given(subjectRepository.existsById(3L)).willReturn(true);
+
+    SubjectRequest request = new SubjectRequest();
+    request.setSubjectsForAddition(List.of());
+    request.setSubjectsForDeletion(List.of(1L, 3L));
+
+    // When
+    subjectService.editSubjects(member.getId(), request);
+
+    // Then
+    assertAll(
+            () -> verify(subjectRepository).deleteById(1L),
+            () -> verify(subjectRepository).deleteById(3L),
+            () -> verify(subjectRepository, never()).deleteById(2L),
+            () -> assertTrue(subjectRepository.existsById(2L))
+    );
+  }
 }
