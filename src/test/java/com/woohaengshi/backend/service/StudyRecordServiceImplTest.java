@@ -38,7 +38,7 @@ class StudyRecordServiceImplTest {
     @Mock private StudyRecordRepository studyRecordRepository;
     @Mock private SubjectRepository subjectRepository;
     @Mock private StudySubjectRepository studySubjectRepository;
-    @InjectMocks private StudyRecordServiceImpl studyRecordServiceImpl;
+    @InjectMocks private StudyRecordServiceImpl studyRecordService;
 
     @Test
     void 첫_공부_기록을_저장할_수_있다() {
@@ -61,7 +61,7 @@ class StudyRecordServiceImplTest {
         }
 
         assertAll(
-                () -> studyRecordServiceImpl.save(request, member.getId()),
+                () -> studyRecordService.save(request, member.getId()),
                 () ->
                         verify(studyRecordRepository, times(1))
                                 .findByDateAndMemberId(request.getDate(), member.getId()),
@@ -92,7 +92,7 @@ class StudyRecordServiceImplTest {
                         });
 
         assertAll(
-                () -> studyRecordServiceImpl.save(request, member.getId()),
+                () -> studyRecordService.save(request, member.getId()),
                 () -> assertThat(existStudyRecord.getTime()).isEqualTo(30),
                 () ->
                         verify(studyRecordRepository, times(1))
@@ -128,7 +128,7 @@ class StudyRecordServiceImplTest {
                         });
 
         assertAll(
-                () -> studyRecordServiceImpl.save(request, member.getId()),
+                () -> studyRecordService.save(request, member.getId()),
                 () -> assertThat(existStudyRecord.getTime()).isEqualTo(30),
                 () ->
                         verify(studyRecordRepository, times(1))
@@ -153,7 +153,7 @@ class StudyRecordServiceImplTest {
 
         assertAll(
                 () ->
-                        assertThatThrownBy(() -> studyRecordServiceImpl.save(request, member.getId()))
+                        assertThatThrownBy(() -> studyRecordService.save(request, member.getId()))
                                 .isExactlyInstanceOf(WoohaengshiException.class),
                 () ->
                         verify(studyRecordRepository, times(1))

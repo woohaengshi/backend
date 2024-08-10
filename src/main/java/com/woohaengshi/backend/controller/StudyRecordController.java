@@ -1,7 +1,7 @@
 package com.woohaengshi.backend.controller;
 
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
-import com.woohaengshi.backend.service.StudyRecordServiceImpl;
+import com.woohaengshi.backend.service.StudyRecordService;
 
 import jakarta.validation.Valid;
 
@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/study-record")
 public class StudyRecordController {
 
-    private final StudyRecordServiceImpl studyRecordServiceImpl;
+    private final StudyRecordService studyRecordService;
 
     @PostMapping
     public ResponseEntity<Void> saveStudyRecord(@Valid @RequestBody SaveRecordRequest request) {
-        studyRecordServiceImpl.save(request, 1L);
+        studyRecordService.save(request, 1L);
         return ResponseEntity.ok().build();
     }
 }
