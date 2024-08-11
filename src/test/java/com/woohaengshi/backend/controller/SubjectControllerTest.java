@@ -52,4 +52,21 @@ public class SubjectControllerTest {
                 .all()
                 .statusCode(404);
     }
+
+    @Test
+    void 이미_존재하는_과목을_추가할_수_없다() {
+        SubjectRequest request = new SubjectRequest(List.of("Spring"), List.of());
+
+        RestAssured.given()
+                .log()
+                .all()
+                .contentType(ContentType.JSON)
+                .body(request)
+                .when()
+                .post("/api/v1/subjects")
+                .then()
+                .log()
+                .all()
+                .statusCode(409);
+    }
 }
