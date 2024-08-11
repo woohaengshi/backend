@@ -46,3 +46,8 @@ tasks.named('test') {
 jar {
 	enabled=false
 }
+
+verifyGoogleJavaFormat {
+	exclude '**/generated/**'
+	exclude '**/test/**'
+}
