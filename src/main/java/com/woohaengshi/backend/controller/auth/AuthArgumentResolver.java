@@ -10,7 +10,6 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import static com.woohaengshi.backend.exception.ErrorCode.INCORRECT_CONSTRUCT_HEADER;
 import static com.woohaengshi.backend.exception.ErrorCode.NOT_EXIST_ACCESS_TOKEN;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -19,8 +18,6 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class AuthArgumentResolver implements HandlerMethodArgumentResolver {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private static final String TOKEN_TYPE = "Bearer";
-
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return parameter.hasParameterAnnotation(MemberId.class)
@@ -28,7 +25,7 @@ public class AuthArgumentResolver implements HandlerMethodArgumentResolver {
     }
 
     @Override
-    public Object resolveArgument(
+    public Long resolveArgument(
             MethodParameter parameter,
             ModelAndViewContainer mavContainer,
             NativeWebRequest webRequest,
@@ -40,7 +37,7 @@ public class AuthArgumentResolver implements HandlerMethodArgumentResolver {
             return null;
         }
         validateExistAuthHeader(authorization);
-        String accessToken = getAccessToken(authorization);
+        String accessToken = jwtTokenProvider.extractAccessToken(authorization);
         return jwtTokenProvider.getMemberId(accessToken);
     }
 
@@ -48,13 +45,5 @@ public class AuthArgumentResolver implements HandlerMethodArgumentResolver {
         if (authorization == null) {
             throw new WoohaengshiException(NOT_EXIST_ACCESS_TOKEN);
         }
-    }
-
-    private String getAccessToken(String authorization) {
-        String[] tokenFormat = authorization.split(" ");
-        if (tokenFormat.length != 2 && !tokenFormat[0].equals(TOKEN_TYPE)) {
-            throw new WoohaengshiException(INCORRECT_CONSTRUCT_HEADER);
-        }
-        return tokenFormat[1];
     }
 }

@@ -13,6 +13,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +27,7 @@ public class JwtTokenProvider {
 
     private static final String MEMBER_ID = "memberId";
     private static final String ISSUER = "woohaengshi";
+    private static final String TOKEN_TYPE = "Bearer";
 
     private SecretKey key;
 
@@ -35,7 +37,8 @@ public class JwtTokenProvider {
     @Value("${security.jwt.expiration.refresh}")
     private Long refreshExpiration;
 
-    public JwtTokenProvider(@Value("${security.jwt.key") String key) {
+    @Autowired
+    public JwtTokenProvider(@Value("${security.jwt.key}") String key) {
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(key));
     }
 
@@ -89,5 +92,13 @@ public class JwtTokenProvider {
 
     public Date getExpiredAt(String accessToken) {
         return getClaimsJwt(accessToken).getBody().getExpiration();
+    }
+
+    public String extractAccessToken(String authorization) {
+        String[] tokenFormat = authorization.split(" ");
+        if (tokenFormat.length != 2 && !tokenFormat[0].equals(TOKEN_TYPE)) {
+            throw new WoohaengshiException(INCORRECT_CONSTRUCT_HEADER);
+        }
+        return tokenFormat[1];
     }
 }
