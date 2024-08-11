@@ -17,9 +17,9 @@ jobs:
         with:
           args: "--replace --aosp"
           commit-message: "format: Google Java Format"
-          
+
   build:
-    runs-on: ubuntu-latest # (3).OS환경
+    runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'test'
 
     steps:
@@ -48,7 +48,7 @@ jobs:
           utcOffset: "+09:00"# (8).build시점의 시간확보
 
       - name: Show Current Time
-        run: echo "CurrentTime=$"
+        run: echo "CurrentTime=${{ steps.current-time.outputs.formattedTime }}"
         shell: bash # (9).확보한 시간 보여주기
 
       - name: Generate deployment package
@@ -71,3 +71,10 @@ jobs:
           region: ap-northeast-2
           deployment_package: deploy/deploy.zip
           wait_for_deployment: false
+
+      - name: Upload Jacoco Report
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: jacoco-report
+          path: build/reports/jacoco/test/html
