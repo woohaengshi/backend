@@ -10,6 +10,10 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 
 import java.util.List;
 
+import static com.woohaengshi.backend.exception.ErrorCode.SUBJECT_ALREADY_EXISTS;
+import static com.woohaengshi.backend.exception.ErrorCode.SUBJECT_NOT_FOUND;
+import static org.springframework.http.HttpStatus.OK;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SubjectControllerTest {
     @LocalServerPort private int port;
@@ -33,7 +37,7 @@ public class SubjectControllerTest {
                 .then()
                 .log()
                 .all()
-                .statusCode(200);
+                .statusCode(OK.value());
     }
 
     @Test
@@ -50,7 +54,7 @@ public class SubjectControllerTest {
                 .then()
                 .log()
                 .all()
-                .statusCode(404);
+                .statusCode(SUBJECT_NOT_FOUND.getStatus().value());
     }
 
     @Test
@@ -67,6 +71,6 @@ public class SubjectControllerTest {
                 .then()
                 .log()
                 .all()
-                .statusCode(409);
+                .statusCode(SUBJECT_ALREADY_EXISTS.getStatus().value());
     }
 }
