@@ -16,8 +16,10 @@ public class JwtTokenProvider {
     private static final String ISSUER = "woohaengshi";
 
     private SecretKey key;
+
     @Value("${security.jwt.expiration.access}")
     private Long accessExpiration;
+
     @Value("${security.jwt.expiration.refresh}")
     private Long refreshExpiration;
 
@@ -25,7 +27,7 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(key));
     }
 
-    public String createToken(Long memberId, Long expiration){
+    private String createToken(Long memberId, Long expiration) {
         return Jwts.builder()
                 .claim(MEMBER_ID, memberId)
                 .signWith(key)
@@ -35,5 +37,11 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-}
+    public String createAccessToken(Long memberId) {
+        return createToken(memberId, accessExpiration);
+    }
 
+    public String createRefreshToken(Long memberId) {
+        return createToken(memberId, refreshExpiration);
+    }
+}
