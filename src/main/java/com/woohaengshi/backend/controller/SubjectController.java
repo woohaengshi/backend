@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class SubjectController {
 
-  private final SubjectService subjectService;
-  @PostMapping
-  public ResponseEntity<Void> edit(@RequestBody SubjectRequest requestDTO) {
-    Long memberId = 1L;
-    subjectService.editSubjects(memberId, requestDTO);
-    return ResponseEntity.ok().build();
-  }
+    private final SubjectService subjectService;
+    @PostMapping
+    public ResponseEntity<Void> edit(@RequestBody SubjectRequest requestDTO) {
+        Long memberId = 1L;
+        subjectService.editSubjects(memberId, requestDTO);
+        return ResponseEntity.ok().build();
+    }
 }
