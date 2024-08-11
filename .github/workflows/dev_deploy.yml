@@ -25,7 +25,7 @@ jobs:
         shell: bash # (6).권한 부여
 
       - name: Build with Gradle
-        run: ./gradlew clean build -x test
+        run: ./gradlew clean build -x test -x verifyGoogleJavaFormat
         shell: bash # (7).build시작
 
       - name: Get current time
