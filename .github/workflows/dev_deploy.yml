@@ -9,14 +9,14 @@ jobs:
   formatting:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-
-#      - uses: axel-op/googlejavaformat-action@v3
+#      - uses: actions/checkout@v3
 #        with:
-#          args: "--replace --aosp"
-#          commit-message: "format: Google Java Format"
+#          ref: ${{ github.event.pull_request.head.ref }}
+
+      - uses: axel-op/googlejavaformat-action@v3
+        with:
+          args: "--replace --aosp"
+          commit-message: "format: Google Java Format"
 
   build:
     runs-on: ubuntu-latest
