@@ -1,4 +1,4 @@
-package com.woohaengshi.backend.dto.response.studyrecord;
+package com.woohaengshi.backend.dto.response.timer;
 
 import com.woohaengshi.backend.domain.Subject;
 import com.woohaengshi.backend.dto.response.subject.ShowSubjectsResponse;

@@ -14,11 +14,14 @@ import com.woohaengshi.backend.domain.StudySubject;
 import com.woohaengshi.backend.domain.Subject;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
+import com.woohaengshi.backend.dto.response.studyrecord.ShowDailyRecordResponse;
+import com.woohaengshi.backend.dto.response.studyrecord.ShowMonthlyRecordResponse;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.StudyRecordRepository;
 import com.woohaengshi.backend.repository.StudySubjectRepository;
 import com.woohaengshi.backend.repository.SubjectRepository;
+import com.woohaengshi.backend.service.studyrecord.StudyRecordServiceImpl;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
 import com.woohaengshi.backend.support.fixture.StudyRecordFixture;
 
@@ -29,11 +32,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
-class StudyRecordServiceImplTest {
+class StudyRecordServiceTest {
     @Mock private MemberRepository memberRepository;
     @Mock private StudyRecordRepository studyRecordRepository;
     @Mock private SubjectRepository subjectRepository;
@@ -139,6 +144,48 @@ class StudyRecordServiceImplTest {
                                         any(Long.class), any(Long.class)),
                 () -> verify(subjectRepository, times(2)).findById(any(Long.class)),
                 () -> verify(studySubjectRepository, times(2)).save(any(StudySubject.class)));
+    }
+
+    @Test
+    void 현재_연도와_월을_통해_공부_기록을_조회_한다() {
+        Member member = MemberFixture.builder().build();
+        List<Object[]> records = new ArrayList<>();
+        records.add(new Object[] {1, 36000, 2L, "CSS"});
+        records.add(new Object[] {1, 36000, 1L, "HTML"});
+        records.add(new Object[] {6, 58000, 3L, "JS"});
+        records.add(new Object[] {9, 47000, 3L, "JS"});
+        records.add(new Object[] {9, 47000, 2L, "CSS"});
+        YearMonth date = YearMonth.now();
+
+        ShowMonthlyRecordResponse expected = ShowMonthlyRecordResponse.of(2024, 8, records);
+
+        given(memberRepository.existsById(member.getId())).willReturn(true);
+        given(studyRecordRepository.findByYearAndMonthAndMemberId(2024, 8, member.getId()))
+                .willReturn(records);
+
+        ShowMonthlyRecordResponse response =
+                studyRecordService.showMonthlyRecord(date, member.getId());
+
+        assertAll(
+                "response",
+                () -> assertThat(response.getYear()).isEqualTo(expected.getYear()),
+                () -> assertThat(response.getMonth()).isEqualTo(expected.getMonth()),
+                () -> {
+                    for (int i = 0; i < response.getDaily().size(); i++) {
+                        ShowDailyRecordResponse daily = response.getDaily().get(i);
+                        ShowDailyRecordResponse expectedDaily = expected.getDaily().get(i);
+
+                        assertThat(daily.getDay()).isEqualTo(expectedDaily.getDay());
+                        assertThat(daily.getTime()).isEqualTo(expectedDaily.getTime());
+
+                        for (int j = 0; j < daily.getSubjects().size(); j++) {
+                            assertThat(daily.getSubjects().get(j).getId())
+                                    .isEqualTo(expectedDaily.getSubjects().get(j).getId());
+                            assertThat(daily.getSubjects().get(j).getName())
+                                    .isEqualTo(expectedDaily.getSubjects().get(j).getName());
+                        }
+                    }
+                });
     }
 
     @Test

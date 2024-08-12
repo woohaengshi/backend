@@ -1,4 +1,4 @@
-package com.woohaengshi.backend.service;
+package com.woohaengshi.backend.service.studyrecord;
 
 import static com.woohaengshi.backend.exception.ErrorCode.MEMBER_NOT_FOUND;
 import static com.woohaengshi.backend.exception.ErrorCode.SUBJECT_NOT_FOUND;
@@ -8,6 +8,7 @@ import com.woohaengshi.backend.domain.StudySubject;
 import com.woohaengshi.backend.domain.Subject;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
+import com.woohaengshi.backend.dto.response.studyrecord.ShowMonthlyRecordResponse;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.StudyRecordRepository;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,6 +41,17 @@ public class StudyRecordServiceImpl implements StudyRecordService {
                 studyRecordRepository.findByDateAndMemberId(request.getDate(), memberId);
         StudyRecord studyRecord = saveStudyRecord(request, memberId, optionalStudyRecord);
         saveSubjects(request.getSubjects(), studyRecord);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ShowMonthlyRecordResponse showMonthlyRecord(YearMonth date, Long memberId) {
+        validateExistMember(memberId);
+
+        return ShowMonthlyRecordResponse.of(
+                date,
+                studyRecordRepository.findByYearAndMonthAndMemberId(
+                        date.getYear(), date.getMonthValue(), memberId));
     }
 
     private void validateExistMember(Long memberId) {
