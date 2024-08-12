@@ -18,7 +18,8 @@ public enum ErrorCode {
     INVALID_CLAIM_TYPE(UNAUTHORIZED, "토큰의 claim값은 Long 타입이어야 합니다"),
     NOT_EXIST_ACCESS_TOKEN(UNAUTHORIZED, "액세스 토큰이 존재하지 않습니다."),
     INCORRECT_CONSTRUCT_HEADER(UNAUTHORIZED, "잘못된 형식의 인증 헤더입니다."),
-    SUBJECT_NOT_FOUND(NOT_FOUND, "과목을 찾을 수 없습니다.");
+    SUBJECT_NOT_FOUND(NOT_FOUND, "과목을 찾을 수 없습니다."),
+    FAIL_TO_SIGN_IN(BAD_REQUEST, "로그인에 실패했습니다.");
 
     private final HttpStatus status;
     private final String message;
