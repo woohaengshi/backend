@@ -12,8 +12,7 @@ public class ShowRankSnapshotResponse {
     private RankDataResponse member;
     private RanksResponse ranking;
 
-    private ShowRankSnapshotResponse(
-            RankDataResponse member, RanksResponse ranksResponse) {
+    private ShowRankSnapshotResponse(RankDataResponse member, RanksResponse ranksResponse) {
         this.member = member;
         this.ranking = ranksResponse;
     }
