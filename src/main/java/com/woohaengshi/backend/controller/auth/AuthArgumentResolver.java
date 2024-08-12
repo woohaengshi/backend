@@ -18,6 +18,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class AuthArgumentResolver implements HandlerMethodArgumentResolver {
 
     private final JwtTokenProvider jwtTokenProvider;
+
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return parameter.hasParameterAnnotation(MemberId.class)
@@ -33,7 +34,7 @@ public class AuthArgumentResolver implements HandlerMethodArgumentResolver {
             throws Exception {
         String authorization = webRequest.getHeader(AUTHORIZATION);
         MemberId memberId = parameter.getParameterAnnotation(MemberId.class);
-        if (!memberId.required()) {
+        if (memberId == null || !memberId.required()) {
             return null;
         }
         validateExistAuthHeader(authorization);
