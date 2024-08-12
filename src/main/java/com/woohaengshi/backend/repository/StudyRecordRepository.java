@@ -2,6 +2,7 @@ package com.woohaengshi.backend.repository;
 
 import com.woohaengshi.backend.domain.StudyRecord;
 
+import com.woohaengshi.backend.domain.member.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -28,4 +29,7 @@ public interface StudyRecordRepository extends JpaRepository<StudyRecord, Long> 
             @Param(value = "year") int year,
             @Param(value = "month") int month,
             @Param(value = "memberId") Long memberId);
+
+    @Query("SELECT SUM(sr.time) FROM StudyRecord sr WHERE sr.member = :member AND sr.date BETWEEN :startDate AND :endDate")
+    Integer sumTimeByMemberAndDateBetween(@Param("member") Member member, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 }
