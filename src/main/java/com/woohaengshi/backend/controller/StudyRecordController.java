@@ -2,6 +2,7 @@ package com.woohaengshi.backend.controller;
 
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowMonthlyRecordResponse;
+import com.woohaengshi.backend.dto.response.studyrecord.ShowYearlyRecordResponse;
 import com.woohaengshi.backend.service.studyrecord.StudyRecordService;
 
 import jakarta.validation.Valid;
@@ -31,5 +32,10 @@ public class StudyRecordController {
     public ShowMonthlyRecordResponse getMonthlyRecords(
             @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM") YearMonth date) {
         return studyRecordService.showMonthlyRecord(date, 1L);
+    }
+
+    @GetMapping("/yearly")
+    public ShowYearlyRecordResponse getYearlyRecords(@RequestParam("year") int year) {
+        return studyRecordService.showYearlyRecord(year, 16L);
     }
 }
