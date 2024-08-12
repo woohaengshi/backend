@@ -15,9 +15,9 @@ public interface StudyRecordRepository extends JpaRepository<StudyRecord, Long> 
 
     @Query(
             value =
-                    "SELECT DAY(r.date), r.time, sb.id, sb.subject_name\n"
-                            + "FROM studyrecord r\n"
-                            + "INNER JOIN studysubject st ON r.study_id = st.study_id\n"
+                    "SELECT DAY(r.date), r.time, sb.id, sb.name\n"
+                            + "FROM study_record r\n"
+                            + "INNER JOIN study_subject st ON r.id = st.study_record_id\n"
                             + "INNER JOIN subject sb ON st.subject_id = sb.id\n"
                             + "WHERE YEAR(r.date) = :year\n"
                             + "  AND MONTH(r.date) = :month\n"
