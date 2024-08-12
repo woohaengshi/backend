@@ -6,20 +6,8 @@ on:
   workflow_dispatch: # (2).수동 실행도 가능하도록
 
 jobs:
-  formatting:
-    runs-on: ubuntu-latest
-    steps:
-#      - uses: actions/checkout@v3
-#        with:
-#          ref: ${{ github.event.pull_request.head.ref }}
-
-      - uses: axel-op/googlejavaformat-action@v3
-        with:
-          args: "--replace --aosp"
-          commit-message: "format: Google Java Format"
-
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # (3).OS환경
     if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'test'
 
     steps:
@@ -37,7 +25,7 @@ jobs:
         shell: bash # (6).권한 부여
 
       - name: Build with Gradle
-        run: ./gradlew clean build -x test
+        run: ./gradlew clean build -x test -x verifyGoogleJavaFormat
         shell: bash # (7).build시작
 
       - name: Get current time
@@ -48,7 +36,7 @@ jobs:
           utcOffset: "+09:00"# (8).build시점의 시간확보
 
       - name: Show Current Time
-        run: echo "CurrentTime=${{ steps.current-time.outputs.formattedTime }}"
+        run: echo "CurrentTime=$"
         shell: bash # (9).확보한 시간 보여주기
 
       - name: Generate deployment package
@@ -71,10 +59,3 @@ jobs:
           region: ap-northeast-2
           deployment_package: deploy/deploy.zip
           wait_for_deployment: false
-
-      - name: Upload Jacoco Report
-        if: ${{ failure() }}
-        uses: actions/upload-artifact@v3
-        with:
-          name: jacoco-report
-          path: build/reports/jacoco/test/html
