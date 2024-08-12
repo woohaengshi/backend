@@ -1,8 +1,8 @@
 package com.woohaengshi.backend.repository;
 
 import com.woohaengshi.backend.domain.StudyRecord;
-
 import com.woohaengshi.backend.dto.result.MonthlyTotalRecordResult;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
