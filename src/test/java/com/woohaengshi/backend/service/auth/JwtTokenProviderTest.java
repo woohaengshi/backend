@@ -10,8 +10,8 @@ class JwtTokenProviderTest {
 
     private static final String key =
             "55e32f10a70c4362a393055896bb17c955e32f10a70c4362a393055896bb17c9";
-    private static final Long accessExpiration = 100L;
-    private static final Long refreshExpiration = 1000L;
+    private static final Long accessExpiration = 100000L;
+    private static final Long refreshExpiration = 100000000L;
 
     @Test
     void 유효기간이_지난_토큰은_예외를_던진다() {
@@ -27,5 +27,14 @@ class JwtTokenProviderTest {
         String accessToken = jwtTokenProvider.createAccessToken(1L);
         assertThat(accessToken).isNotBlank();
     }
+
+    @Test
+    void 토큰의_claim을_가져올_수_있다(){
+        Long MEMBER_ID = 1L;
+        JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(key, accessExpiration, refreshExpiration);
+        String accessToken = jwtTokenProvider.createAccessToken(MEMBER_ID);
+        assertThat(jwtTokenProvider.getMemberId(accessToken)).isEqualTo(MEMBER_ID);
+    }
 }
+
 
