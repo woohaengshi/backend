@@ -51,13 +51,11 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         Specification<Statistics> specification =
                 (Root<Statistics> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
-                    if (statisticsType == StatisticsType.DAILY)
-                        return cb.greaterThan(root.get("dailyTime"), time);
-                    else if (statisticsType == StatisticsType.WEEKLY)
-                        return cb.greaterThan(root.get("weeklyTime"), time);
-                    else if (statisticsType == StatisticsType.MONTHLY)
-                        return cb.greaterThan(root.get("monthlyTime"), time);
-                    else throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
+                    if (statisticsType == StatisticsType.DAILY) return cb.greaterThan(root.get("dailyTime"), time);
+                    if (statisticsType == StatisticsType.WEEKLY) return cb.greaterThan(root.get("weeklyTime"), time);
+                    if (statisticsType == StatisticsType.MONTHLY) return cb.greaterThan(root.get("monthlyTime"), time);
+
+                    throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
                 };
         return (int) statisticsRepository.count(specification) + 1;
     }
@@ -65,12 +63,9 @@ public class StatisticsServiceImpl implements StatisticsService {
     private Slice<Statistics> getRankDataSlice(StatisticsType statisticsType, Pageable pageable) {
         Specification<Statistics> specification =
                 (Root<Statistics> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
-                    if (statisticsType == StatisticsType.DAILY)
-                        query.orderBy(cb.desc(root.get("dailyTime")));
-                    else if (statisticsType == StatisticsType.WEEKLY)
-                        query.orderBy(cb.desc(root.get("weeklyTime")));
-                    else if (statisticsType == StatisticsType.MONTHLY)
-                        query.orderBy(cb.desc(root.get("monthlyTime")));
+                    if (statisticsType == StatisticsType.DAILY) query.orderBy(cb.desc(root.get("dailyTime")));
+                    if (statisticsType == StatisticsType.WEEKLY) query.orderBy(cb.desc(root.get("weeklyTime")));
+                    if (statisticsType == StatisticsType.MONTHLY) query.orderBy(cb.desc(root.get("monthlyTime")));
                     return query.getRestriction();
                 };
         return statisticsRepository.findAll(specification, pageable);
