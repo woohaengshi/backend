@@ -31,15 +31,12 @@ public class JwtTokenProvider {
 
     private SecretKey key;
     private Long accessExpiration;
-    private Long refreshExpiration;
 
     @Autowired
     public JwtTokenProvider(@Value("${security.jwt.key}") String key,
-                            @Value("${security.jwt.expiration.access}") Long accessExpiration,
-                            @Value("${security.jwt.expiration.refresh}") Long refreshExpiration) {
+                            @Value("${security.jwt.expiration.access}") Long accessExpiration) {
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(key));
         this.accessExpiration = accessExpiration;
-        this.refreshExpiration = refreshExpiration;
     }
 
     private String createToken(Long memberId, Long expiration) {
@@ -54,10 +51,6 @@ public class JwtTokenProvider {
 
     public String createAccessToken(Long memberId) {
         return createToken(memberId, accessExpiration);
-    }
-
-    public String createRefreshToken(Long memberId) {
-        return createToken(memberId, refreshExpiration);
     }
 
     public void validToken(String token) {
