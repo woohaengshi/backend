@@ -22,7 +22,7 @@ public class StatisticsController {
 
     @GetMapping
     public ShowRankSnapshotResponse getRanking(
-            @PageableDefault Pageable pageable,
+            @PageableDefault(size = 100) Pageable pageable,
             @RequestParam(value = "type", defaultValue = "WEEKLY") StatisticsType statisticsType) {
 
         return statisticsService.showRankData(1L, statisticsType, pageable);
