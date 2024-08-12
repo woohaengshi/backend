@@ -93,7 +93,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                                     getTimeByStatisticsType(statisticsType, statistics),
                                     statistics.getTotalTime());
                         })
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private int getTimeByStatisticsType(StatisticsType statisticsType, Statistics statistics) {
