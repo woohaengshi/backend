@@ -2,6 +2,7 @@ package com.woohaengshi.backend.support.fixture;
 
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.member.Member;
+import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 
 import java.time.LocalDate;
 
@@ -37,5 +38,13 @@ public class StudyRecordFixture {
 
     public StudyRecord build() {
         return StudyRecord.builder().id(id).date(date).member(member).time(time).build();
+    }
+
+    public static StudyRecord from(SaveRecordRequest request) {
+        return from(request, null);
+    }
+
+    public static StudyRecord from(SaveRecordRequest request, Long id) {
+        return StudyRecord.builder().id(id).time(request.getTime()).date(request.getDate()).build();
     }
 }
