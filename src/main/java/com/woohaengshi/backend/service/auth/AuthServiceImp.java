@@ -8,6 +8,8 @@ import com.woohaengshi.backend.dto.response.auth.SignInResponse;
 import com.woohaengshi.backend.dto.result.SignInResult;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
+import com.woohaengshi.backend.repository.RefreshTokenRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
@@ -18,6 +20,7 @@ import java.util.UUID;
 import static com.woohaengshi.backend.exception.ErrorCode.FAIL_TO_SIGN_IN;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AuthServiceImp implements AuthService {
 
@@ -27,13 +30,14 @@ public class AuthServiceImp implements AuthService {
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshCookieProvider refreshCookieProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
     public SignInResult signIn(SignInRequest request) {
         Member member = findMemberByRequest(request);
         String accessToken = jwtTokenProvider.createAccessToken(member.getId());
         SignInResponse signInResponse = SignInResponse.of(accessToken, member);
-        RefreshToken refreshToken = createRefreshToken(member);
+        RefreshToken refreshToken = refreshTokenRepository.save(createRefreshToken(member));
         ResponseCookie refreshTokenCookie = refreshCookieProvider.createRefreshTokenCookie(refreshToken);
         return new SignInResult(refreshTokenCookie, signInResponse);
     }
