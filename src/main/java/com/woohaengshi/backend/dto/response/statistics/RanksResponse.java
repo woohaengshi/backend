@@ -1,4 +1,4 @@
-package com.woohaengshi.backend.dto.response;
+package com.woohaengshi.backend.dto.response.statistics;
 
 import lombok.Getter;
 
