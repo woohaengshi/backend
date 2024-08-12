@@ -69,7 +69,16 @@ public class MemberFixture {
     }
 
     public Member build() {
-        return Member.builder().id(id).email(email).name(name).image(image).state(state).course(course).password(password).
-        createdAt(createdAt).sleepDate(sleepDate).build();
+        return Member.builder()
+                .id(id)
+                .email(email)
+                .name(name)
+                .image(image)
+                .state(state)
+                .course(course)
+                .password(password)
+                .createdAt(createdAt)
+                .sleepDate(sleepDate)
+                .build();
     }
 }

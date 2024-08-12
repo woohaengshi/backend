@@ -1,6 +1,5 @@
 package com.woohaengshi.backend.controller;
 
-
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 

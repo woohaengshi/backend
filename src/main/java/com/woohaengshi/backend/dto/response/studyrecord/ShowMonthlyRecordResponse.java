@@ -1,8 +1,8 @@
 package com.woohaengshi.backend.dto.response.studyrecord;
 
 import com.woohaengshi.backend.domain.Subject;
-
 import com.woohaengshi.backend.dto.response.subject.ShowSubjectsResponse;
+
 import lombok.Getter;
 
 import java.time.YearMonth;

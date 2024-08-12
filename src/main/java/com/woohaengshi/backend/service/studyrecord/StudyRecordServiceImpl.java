@@ -50,7 +50,8 @@ public class StudyRecordServiceImpl implements StudyRecordService {
 
         return ShowMonthlyRecordResponse.of(
                 date,
-                studyRecordRepository.findByYearAndMonthAndMemberId(date.getYear(), date.getMonthValue(), memberId));
+                studyRecordRepository.findByYearAndMonthAndMemberId(
+                        date.getYear(), date.getMonthValue(), memberId));
     }
 
     private void validateExistMember(Long memberId) {
