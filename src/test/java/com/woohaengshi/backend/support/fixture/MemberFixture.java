@@ -54,6 +54,14 @@ public class MemberFixture {
     }
 
     public Member build() {
-        return Member.builder().id(id).email(email).name(name).image(image).state(state).build();
+        return Member.builder()
+                .id(id)
+                .email(email)
+                .course(course)
+                .password(password)
+                .name(name)
+                .image(image)
+                .state(state)
+                .build();
     }
 }
