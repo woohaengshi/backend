@@ -34,7 +34,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Transactional(readOnly = true)
     public ShowRankSnapshotResponse showRankData(
             Long memberId, StatisticsType statisticsType, Pageable pageable) {
-        Statistics statistics = getStatisticsByMemberId(memberId);
+        Statistics statistics = findStatisticsByMemberId(memberId);
         Slice<Statistics> rankSlice = getRankDataSlice(statisticsType, pageable);
 
         return ShowRankSnapshotResponse.of(
@@ -98,7 +98,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
     }
 
-    private Statistics getStatisticsByMemberId(Long memberId) {
+    private Statistics findStatisticsByMemberId(Long memberId) {
         return statisticsRepository
                 .findByMemberId(memberId)
                 .orElseThrow(() -> new WoohaengshiException(ErrorCode.STATISTICS_NOT_FOUND));
