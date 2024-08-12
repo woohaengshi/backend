@@ -16,9 +16,9 @@ public class SubjectController {
 
     private final SubjectService subjectService;
     @PostMapping
-    public ResponseEntity<Void> edit(@RequestBody SubjectRequest requestDTO) {
+    public ResponseEntity<Void> edit(@RequestBody SubjectRequest request) {
         Long memberId = 1L;
-        subjectService.editSubjects(memberId, requestDTO);
+        subjectService.editSubjects(memberId, request);
         return ResponseEntity.ok().build();
     }
 }
