@@ -2,6 +2,7 @@ package com.woohaengshi.backend.controller;
 
 import static com.woohaengshi.backend.exception.ErrorCode.INVALID_INPUT;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
@@ -91,7 +92,7 @@ class StudyRecordControllerTest {
                 .then()
                 .log()
                 .all()
-                .statusCode(200);
+                .statusCode(OK.value());
     }
 
     @Test
@@ -108,7 +109,7 @@ class StudyRecordControllerTest {
                 .then()
                 .log()
                 .all()
-                .statusCode(400);
+                .statusCode(BAD_REQUEST.value());
     }
 
     @Test
@@ -125,6 +126,6 @@ class StudyRecordControllerTest {
                 .then()
                 .log()
                 .all()
-                .statusCode(400);
+                .statusCode(BAD_REQUEST.value());
     }
 }
