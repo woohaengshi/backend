@@ -19,15 +19,6 @@ class StatisticsControllerTest {
 
     @LocalServerPort private int port;
 
-    @Autowired private MemberRepository memberRepository;
-
-    @Autowired private StatisticsRepository statisticsRepository;
-
-    private Member member1;
-    private Member member2;
-    private Statistics statistics1;
-    private Statistics statistics2;
-
     @BeforeEach
     void setUp() {
         RestAssured.port = port;
