@@ -1,0 +1,22 @@
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: utf-8
+      force: true
+
+spring:
+  datasource:
+    url: ${RDS_ENDPOINT}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${RDS_USERNAME}
+    password: ${RDS_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+woohaengshi:
+  openapi:
+    dev-url: "http://localhost:8080"
+    prod-url: "https://api.myapp.com"
