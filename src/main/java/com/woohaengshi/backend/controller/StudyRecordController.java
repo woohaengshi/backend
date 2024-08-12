@@ -11,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/study-record")
@@ -23,7 +21,7 @@ public class StudyRecordController {
     @PostMapping
     public ResponseEntity<Void> saveStudyRecord(@Valid @RequestBody SaveRecordRequest request) {
         studyRecordService.save(request, 1L);
-        return ResponseEntity.created(URI.create("/api/v1/timers")).build();
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/monthly")

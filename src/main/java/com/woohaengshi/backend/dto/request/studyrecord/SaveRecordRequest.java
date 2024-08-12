@@ -20,11 +20,11 @@ public class SaveRecordRequest {
     @Min(value = 1, message = "공부 기록은 1초 부터 저장할 수 있습니다. ")
     private int time;
 
-    private List<String> subjects = new ArrayList<>();
+    private List<Long> subjects = new ArrayList<>();
 
     private SaveRecordRequest() {}
 
-    public SaveRecordRequest(LocalDate date, int time, List<String> subjects) {
+    public SaveRecordRequest(LocalDate date, int time, List<Long> subjects) {
         this.date = date;
         this.time = time;
         this.subjects = subjects;
