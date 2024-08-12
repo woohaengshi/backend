@@ -5,38 +5,34 @@ import com.woohaengshi.backend.domain.member.Member;
 import lombok.Getter;
 
 @Getter
-public class MemberRankingResponse {
-    private Long id;
+public class RankDataResponse {
+    private String course;
     private String name;
     private String image;
-    private String group;
     private Integer rank;
-    private Integer time;
+    private Integer studyTime;
     private Integer totalTime;
 
-    private MemberRankingResponse(
-            Long id,
+    private RankDataResponse(
+            String course,
             String name,
             String image,
-            String group,
             Integer rank,
-            Integer time,
+            Integer studyTime,
             Integer totalTime) {
-        this.id = id;
+        this.course = course;
         this.name = name;
         this.image = image;
-        this.group = group;
         this.rank = rank;
-        this.time = time;
+        this.studyTime = studyTime;
         this.totalTime = totalTime;
     }
 
-    public static MemberRankingResponse of(Member member, int rank, int time, int totalTime) {
-        return new MemberRankingResponse(
-                member.getId(),
+    public static RankDataResponse of(Member member, int rank, int time, int totalTime) {
+        return new RankDataResponse(
+                member.getCourse().getName(),
                 member.getName(),
                 member.getImage(),
-                member.getCourse().getName(),
                 rank,
                 time,
                 totalTime);

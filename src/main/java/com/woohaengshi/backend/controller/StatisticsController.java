@@ -1,7 +1,7 @@
 package com.woohaengshi.backend.controller;
 
 import com.woohaengshi.backend.domain.statistics.StatisticsType;
-import com.woohaengshi.backend.dto.response.RankingSnapshotResponse;
+import com.woohaengshi.backend.dto.response.ShowRankSnapshotResponse;
 import com.woohaengshi.backend.service.statistics.StatisticsService;
 
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class StatisticsController {
     private final StatisticsService statisticsService;
 
     @GetMapping
-    public RankingSnapshotResponse getRanking(
+    public ShowRankSnapshotResponse getRanking(
             @PageableDefault Pageable pageable,
             @RequestParam(value = "type", defaultValue = "WEEKLY") StatisticsType statisticsType) {
 

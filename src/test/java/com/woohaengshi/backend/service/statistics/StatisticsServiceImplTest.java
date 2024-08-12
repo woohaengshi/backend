@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.statistics.Statistics;
 import com.woohaengshi.backend.domain.statistics.StatisticsType;
-import com.woohaengshi.backend.dto.response.RankingSnapshotResponse;
+import com.woohaengshi.backend.dto.response.ShowRankSnapshotResponse;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.StatisticsRepository;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
@@ -46,7 +46,7 @@ public class StatisticsServiceImplTest {
         given(statisticsRepository.findAll(any(Specification.class), eq(pageable)))
                 .willReturn(new PageImpl<>(List.of(statistics)));
 
-        RankingSnapshotResponse response =
+        ShowRankSnapshotResponse response =
                 statisticsService.showRankData(member.getId(), statisticsType, pageable);
 
         // 응답 검증
@@ -54,7 +54,7 @@ public class StatisticsServiceImplTest {
                 "응답 전체 확인",
                 () -> assertNotNull(response, "응답은 null이 아니어야 함"),
                 () -> assertEquals(1, response.getMember().getRank(), "순위가 올바르게 계산되어야 함"),
-                () -> assertFalse(response.getInfiniteScrolling().getHasNext(), "다음 페이지 존재 여부 확인"));
+                () -> assertFalse(response.getRanking().getHasNext(), "다음 페이지 존재 여부 확인"));
     }
 
     @Test

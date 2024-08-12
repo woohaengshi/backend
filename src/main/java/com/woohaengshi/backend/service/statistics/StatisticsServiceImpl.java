@@ -3,8 +3,8 @@ package com.woohaengshi.backend.service.statistics;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.statistics.Statistics;
 import com.woohaengshi.backend.domain.statistics.StatisticsType;
-import com.woohaengshi.backend.dto.response.RankingDataResponse;
-import com.woohaengshi.backend.dto.response.RankingSnapshotResponse;
+import com.woohaengshi.backend.dto.response.RankDataResponse;
+import com.woohaengshi.backend.dto.response.ShowRankSnapshotResponse;
 import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.StatisticsRepository;
@@ -33,12 +33,12 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     @Transactional(readOnly = true)
-    public RankingSnapshotResponse showRankData(
+    public ShowRankSnapshotResponse showRankData(
             long memberId, StatisticsType statisticsType, Pageable pageable) {
         Statistics statistics = getStatisticsByMemberId(memberId);
         Slice<Statistics> rankSlice = getRankDataSlice(statisticsType, pageable);
 
-        return RankingSnapshotResponse.of(
+        return ShowRankSnapshotResponse.of(
                 statistics.getMember(),
                 getMemberRank(statisticsType, statistics),
                 statistics.getDailyTime(),
@@ -77,7 +77,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         return statisticsRepository.findAll(specification, pageable);
     }
 
-    private List<RankingDataResponse> calculationRank(
+    private List<RankDataResponse> calculationRank(
             Slice<Statistics> statisticsSlice, Pageable pageable, StatisticsType statisticsType) {
         int startRank = pageable.getPageNumber() * pageable.getPageSize() + 1;
 
@@ -87,7 +87,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                             Statistics statistics = statisticsSlice.getContent().get(index);
                             Member member = statistics.getMember();
 
-                            return RankingDataResponse.of(
+                            return RankDataResponse.of(
                                     member,
                                     startRank + index,
                                     getTimeByStatisticsType(statisticsType, statistics),
