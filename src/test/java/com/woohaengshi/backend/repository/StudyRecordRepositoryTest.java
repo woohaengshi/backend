@@ -1,5 +1,8 @@
 package com.woohaengshi.backend.repository;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.StudySubject;
 import com.woohaengshi.backend.domain.Subject;
@@ -7,6 +10,7 @@ import com.woohaengshi.backend.domain.member.Course;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.member.State;
 import com.woohaengshi.backend.support.RepositoryTest;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,9 +20,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 @RepositoryTest
 public class StudyRecordRepositoryTest {
