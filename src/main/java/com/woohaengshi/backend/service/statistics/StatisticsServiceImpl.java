@@ -34,7 +34,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     @Transactional(readOnly = true)
     public ShowRankSnapshotResponse showRankData(
-            long memberId, StatisticsType statisticsType, Pageable pageable) {
+            Long memberId, StatisticsType statisticsType, Pageable pageable) {
         Statistics statistics = getStatisticsByMemberId(memberId);
         Slice<Statistics> rankSlice = getRankDataSlice(statisticsType, pageable);
 

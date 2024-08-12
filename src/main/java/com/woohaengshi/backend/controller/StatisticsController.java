@@ -25,6 +25,6 @@ public class StatisticsController {
             @PageableDefault Pageable pageable,
             @RequestParam(value = "type", defaultValue = "WEEKLY") StatisticsType statisticsType) {
 
-        return statisticsService.showRankData(1, statisticsType, pageable);
+        return statisticsService.showRankData(1L, statisticsType, pageable);
     }
 }

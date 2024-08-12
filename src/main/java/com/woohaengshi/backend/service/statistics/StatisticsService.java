@@ -7,5 +7,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface StatisticsService {
     ShowRankSnapshotResponse showRankData(
-            long memberId, StatisticsType statisticsType, Pageable pageable);
+            Long memberId, StatisticsType statisticsType, Pageable pageable);
 }
