@@ -1,7 +1,7 @@
 package com.woohaengshi.backend.controller;
 
 import com.woohaengshi.backend.dto.request.subject.SubjectRequest;
-import com.woohaengshi.backend.service.SubjectService;
+import com.woohaengshi.backend.service.subject.SubjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

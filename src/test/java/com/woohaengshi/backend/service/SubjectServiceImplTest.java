@@ -6,6 +6,7 @@ import com.woohaengshi.backend.dto.request.subject.SubjectRequest;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.SubjectRepository;
+import com.woohaengshi.backend.service.subject.SubjectServiceImpl;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +27,7 @@ class SubjectServiceTest {
 
     @Mock private MemberRepository memberRepository;
     @Mock private SubjectRepository subjectRepository;
-    @InjectMocks private SubjectService subjectService;
+    @InjectMocks private SubjectServiceImpl subjectService;
 
     @Test
     void 과목을_저장한다() {

@@ -1,4 +1,4 @@
-package com.woohaengshi.backend.service;
+package com.woohaengshi.backend.service.subject;
 
 import com.woohaengshi.backend.domain.Subject;
 import com.woohaengshi.backend.domain.member.Member;
@@ -15,9 +15,10 @@ import java.util.List;
 
 @Transactional
 @Service
-public class SubjectService {
+public class SubjectServiceImpl implements SubjectService {
 
-    @Autowired private SubjectRepository subjectRepository;
+    @Autowired
+    private SubjectRepository subjectRepository;
     @Autowired private MemberRepository memberRepository;
 
     public void editSubjects(Long memberId, SubjectRequest requestDTO) {
