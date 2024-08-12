@@ -8,8 +8,11 @@ import jakarta.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.YearMonth;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +29,7 @@ public class StudyRecordController {
 
     @GetMapping("/monthly")
     public ShowMonthlyRecordResponse getMonthlyRecords(
-            @RequestParam("year") int year, @RequestParam("month") int month) {
-        return studyRecordService.showMonthlyRecord(year, month, 1L);
+            @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM") YearMonth date) {
+        return studyRecordService.showMonthlyRecord(date, 1L);
     }
 }

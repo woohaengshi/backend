@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,8 +45,11 @@ public class StudyRecordServiceImpl implements StudyRecordService {
 
     @Override
     @Transactional(readOnly = true)
-    public ShowMonthlyRecordResponse showMonthlyRecord(int year, int month, Long memberId) {
+    public ShowMonthlyRecordResponse showMonthlyRecord(YearMonth date, Long memberId) {
         validateExistMember(memberId);
+        int year = date.getYear();
+        int month = date.getMonthValue();
+
         return ShowMonthlyRecordResponse.of(
                 year,
                 month,

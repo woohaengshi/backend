@@ -32,6 +32,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -146,7 +147,7 @@ class StudyRecordServiceTest {
     }
 
     @Test
-    void 연도와_월을_통해_공부_기록을_조회_한다() {
+    void 현재_연도와_월을_통해_공부_기록을_조회_한다() {
         Member member = MemberFixture.builder().build();
         List<Object[]> records = new ArrayList<>();
         records.add(new Object[] {1, 36000, 2L, "CSS"});
@@ -154,6 +155,7 @@ class StudyRecordServiceTest {
         records.add(new Object[] {6, 58000, 3L, "JS"});
         records.add(new Object[] {9, 47000, 3L, "JS"});
         records.add(new Object[] {9, 47000, 2L, "CSS"});
+        YearMonth date = YearMonth.now();
 
         ShowMonthlyRecordResponse expected = ShowMonthlyRecordResponse.of(2024, 8, records);
 
@@ -162,8 +164,7 @@ class StudyRecordServiceTest {
                 .willReturn(records);
 
         ShowMonthlyRecordResponse response =
-                studyRecordService.showMonthlyRecord(
-                        expected.getYear(), expected.getMonth(), member.getId());
+                studyRecordService.showMonthlyRecord(date, member.getId());
 
         assertAll(
                 "response",
