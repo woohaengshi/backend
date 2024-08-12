@@ -1,5 +1,6 @@
 package com.woohaengshi.backend.controller;
 
+import com.woohaengshi.backend.controller.auth.MemberId;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 import com.woohaengshi.backend.service.StudyRecordService;
 
@@ -21,8 +22,8 @@ public class StudyRecordController {
     private final StudyRecordService studyRecordService;
 
     @PostMapping
-    public ResponseEntity<Void> saveStudyRecord(@Valid @RequestBody SaveRecordRequest request) {
-        studyRecordService.save(request, 1L);
+    public ResponseEntity<Void> saveStudyRecord(@Valid @RequestBody SaveRecordRequest request, @MemberId Long memberId) {
+        studyRecordService.save(request, memberId);
         return ResponseEntity.ok().build();
     }
 }
