@@ -4,6 +4,9 @@ import com.woohaengshi.backend.domain.member.Course;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.member.State;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 public class MemberFixture {
 
     private Long id;
@@ -13,6 +16,8 @@ public class MemberFixture {
     private Course course = Course.CLOUD_SERVICE;
     private State state = State.ACTIVE;
     private String image = "https://image.com/virtual.png";
+    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDate sleepDate = LocalDate.now();
 
     public static MemberFixture builder() {
         return new MemberFixture();
@@ -53,7 +58,18 @@ public class MemberFixture {
         return this;
     }
 
+    public MemberFixture createdAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+        return this;
+    }
+
+    public MemberFixture sleepDate(LocalDate sleepDate) {
+        this.sleepDate = sleepDate;
+        return this;
+    }
+
     public Member build() {
-        return Member.builder().id(id).email(email).name(name).image(image).state(state).build();
+        return Member.builder().id(id).email(email).name(name).image(image).state(state).course(course).password(password).
+        createdAt(createdAt).sleepDate(sleepDate).build();
     }
 }

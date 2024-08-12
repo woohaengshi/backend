@@ -7,6 +7,8 @@ import com.woohaengshi.backend.domain.member.Course;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.member.State;
 import com.woohaengshi.backend.support.RepositoryTest;
+import com.woohaengshi.backend.support.fixture.MemberFixture;
+import com.woohaengshi.backend.support.fixture.StudyRecordFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,84 +30,51 @@ public class StudyRecordRepositoryTest {
     @Autowired private SubjectRepository subjectRepository;
     @Autowired private StudyRecordRepository studyRecordRepository;
 
-    @BeforeEach
-    public void setUp() {
-        Member member =
-                Member.builder()
-                        .id(100L)
-                        .password("pwd")
-                        .course(Course.CLOUD_SERVICE)
-                        .email("dd@Naver")
-                        .name("si")
-                        .state(State.ACTIVE)
-                        .sleepDate(LocalDate.now())
-                        .createdAt(LocalDateTime.now())
-                        .build();
-        memberRepository.save(member);
+    private StudyRecord 저장(StudyRecord studyRecord) {
+        return studyRecordRepository.save(studyRecord);
+    }
 
-        LocalDate date1 = LocalDate.of(2024, 8, 10);
-        LocalDate date2 = LocalDate.of(2024, 8, 11);
+    private StudySubject 저장(StudySubject studySubject) {
+        return studySubjectRepository.save(studySubject);
+    }
 
-        StudyRecord studyRecord1 =
-                StudyRecord.builder().member(member).time(500).date(date1).build();
-        StudyRecord studyRecord2 =
-                StudyRecord.builder().member(member).time(600).date(date1).build();
-        StudyRecord studyRecord3 =
-                StudyRecord.builder().member(member).time(700).date(date1).build();
-        StudyRecord studyRecord4 =
-                StudyRecord.builder().member(member).time(300).date(date2).build();
-        StudyRecord studyRecord5 =
-                StudyRecord.builder().member(member).time(300).date(date2).build();
-        studyRecordRepository.save(studyRecord1);
-        studyRecordRepository.save(studyRecord2);
-        studyRecordRepository.save(studyRecord3);
-        studyRecordRepository.save(studyRecord4);
-        studyRecordRepository.save(studyRecord5);
+    private Member 저장(Member member) {
+        return memberRepository.save(member);
+    }
 
-        Subject subject1 = Subject.builder().name("HTML").member(member).build();
-        Subject subject2 = Subject.builder().name("CSS").member(member).build();
-        Subject subject3 = Subject.builder().name("JS").member(member).build();
-        subjectRepository.save(subject1);
-        subjectRepository.save(subject2);
-        subjectRepository.save(subject3);
-
-        StudySubject studySubject1 =
-                StudySubject.builder().studyRecord(studyRecord1).subject(subject1).build();
-        StudySubject studySubject2 =
-                StudySubject.builder().studyRecord(studyRecord2).subject(subject2).build();
-        StudySubject studySubject3 =
-                StudySubject.builder().studyRecord(studyRecord3).subject(subject3).build();
-        StudySubject studySubject4 =
-                StudySubject.builder().studyRecord(studyRecord4).subject(subject2).build();
-        StudySubject studySubject5 =
-                StudySubject.builder().studyRecord(studyRecord5).subject(subject3).build();
-        studySubjectRepository.save(studySubject1);
-        studySubjectRepository.save(studySubject2);
-        studySubjectRepository.save(studySubject3);
-        studySubjectRepository.save(studySubject4);
-        studySubjectRepository.save(studySubject5);
+    private Subject 저장(Subject subject) {
+        return subjectRepository.save(subject);
     }
 
     @Test
-    @DisplayName("공부 기록이 일 별로 제대로 조회가 되는지 확인")
+    @DisplayName("1월과 2월의 공부 기록이 존재할 때 1월의 공부 기록만 제대로 조회가 되는지 확인")
     public void findStudyRecords() {
-        List<Object[]> result = studyRecordRepository.findByYearAndMonthAndMemberId(2024, 8, 100L);
-        List<Object[]> expected = new ArrayList<>();
-        expected.add(new Object[] {10, 500, 1L, "HTML"});
-        expected.add(new Object[] {10, 600, 1L, "CSS"});
-        expected.add(new Object[] {10, 700, 1L, "JS"});
-        expected.add(new Object[] {11, 300, 1L, "CSS"});
-        expected.add(new Object[] {11, 300, 1L, "JS"});
+        Member member = 저장(MemberFixture.builder().build());
+        LocalDate date1 = LocalDate.of(2024, 1, 10);
+        LocalDate date2 = LocalDate.of(2024, 2, 11);
+        StudyRecord studyRecord1 =
+                저장(StudyRecord.builder().member(member).time(500).date(date1).build());
+        StudyRecord studyRecord2 =
+                저장(StudyRecord.builder().member(member).time(400).date(date2).build());
+        Subject subject = 저장(Subject.builder().name("HTML").member(member).build());
+        StudySubject studySubject1 =
+                저장(StudySubject.builder().studyRecord(studyRecord1).subject(subject).build());
+        StudySubject studySubject2 =
+                저장(StudySubject.builder().studyRecord(studyRecord2).subject(subject).build());
+
+        List<Object[]> result1 =
+                studyRecordRepository.findByYearAndMonthAndMemberId(2024, 1, member.getId());
 
         assertAll(
                 "response",
-                () -> assertThat(result.size()).isEqualTo(expected.size()),
-                () -> {
-                    for (int i = 0; i < result.size(); i++) {
-                        assertThat(result.get(i)[0]).isEqualTo(expected.get(i)[0]);
-                        assertThat(result.get(i)[1]).isEqualTo(expected.get(i)[1]);
-                        assertThat(result.get(i)[3]).isEqualTo(expected.get(i)[3]);
-                    }
-                });
+                () -> assertThat(result1.size()).isEqualTo(1),
+                () ->
+                        assertThat(((Number) result1.get(0)[0]).intValue())
+                                .isEqualTo(date1.getDayOfMonth()),
+                () ->
+                        assertThat(((Number) result1.get(0)[1]).intValue())
+                                .isEqualTo(studyRecord1.getTime()),
+                () -> assertThat((Long) result1.get(0)[2]).isEqualTo(subject.getId()),
+                () -> assertThat((String) result1.get(0)[3]).isEqualTo(subject.getName()));
     }
 }
