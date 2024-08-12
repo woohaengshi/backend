@@ -30,16 +30,16 @@ public class JwtTokenProvider {
     private static final String TOKEN_TYPE = "Bearer";
 
     private SecretKey key;
-
-    @Value("${security.jwt.expiration.access}")
     private Long accessExpiration;
-
-    @Value("${security.jwt.expiration.refresh}")
     private Long refreshExpiration;
 
     @Autowired
-    public JwtTokenProvider(@Value("${security.jwt.key}") String key) {
+    public JwtTokenProvider(@Value("${security.jwt.key}") String key,
+                            @Value("${security.jwt.expiration.access}") Long accessExpiration,
+                            @Value("${security.jwt.expiration.refresh}") Long refreshExpiration) {
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(key));
+        this.accessExpiration = accessExpiration;
+        this.refreshExpiration = refreshExpiration;
     }
 
     private String createToken(Long memberId, Long expiration) {
