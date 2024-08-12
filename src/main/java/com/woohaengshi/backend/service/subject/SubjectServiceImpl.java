@@ -44,28 +44,28 @@ public class SubjectServiceImpl implements SubjectService {
         Member member = memberRepository.findById(memberId).get();
         addSubjects
                 .forEach(
-                        s -> {
-                            validateAlreadyExistSubject(memberId, s);
-                            subjectRepository.save(Subject.builder().name(s).member(member).build());
+                        subject -> {
+                            validateAlreadyExistSubject(memberId, subject);
+                            subjectRepository.save(Subject.builder().name(subject).member(member).build());
                         });
     }
 
     private void deleteSubjects(List<Long> deleteSubjects) {
         deleteSubjects.forEach(
-                i -> {
-                    validateNotExistSubject(i);
-                    subjectRepository.deleteById(i);
+                subjectId -> {
+                    validateNotExistSubject(subjectId);
+                    subjectRepository.deleteById(subjectId);
                 });
     }
 
-    private void validateAlreadyExistSubject(Long member_id, String s) {
-        if (subjectRepository.existsByMemberIdAndName(member_id, s)) {
+    private void validateAlreadyExistSubject(Long member_id, String subject) {
+        if (subjectRepository.existsByMemberIdAndName(member_id, subject)) {
             throw new WoohaengshiException(ErrorCode.SUBJECT_ALREADY_EXISTS);
         }
     }
 
-    private void validateNotExistSubject(Long i) {
-        if (!subjectRepository.existsById(i)) {
+    private void validateNotExistSubject(Long subjectId) {
+        if (!subjectRepository.existsById(subjectId)) {
             throw new WoohaengshiException(ErrorCode.SUBJECT_NOT_FOUND);
         }
     }
