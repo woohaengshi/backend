@@ -83,10 +83,6 @@ public class JwtTokenProvider {
         }
     }
 
-    public Date getExpiredAt(String accessToken) {
-        return getClaimsJwt(accessToken).getBody().getExpiration();
-    }
-
     public String extractAccessToken(String authorization) {
         String[] tokenFormat = authorization.split(" ");
         if (tokenFormat.length != 2 && !tokenFormat[0].equals(TOKEN_TYPE)) {
