@@ -7,6 +7,7 @@ import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.StudySubject;
 import com.woohaengshi.backend.domain.Subject;
 import com.woohaengshi.backend.domain.member.Member;
+import com.woohaengshi.backend.dto.result.MonthlyTotalRecordResult;
 import com.woohaengshi.backend.support.RepositoryTest;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
 
@@ -43,7 +44,7 @@ public class StudyRecordRepositoryTest {
 
     @Test
     @DisplayName("1월과 2월의 공부 기록이 존재할 때 1월의 공부 기록만 제대로 조회가 되는지 확인")
-    public void findStudyRecords() {
+    public void findMonthlyRecords() {
         Member member = 저장(MemberFixture.builder().build());
         LocalDate date1 = LocalDate.of(2024, 1, 10);
         LocalDate date2 = LocalDate.of(2024, 2, 11);
@@ -71,5 +72,32 @@ public class StudyRecordRepositoryTest {
                                 .isEqualTo(studyRecord1.getTime()),
                 () -> assertThat((Long) result1.get(0)[2]).isEqualTo(subject.getId()),
                 () -> assertThat((String) result1.get(0)[3]).isEqualTo(subject.getName()));
+    }
+
+    @Test
+    @DisplayName("2024년의 공부 기록을 조회하면 월 별로 총 공부 시간이 제대로 조회되는지 확인")
+    public void findYearlyRecords() {
+        Member member = 저장(MemberFixture.builder().build());
+        LocalDate date1 = LocalDate.of(2024, 1, 10);
+        LocalDate date2 = LocalDate.of(2024, 2, 11);
+        LocalDate date3 = LocalDate.of(2024, 2, 20);
+        StudyRecord studyRecord1 =
+                저장(StudyRecord.builder().member(member).time(500).date(date1).build());
+        StudyRecord studyRecord2 =
+                저장(StudyRecord.builder().member(member).time(400).date(date2).build());
+        StudyRecord studyRecord3 =
+                저장(StudyRecord.builder().member(member).time(1000).date(date3).build());
+
+        List<MonthlyTotalRecordResult> results =
+                studyRecordRepository.findMonthlyTotalByYearAndMemberId(2024, member.getId());
+
+        assertAll(
+                "response",
+                () -> assertThat(results.size()).isEqualTo(2),
+                () -> assertThat(results.get(0).getMonth()).isEqualTo(date1.getMonth().getValue()),
+                () -> assertThat(results.get(0).getTotal()).isEqualTo(studyRecord1.getTime()),
+                () -> assertThat(results.get(1).getMonth()).isEqualTo(date2.getMonth().getValue()),
+                () -> assertThat(results.get(1).getTotal()).isEqualTo(studyRecord2.getTime() + studyRecord3.getTime())
+        );
     }
 }
