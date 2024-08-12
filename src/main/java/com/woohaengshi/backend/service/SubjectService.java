@@ -21,8 +21,7 @@ public class SubjectService {
     @Autowired private MemberRepository memberRepository;
 
     public void editSubjects(Long memberId, SubjectRequest requestDTO) {
-        if (!memberRepository.existsById(memberId))
-            throw new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND);
+        validateMemberExist(memberId);
 
         List<String> addSubjects = requestDTO.getAddSubjects();
         if (addSubjects != null && !addSubjects.isEmpty()) {
@@ -35,9 +34,14 @@ public class SubjectService {
         }
     }
 
+    private void validateMemberExist(Long memberId) {
+        if (!memberRepository.existsById(memberId))
+            throw new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND);
+    }
+
     private void insertSubjects(Long memberId, List<String> addSubjects) {
         Member member = memberRepository.findById(memberId).get();
-        addSubjects.stream()
+        addSubjects
                 .forEach(
                         s -> {
                             validateAlreadyExistSubject(memberId, s);
