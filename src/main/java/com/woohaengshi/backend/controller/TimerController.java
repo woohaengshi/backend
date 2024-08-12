@@ -1,7 +1,7 @@
 package com.woohaengshi.backend.controller;
 
 import com.woohaengshi.backend.controller.auth.MemberId;
-import com.woohaengshi.backend.dto.response.studyrecord.ShowTimerResponse;
+import com.woohaengshi.backend.dto.response.timer.ShowTimerResponse;
 import com.woohaengshi.backend.service.timer.TimerService;
 
 import lombok.RequiredArgsConstructor;

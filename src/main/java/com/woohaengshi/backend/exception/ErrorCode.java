@@ -8,6 +8,8 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 public enum ErrorCode {
     MEMBER_NOT_FOUND(NOT_FOUND, "회원을 찾을 수 없습니다."),
+    STATISTICS_TYPE_NOT_FOUND(BAD_REQUEST, "랭킹 조회에서 찾을 수 없는 유형 타입입니다."),
+    STATISTICS_NOT_FOUND(NOT_FOUND, "통계를 찾을 수 없습니다"),
     INVALID_INPUT(BAD_REQUEST, "잘못된 입력 값입니다."),
     MISSING_ISSUER_TOKEN(UNAUTHORIZED, "issuer가 존재하지 않는 토큰입니다"),
     NOT_WOOHAENGSHI_TOKEN(UNAUTHORIZED, "발급자가 잘못된 토큰입니다"),
