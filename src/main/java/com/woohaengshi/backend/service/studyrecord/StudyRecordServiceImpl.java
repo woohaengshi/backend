@@ -47,13 +47,10 @@ public class StudyRecordServiceImpl implements StudyRecordService {
     @Transactional(readOnly = true)
     public ShowMonthlyRecordResponse showMonthlyRecord(YearMonth date, Long memberId) {
         validateExistMember(memberId);
-        int year = date.getYear();
-        int month = date.getMonthValue();
 
         return ShowMonthlyRecordResponse.of(
-                year,
-                month,
-                studyRecordRepository.findByYearAndMonthAndMemberId(year, month, memberId));
+                date,
+                studyRecordRepository.findByYearAndMonthAndMemberId(date.getYear(), date.getMonthValue(), memberId));
     }
 
     private void validateExistMember(Long memberId) {

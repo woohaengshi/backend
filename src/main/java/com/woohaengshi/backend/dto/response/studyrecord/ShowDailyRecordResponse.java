@@ -19,8 +19,8 @@ public class ShowDailyRecordResponse {
         this.subjects = subjects;
     }
 
-    public static ShowDailyRecordResponse of(int day, int time, List<Subject> subjects) {
-        return new ShowDailyRecordResponse(
-                day, time, subjects.stream().map(ShowSubjectsResponse::from).toList());
+    public static ShowDailyRecordResponse of(
+            int day, int time, List<ShowSubjectsResponse> subjects) {
+        return new ShowDailyRecordResponse(day, time, subjects);
     }
 }
