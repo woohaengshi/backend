@@ -45,7 +45,6 @@ public class AuthServiceImpl implements AuthService {
 
     private RefreshToken createRefreshToken(Member member) {
         return RefreshToken.builder()
-                .token(UUID.randomUUID().toString())
                 .expirationSeconds(expirationSeconds)
                 .member(member)
                 .build();

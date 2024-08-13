@@ -34,15 +34,20 @@ public class RefreshToken {
     }
 
     @Builder
-    public RefreshToken(Long expirationSeconds, Long id, Member member, String token) {
+    public RefreshToken(Long expirationSeconds, Long id, Member member) {
         this.expirationTime = LocalDateTime.now().plusSeconds(expirationSeconds);
         this.id = id;
         this.member = member;
-        this.token = token;
+        this.token = createToken();
     }
 
     public void reissue(Long expirationSeconds) {
-        this.token = UUID.randomUUID().toString();
+        this.token = createToken();
         this.expirationTime = LocalDateTime.now().plusSeconds(expirationSeconds);
     }
+
+    private String createToken(){
+        return UUID.randomUUID().toString();
+}
+
 }
