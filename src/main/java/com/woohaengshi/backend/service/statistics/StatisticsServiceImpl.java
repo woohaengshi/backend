@@ -51,9 +51,9 @@ public class StatisticsServiceImpl implements StatisticsService {
         Slice<StudyRecord> rankSlice = getRankDataSlice(LocalDate.now(), pageable);
         return ShowRankSnapshotResponse.of(
                 statistics.getMember(),
-                studyRecordRepository.findRankByDateAndMemberId(
+                (studyRecord == null) ? 0: studyRecordRepository.findRankByDateAndMemberId(
                         LocalDate.now(), studyRecord.getTime()),
-                studyRecord.getTime(),
+                (studyRecord == null) ? 0: studyRecord.getTime(),
                 statistics.getTotalTime(),
                 rankSlice.hasNext(),
                 calculationRank(rankSlice, pageable, statistics));
@@ -162,6 +162,6 @@ public class StatisticsServiceImpl implements StatisticsService {
     private StudyRecord findStudyRecordByMemberId(Long memberId) {
         return studyRecordRepository
                 .findByDateAndMemberId(LocalDate.now(), memberId)
-                .orElseThrow(() -> new WoohaengshiException(ErrorCode.STUDY_RECORD_NOT_FOUND));
+                .orElse(null);
     }
 }
