@@ -22,13 +22,12 @@ public enum ErrorCode {
     NOT_EXIST_ACCESS_TOKEN(UNAUTHORIZED, "액세스 토큰이 존재하지 않습니다."),
     INCORRECT_CONSTRUCT_HEADER(UNAUTHORIZED, "잘못된 형식의 인증 헤더입니다."),
     SUBJECT_NOT_FOUND(NOT_FOUND, "과목을 찾을 수 없습니다."),
-    STUDY_RECORD_NOT_FOUND(NOT_FOUND, "학습 기록을 찾을 수 없습니다."),
-    INVALID_INPUT(BAD_REQUEST, "잘못된 입력 값입니다.");
     FAIL_TO_SIGN_IN(BAD_REQUEST, "로그인에 실패했습니다."),
     NOT_EXIST_REFRESH_TOKEN(UNAUTHORIZED, "리프레시 토큰이 존재하지 않습니다."),
     REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "리프레시 토큰을 찾을 수 없습니다."),
     REFRESH_TOKEN_EXPIRED(UNAUTHORIZED, "리프레시 토큰의 유효기간이 만료되었습니다."),
-    SUBJECT_ALREADY_EXISTS(CONFLICT, "이미 존재하는 과목입니다.");
+    SUBJECT_ALREADY_EXISTS(CONFLICT, "이미 존재하는 과목입니다."),
+    STUDY_RECORD_NOT_FOUND(NOT_FOUND, "학습 기록을 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String message;
