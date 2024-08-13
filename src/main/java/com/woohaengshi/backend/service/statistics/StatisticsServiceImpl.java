@@ -40,7 +40,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         return ShowRankSnapshotResponse.of(
                 statistics.getMember(),
                 getMemberRank(statisticsType, statistics),
-                statistics.getDailyTime(),
+                getTimeByStatisticsType(statisticsType, statistics),
                 statistics.getTotalTime(),
                 rankSlice.hasNext(),
                 calculationRank(rankSlice, pageable, statisticsType));
