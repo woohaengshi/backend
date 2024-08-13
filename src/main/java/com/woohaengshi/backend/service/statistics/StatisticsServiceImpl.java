@@ -141,7 +141,6 @@ public class StatisticsServiceImpl implements StatisticsService {
 
 
     private int getTimeByStatisticsType(StatisticsType statisticsType, Statistics statistics) {
-        if (statisticsType == StatisticsType.DAILY) return statistics.getDailyTime();
         if (statisticsType == StatisticsType.WEEKLY) return statistics.getWeeklyTime();
         if (statisticsType == StatisticsType.MONTHLY) return statistics.getMonthlyTime();
 
@@ -155,7 +154,6 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     private StudyRecord findStudyRecordByMemberId(Long memberId) {
-        System.out.println(memberId);
         return studyRecordRepository
                 .findByDateAndMemberId(LocalDate.now(), memberId)
                 .orElseThrow(() -> new WoohaengshiException(ErrorCode.STUDY_RECORD_NOT_FOUND));

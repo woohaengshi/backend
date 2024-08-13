@@ -60,7 +60,6 @@ CREATE TABLE IF NOT EXISTS `statistics`
     `id`           BIGINT NOT NULL auto_increment,
     `monthly_time` MEDIUMINT,
     `weekly_time`  MEDIUMINT,
-    `daily_time`   MEDIUMINT,
     `total_time`   INT,
     `member_id`    BIGINT NOT NULL,
     PRIMARY KEY (`id`)
