@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
@@ -32,6 +33,7 @@ class AuthServiceTest {
     @Mock private JwtTokenProvider jwtTokenProvider;
     @Mock private RefreshCookieProvider refreshCookieProvider;
     @Mock private RefreshTokenRepository refreshTokenRepository;
+    @Mock private PasswordEncoder passwordEncoder;
     @InjectMocks private AuthServiceImpl authService;
 
     @BeforeEach()
@@ -48,6 +50,8 @@ class AuthServiceTest {
                         memberRepository.findByEmail(
                                 signInRequest.getEmail()))
                 .willReturn(Optional.of(member));
+        given(passwordEncoder.matches(signInRequest.getPassword(), member.getPassword()))
+                .willReturn(true);
         given(jwtTokenProvider.createAccessToken(member.getId())).willReturn("fakeAccessToken");
         given(refreshTokenRepository.save(any(RefreshToken.class))).willReturn(refreshToken);
         assertAll(
@@ -60,7 +64,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void 이메일과_비밀번호가_일치하지_않으면_예외() {
+    void 이메일이_일치하지_않으면_예외() {
         SignInRequest signInRequest = new SignInRequest("rlfrkdms1@naver.com", "password12!@");
         given(
                         memberRepository.findByEmail(
@@ -75,4 +79,26 @@ class AuthServiceTest {
                                 .findByEmail(
                                         signInRequest.getEmail()));
     }
+
+    @Test
+    void 비밀번호가_일치하지_않으면_예외() {
+        SignInRequest signInRequest = new SignInRequest("rlfrkdms1@naver.com", "password12!@");
+        Member member = MemberFixture.builder().id(1L).build();
+        given(
+                memberRepository.findByEmail(
+                        signInRequest.getEmail()))
+                .willReturn(Optional.of(member));
+        given(passwordEncoder.matches(signInRequest.getPassword(), member.getPassword()))
+                .willReturn(false);
+        assertAll(
+                () ->
+                        assertThatThrownBy(() -> authService.signIn(signInRequest))
+                                .isExactlyInstanceOf(WoohaengshiException.class),
+                () ->
+                        verify(memberRepository, times(1))
+                                .findByEmail(
+                                        signInRequest.getEmail()));
+    }
+
+
 }
