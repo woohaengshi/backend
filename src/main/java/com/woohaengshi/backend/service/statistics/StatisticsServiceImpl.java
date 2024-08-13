@@ -37,21 +37,25 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     @Transactional(readOnly = true)
-    public ShowRankSnapshotResponse showRankData(
-            Long memberId, StatisticsType statisticsType, Pageable pageable) {
+    public ShowRankSnapshotResponse showRankData(Long memberId, StatisticsType statisticsType, Pageable pageable) {
         Statistics statistics = findStatisticsByMemberId(memberId);
-        if(statisticsType == StatisticsType.DAILY){
-            StudyRecord studyRecord = findStudyRecordByMemberId(statistics.getMember().getId());
-            Slice<StudyRecord> rankSlice = getRankDataSlice(LocalDate.now(), pageable);
-            return ShowRankSnapshotResponse.of(
-                    statistics.getMember(),
-                    studyRecordRepository.findRankByDateAndMemberId(LocalDate.now(), studyRecord.getTime()),
-                    studyRecord.getTime(),
-                    statistics.getTotalTime(),
-                    rankSlice.hasNext(),
-                    calculationRank(rankSlice, pageable, statistics));
-        }
+        return statisticsType == StatisticsType.DAILY ? handleDailyStatistics(memberId, pageable, statistics)
+                : handlePeriodicStatistics(statisticsType, pageable, statistics);
+    }
 
+    private ShowRankSnapshotResponse handleDailyStatistics(Long memberId, Pageable pageable, Statistics statistics) {
+        StudyRecord studyRecord = findStudyRecordByMemberId(memberId);
+        Slice<StudyRecord> rankSlice = getRankDataSlice(LocalDate.now(), pageable);
+        return ShowRankSnapshotResponse.of(
+                statistics.getMember(),
+                studyRecordRepository.findRankByDateAndMemberId(LocalDate.now(), studyRecord.getTime()),
+                studyRecord.getTime(),
+                statistics.getTotalTime(),
+                rankSlice.hasNext(),
+                calculationRank(rankSlice, pageable, statistics));
+    }
+
+    private ShowRankSnapshotResponse handlePeriodicStatistics(StatisticsType statisticsType, Pageable pageable, Statistics statistics) {
         Slice<Statistics> rankSlice = getRankDataSlice(statisticsType, pageable);
         return ShowRankSnapshotResponse.of(
                 statistics.getMember(),
@@ -61,7 +65,6 @@ public class StatisticsServiceImpl implements StatisticsService {
                 rankSlice.hasNext(),
                 calculationRank(rankSlice, pageable, statisticsType));
     }
-
     private int getMemberRank(StatisticsType statisticsType, Statistics statistics) {
         int time = getTimeByStatisticsType(statisticsType, statistics);
 
