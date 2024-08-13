@@ -6,7 +6,12 @@ import com.woohaengshi.backend.dto.response.studyrecord.ShowMonthlyRecordRespons
 import java.time.YearMonth;
 
 public interface StudyRecordService {
-    public void save(SaveRecordRequest request, Long memberId);
+    void save(SaveRecordRequest request, Long memberId);
 
-    public ShowMonthlyRecordResponse showMonthlyRecord(YearMonth date, Long memberId);
+    ShowMonthlyRecordResponse showMonthlyRecord(YearMonth date, Long memberId);
+
+    void updateDailyStatistics();
+    void updateWeeklyStatistics();
+    void updateMonthlyStatistics();
+    void updateTotalStatistics();
 }

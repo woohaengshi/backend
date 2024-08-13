@@ -94,4 +94,24 @@ public class StudyRecordServiceImpl implements StudyRecordService {
                 .findById(memberId)
                 .orElseThrow(() -> new WoohaengshiException(MEMBER_NOT_FOUND));
     }
+
+    @Override
+    public void updateDailyStatistics() {
+
+    }
+
+    @Override
+    public void updateWeeklyStatistics() {
+
+    }
+
+    @Override
+    public void updateMonthlyStatistics() {
+
+    }
+
+    @Override
+    public void updateTotalStatistics() {
+
+    }
 }
