@@ -12,7 +12,7 @@ import com.woohaengshi.backend.domain.RefreshToken;
 import com.woohaengshi.backend.domain.member.Course;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.request.auth.SignUpRequest;
-import com.woohaengshi.backend.dto.request.studyrecord.auth.SignInRequest;
+import com.woohaengshi.backend.dto.request.auth.SignInRequest;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.RefreshTokenRepository;

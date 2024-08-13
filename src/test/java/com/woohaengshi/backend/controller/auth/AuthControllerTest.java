@@ -8,7 +8,7 @@ import static org.springframework.http.HttpStatus.OK;
 
 import com.woohaengshi.backend.domain.member.Course;
 import com.woohaengshi.backend.dto.request.auth.SignUpRequest;
-import com.woohaengshi.backend.dto.request.studyrecord.auth.SignInRequest;
+import com.woohaengshi.backend.dto.request.auth.SignInRequest;
 import com.woohaengshi.backend.support.ControllerTest;
 
 import org.junit.jupiter.api.Test;
