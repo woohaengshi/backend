@@ -72,7 +72,7 @@ class StatisticsControllerTest {
                 .log()
                 .all()
                 .param("page", 0)
-                .param("type", "asd")
+                .param("type", "DAILY")
                 .param("size", 0)
                 .contentType(ContentType.JSON)
                 .get("/api/v1/rank")
