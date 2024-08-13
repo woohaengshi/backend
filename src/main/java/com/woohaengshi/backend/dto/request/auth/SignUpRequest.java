@@ -17,8 +17,8 @@ public class SignUpRequest {
     @NotBlank(message = "이름은 필수 입니다.")
     private String name;
 
-    @NotNull(message = "과정은 필수 입니다.")
-    private Course course;
+    @NotBlank(message = "과정은 필수 입니다.")
+    private String course;
 
     @Email(message = "잘못된 이메일 형식입니다.")
     private String email;
@@ -28,7 +28,7 @@ public class SignUpRequest {
             message = "비밀번호는 영어, 숫자, 특수문자를 포함해야합니다.")
     private String password;
 
-    public SignUpRequest(String name, Course course, String email, String password) {
+    public SignUpRequest(String name, String course, String email, String password) {
         this.name = name;
         this.course = course;
         this.email = email;
@@ -43,7 +43,7 @@ public class SignUpRequest {
                 .name(name)
                 .email(email)
                 .password(password)
-                .course(course)
+                .course(Course.from(course))
                 .build();
     }
 }

@@ -91,7 +91,7 @@ class AuthServiceTest {
     void 회원가입을_할_수_있다() {
         SignUpRequest request =
                 new SignUpRequest(
-                        "강현우", Course.CLOUD_SERVICE, "rkdgusdn@naver.com", "password12!@");
+                        "강현우", "클라우드 서비스", "rkdgusdn@naver.com", "password12!@");
         authService.signUp(request);
         verify(memberRepository, times(1)).save(any(Member.class));
     }

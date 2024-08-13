@@ -33,7 +33,7 @@ class AuthControllerTest extends ControllerTest {
     void 회원가입이_가능하다() {
         SignUpRequest request =
                 new SignUpRequest(
-                        "김혜빈", Course.CLOUD_SERVICE, "rlagpqls@naver.com", "password12!@");
+                        "김혜빈", "클라우드 서비스", "rlagpqls@naver.com", "password12!@");
         baseRestAssured()
                 .body(request)
                 .when()
@@ -47,7 +47,7 @@ class AuthControllerTest extends ControllerTest {
     @Test
     void 비밀번호_형식이_틀린_경우() {
         SignUpRequest request =
-                new SignUpRequest("김혜빈", Course.CLOUD_SERVICE, "rlagpqls@naver.com", "password12");
+                new SignUpRequest("김혜빈", "클라우드 서비스", "rlagpqls@naver.com", "password12");
         baseRestAssured()
                 .body(request)
                 .when()
@@ -61,7 +61,7 @@ class AuthControllerTest extends ControllerTest {
     @Test
     void 이메일_형식이_틀린_경우() {
         SignUpRequest request =
-                new SignUpRequest("김혜빈", Course.CLOUD_SERVICE, "rlagpqlm", "password12!@");
+                new SignUpRequest("김혜빈", "클라우드 서비스", "rlagpqlm", "password12!@");
         baseRestAssured()
                 .body(request)
                 .when()
