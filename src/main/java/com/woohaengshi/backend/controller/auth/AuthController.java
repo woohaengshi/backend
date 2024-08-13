@@ -4,8 +4,8 @@ import static com.woohaengshi.backend.controller.auth.RefreshCookieProvider.REFR
 
 import static org.springframework.http.HttpHeaders.SET_COOKIE;
 
-import com.woohaengshi.backend.dto.request.auth.SignUpRequest;
 import com.woohaengshi.backend.dto.request.auth.SignInRequest;
+import com.woohaengshi.backend.dto.request.auth.SignUpRequest;
 import com.woohaengshi.backend.dto.response.auth.SignInResponse;
 import com.woohaengshi.backend.dto.result.SignInResult;
 import com.woohaengshi.backend.service.auth.AuthService;
