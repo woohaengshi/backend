@@ -2,6 +2,7 @@ package com.woohaengshi.backend.controller.auth;
 
 import com.woohaengshi.backend.domain.RefreshToken;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.server.Cookie;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
@@ -10,11 +11,14 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class RefreshCookieProvider {
 
-    public static final String REFRESH_TOKEN = "REFRESH_TOKEN";
+    public static final String REFRESH_TOKEN = "refresh_token";
+
+    @Value("${security.refresh.expiration}")
+    private Long expirationSeconds;
 
     public ResponseCookie createRefreshTokenCookie(RefreshToken refreshToken) {
         return createBaseCookie(refreshToken.getToken())
-                .maxAge(refreshToken.getExpirationTime())
+                .maxAge(expirationSeconds)
                 .build();
     }
 
