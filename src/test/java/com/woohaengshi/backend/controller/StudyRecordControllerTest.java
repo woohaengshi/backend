@@ -8,6 +8,8 @@ import static org.springframework.http.HttpStatus.OK;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 import com.woohaengshi.backend.support.ControllerTest;
 
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
