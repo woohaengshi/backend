@@ -1,6 +1,6 @@
 package com.woohaengshi.backend.repository;
 
-import com.woohaengshi.backend.domain.Subject;
+import com.woohaengshi.backend.domain.subject.Subject;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

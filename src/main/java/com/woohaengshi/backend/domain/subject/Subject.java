@@ -1,4 +1,4 @@
-package com.woohaengshi.backend.domain;
+package com.woohaengshi.backend.domain.subject;
 
 import com.woohaengshi.backend.domain.member.Member;
 
@@ -34,6 +34,11 @@ public class Subject {
     @Builder
     public Subject(Long id, String name, Member member) {
         this.id = id;
+        this.name = name;
+        this.member = member;
+    }
+
+    public Subject(String name, Member member) {
         this.name = name;
         this.member = member;
     }

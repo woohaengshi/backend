@@ -5,12 +5,17 @@ import static com.woohaengshi.backend.exception.ErrorCode.*;
 import com.woohaengshi.backend.controller.auth.RefreshCookieProvider;
 import com.woohaengshi.backend.domain.RefreshToken;
 import com.woohaengshi.backend.domain.member.Member;
+import com.woohaengshi.backend.domain.statistics.Statistics;
+import com.woohaengshi.backend.domain.subject.DefaultSubject;
+import com.woohaengshi.backend.domain.subject.Subject;
 import com.woohaengshi.backend.dto.request.auth.SignInRequest;
+import com.woohaengshi.backend.dto.request.auth.SignUpRequest;
 import com.woohaengshi.backend.dto.response.auth.SignInResponse;
 import com.woohaengshi.backend.dto.result.SignInResult;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.RefreshTokenRepository;
+import com.woohaengshi.backend.repository.StatisticsRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -18,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -32,6 +38,8 @@ public class AuthServiceImpl implements AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshCookieProvider refreshCookieProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final StatisticsRepository statisticsRepository;
 
     @Override
     public SignInResult signIn(SignInRequest request) {
@@ -50,9 +58,14 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private Member findMemberByRequest(SignInRequest request) {
-        return memberRepository
-                .findByEmailAndPassword(request.getEmail(), request.getPassword())
-                .orElseThrow(() -> new WoohaengshiException(FAIL_TO_SIGN_IN));
+        Member member =
+                memberRepository
+                        .findByEmail(request.getEmail())
+                        .orElseThrow(() -> new WoohaengshiException(FAIL_TO_SIGN_IN));
+        if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
+            throw new WoohaengshiException(FAIL_TO_SIGN_IN);
+        }
+        return member;
     }
 
     @Override
@@ -76,6 +89,15 @@ public class AuthServiceImpl implements AuthService {
             refreshTokenRepository.delete(refreshToken);
         }
         return refreshCookieProvider.createSignOutCookie();
+    }
+
+    @Override
+    public void signUp(SignUpRequest request) {
+        Member member = request.toMember(passwordEncoder.encode(request.getPassword()));
+        memberRepository.save(member);
+        DefaultSubject.getDefaultSubjects(member.getCourse())
+                .forEach(subject -> new Subject(subject, member));
+        statisticsRepository.save(new Statistics(member));
     }
 
     private void validateRefreshTokenExpired(RefreshToken refreshToken) {
