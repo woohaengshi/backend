@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -70,7 +69,9 @@ public class StatisticsServiceImpl implements StatisticsService {
                 studyTime,
                 statistics.getTotalTime(),
                 rankSlice.hasNext(),
-                (rankSlice.getContent().size() == 0) ? Collections.emptyList(): calculationRank(rankSlice, pageable, statisticsType));
+                (rankSlice.getContent().size() == 0)
+                        ? Collections.emptyList()
+                        : calculationRank(rankSlice, pageable, statisticsType));
     }
 
     private int getMemberRank(StatisticsType statisticsType, Statistics statistics) {
@@ -96,29 +97,27 @@ public class StatisticsServiceImpl implements StatisticsService {
         return (int) statisticsRepository.count(specification) + 1;
     }
 
-
     private Slice<Statistics> getRankDataSlice(StatisticsType statisticsType, Pageable pageable) {
-        Specification<Statistics> specification = (root, query, cb) -> {
-            Predicate timeIsNotZero;
+        Specification<Statistics> specification =
+                (root, query, cb) -> {
+                    Predicate timeIsNotZero;
 
-             if (statisticsType == StatisticsType.WEEKLY) {
-                timeIsNotZero = cb.notEqual(root.get("weeklyTime"), 0);
-                query.orderBy(cb.desc(root.get("weeklyTime")));
-            } else if (statisticsType == StatisticsType.MONTHLY) {
-                timeIsNotZero = cb.notEqual(root.get("monthlyTime"), 0);
-                query.orderBy(cb.desc(root.get("monthlyTime")));
-            } else {
-                throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
-            }
+                    if (statisticsType == StatisticsType.WEEKLY) {
+                        timeIsNotZero = cb.notEqual(root.get("weeklyTime"), 0);
+                        query.orderBy(cb.desc(root.get("weeklyTime")));
+                    } else if (statisticsType == StatisticsType.MONTHLY) {
+                        timeIsNotZero = cb.notEqual(root.get("monthlyTime"), 0);
+                        query.orderBy(cb.desc(root.get("monthlyTime")));
+                    } else {
+                        throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
+                    }
 
-            query.where(timeIsNotZero);
-            return query.getRestriction();
-        };
+                    query.where(timeIsNotZero);
+                    return query.getRestriction();
+                };
 
         return statisticsRepository.findAll(specification, pageable);
     }
-
-
 
     private List<RankDataResponse> calculationRank(
             Slice<Statistics> statisticsSlice, Pageable pageable, StatisticsType statisticsType) {
