@@ -23,14 +23,16 @@ public class StudyRecordController {
     private final StudyRecordService studyRecordService;
 
     @PostMapping
-    public ResponseEntity<Void> saveStudyRecord(@Valid @RequestBody SaveRecordRequest request, @MemberId Long memberId) {
+    public ResponseEntity<Void> saveStudyRecord(
+            @Valid @RequestBody SaveRecordRequest request, @MemberId Long memberId) {
         studyRecordService.save(request, memberId);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/monthly")
     public ShowMonthlyRecordResponse getMonthlyRecords(
-            @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM") YearMonth date, @MemberId Long memberId) {
+            @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM") YearMonth date,
+            @MemberId Long memberId) {
         return studyRecordService.showMonthlyRecord(date, memberId);
     }
 }

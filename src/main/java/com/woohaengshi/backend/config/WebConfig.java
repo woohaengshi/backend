@@ -6,10 +6,11 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class WebConfig  implements WebMvcConfigurer {
+public class WebConfig implements WebMvcConfigurer {
 
     private static final String CLIENT_LOCALHOST = "http://localhost:3000";
-    private static final String CORS_ALLOWED_METHODS = "GET,POST,HEAD,PUT,PATCH,DELETE,TRACE,OPTIONS";
+    private static final String CORS_ALLOWED_METHODS =
+            "GET,POST,HEAD,PUT,PATCH,DELETE,TRACE,OPTIONS";
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
