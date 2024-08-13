@@ -158,24 +158,4 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .findByDateAndMemberId(LocalDate.now(), memberId)
                 .orElseThrow(() -> new WoohaengshiException(ErrorCode.STUDY_RECORD_NOT_FOUND));
     }
-
-    @Override
-    public void updateDailyStatistics() {
-
-    }
-
-    @Override
-    public void updateWeeklyStatistics() {
-
-    }
-
-    @Override
-    public void updateMonthlyStatistics() {
-
-    }
-
-    @Override
-    public void updateTotalStatistics() {
-
-    }
 }
