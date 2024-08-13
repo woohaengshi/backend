@@ -37,6 +37,7 @@ public class AuthServiceImpl implements AuthService {
         Member member = findMemberByRequest(request);
         String accessToken = jwtTokenProvider.createAccessToken(member.getId());
         SignInResponse signInResponse = SignInResponse.of(accessToken, member);
+        refreshTokenRepository.deleteAllByMemberId(member.getId());
         RefreshToken refreshToken = refreshTokenRepository.save(createRefreshToken(member));
         ResponseCookie refreshTokenCookie = refreshCookieProvider.createRefreshTokenCookie(refreshToken);
         return new SignInResult(refreshTokenCookie, signInResponse);

@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
     @Query("select r from RefreshToken r join fetch r.member where r.token = :token")
     Optional<RefreshToken> findByToken(@Param("token") String token);
+
+    void deleteAllByMemberId(Long memberId);
 }
