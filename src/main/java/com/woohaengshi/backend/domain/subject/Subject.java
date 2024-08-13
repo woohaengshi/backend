@@ -1,4 +1,4 @@
-package com.woohaengshi.backend.domain;
+package com.woohaengshi.backend.domain.subject;
 
 import com.woohaengshi.backend.domain.member.Member;
 

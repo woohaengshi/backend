@@ -1,7 +1,7 @@
 package com.woohaengshi.backend.support.fixture;
 
 import com.woohaengshi.backend.domain.StudyRecord;
-import com.woohaengshi.backend.domain.Subject;
+import com.woohaengshi.backend.domain.subject.Subject;
 import com.woohaengshi.backend.domain.member.Member;
 
 public class SubjectFixture {

@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.StudySubject;
-import com.woohaengshi.backend.domain.Subject;
+import com.woohaengshi.backend.domain.subject.Subject;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.support.RepositoryTest;
 import com.woohaengshi.backend.support.fixture.MemberFixture;

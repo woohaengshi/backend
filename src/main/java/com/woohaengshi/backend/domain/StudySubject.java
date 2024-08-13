@@ -1,5 +1,6 @@
 package com.woohaengshi.backend.domain;
 
+import com.woohaengshi.backend.domain.subject.Subject;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
