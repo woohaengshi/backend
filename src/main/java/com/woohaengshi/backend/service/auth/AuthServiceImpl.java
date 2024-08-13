@@ -68,6 +68,15 @@ public class AuthServiceImpl implements AuthService {
         return new SignInResult(refreshTokenCookie, signInResponse);
     }
 
+    @Override
+    public ResponseCookie signOut(String token) {
+        if (token != null) {
+            RefreshToken refreshToken = findRefreshToken(token);
+            refreshTokenRepository.delete(refreshToken);
+        }
+        return refreshCookieProvider.createSignOutCookie();
+    }
+
     private void validateRefreshTokenExpired(RefreshToken refreshToken) {
         if (refreshToken.isExpired()) throw new WoohaengshiException(REFRESH_TOKEN_EXPIRED);
     }
