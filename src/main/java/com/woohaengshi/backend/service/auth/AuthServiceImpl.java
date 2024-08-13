@@ -17,6 +17,7 @@ import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.RefreshTokenRepository;
 import com.woohaengshi.backend.repository.StatisticsRepository;
 
+import com.woohaengshi.backend.repository.SubjectRepository;
 import jakarta.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,7 @@ public class AuthServiceImpl implements AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final StatisticsRepository statisticsRepository;
+    private final SubjectRepository subjectRepository;
 
     @Override
     public SignInResult signIn(SignInRequest request) {
@@ -96,7 +98,7 @@ public class AuthServiceImpl implements AuthService {
         Member member = request.toMember(passwordEncoder.encode(request.getPassword()));
         memberRepository.save(member);
         DefaultSubject.getDefaultSubjects(member.getCourse())
-                .forEach(subject -> new Subject(subject, member));
+                .forEach(subject -> subjectRepository.save(new Subject(subject, member)));
         statisticsRepository.save(new Statistics(member));
     }
 
