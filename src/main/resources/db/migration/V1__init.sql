@@ -32,9 +32,9 @@ CREATE TABLE IF NOT EXISTS `badge`
 
 CREATE TABLE IF NOT EXISTS `subject`
 (
-    `id`              BIGINT       NOT NULL auto_increment,
-    `name`            VARCHAR(255) NOT NULL,
-    `member_id`       BIGINT       NOT NULL,
+    `id`        BIGINT       NOT NULL auto_increment,
+    `name`      VARCHAR(255) NOT NULL,
+    `member_id` BIGINT       NOT NULL,
     PRIMARY KEY (`id`)
 )
     engine = innodb
@@ -75,6 +75,19 @@ CREATE TABLE IF NOT EXISTS `study_subject`
     `id`              BIGINT NOT NULL auto_increment,
     `study_record_id` BIGINT NOT NULL,
     `subject_id`      BIGINT NOT NULL,
+    PRIMARY KEY (`id`)
+)
+    engine = innodb
+    auto_increment = 1
+    DEFAULT charset = utf8mb4
+    COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS `refresh_token`
+(
+    `id`              BIGINT       NOT NULL auto_increment,
+    `member_id`       BIGINT       NOT NULL,
+    `token`           VARCHAR(255) NOT NULL,
+    `expiration_time` TIMESTAMP       NOT NULL,
     PRIMARY KEY (`id`)
 )
     engine = innodb
