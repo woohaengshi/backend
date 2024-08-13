@@ -157,7 +157,7 @@ class StudyRecordServiceTest {
         records.add(new Object[] {9, 47000, 2L, "CSS"});
         YearMonth date = YearMonth.now();
 
-        ShowMonthlyRecordResponse expected = ShowMonthlyRecordResponse.of(2024, 8, records);
+        ShowMonthlyRecordResponse expected = ShowMonthlyRecordResponse.of(date, records);
 
         given(memberRepository.existsById(member.getId())).willReturn(true);
         given(studyRecordRepository.findByYearAndMonthAndMemberId(2024, 8, member.getId()))
