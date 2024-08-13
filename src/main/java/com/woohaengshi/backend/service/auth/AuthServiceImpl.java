@@ -3,6 +3,7 @@ package com.woohaengshi.backend.service.auth;
 import com.woohaengshi.backend.controller.auth.RefreshCookieProvider;
 import com.woohaengshi.backend.domain.RefreshToken;
 import com.woohaengshi.backend.domain.member.Member;
+import com.woohaengshi.backend.dto.request.auth.SignUpRequest;
 import com.woohaengshi.backend.dto.request.studyrecord.auth.SignInRequest;
 import com.woohaengshi.backend.dto.response.auth.SignInResponse;
 import com.woohaengshi.backend.dto.result.SignInResult;
@@ -13,6 +14,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import static com.woohaengshi.backend.exception.ErrorCode.*;
@@ -29,6 +31,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshCookieProvider refreshCookieProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public SignInResult signIn(SignInRequest request) {
@@ -73,6 +76,12 @@ public class AuthServiceImpl implements AuthService {
             refreshTokenRepository.delete(refreshToken);
         }
         return refreshCookieProvider.createSignOutCookie();
+    }
+
+    @Override
+    public void signUp(SignUpRequest request) {
+        Member member = request.toMember(passwordEncoder.encode(request.getPassword()));
+        memberRepository.save(member);
     }
 
     private void validateRefreshTokenExpired(RefreshToken refreshToken) {
