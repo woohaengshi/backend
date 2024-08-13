@@ -109,4 +109,24 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .findByMemberId(memberId)
                 .orElseThrow(() -> new WoohaengshiException(ErrorCode.STATISTICS_NOT_FOUND));
     }
+
+    @Override
+    public void updateDailyStatistics() {
+
+    }
+
+    @Override
+    public void updateWeeklyStatistics() {
+
+    }
+
+    @Override
+    public void updateMonthlyStatistics() {
+
+    }
+
+    @Override
+    public void updateTotalStatistics() {
+
+    }
 }

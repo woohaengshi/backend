@@ -8,4 +8,10 @@ import org.springframework.data.domain.Pageable;
 public interface StatisticsService {
     ShowRankSnapshotResponse showRankData(
             Long memberId, StatisticsType statisticsType, Pageable pageable);
+
+
+    void updateDailyStatistics();
+    void updateWeeklyStatistics();
+    void updateMonthlyStatistics();
+    void updateTotalStatistics();
 }
