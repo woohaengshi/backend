@@ -40,6 +40,34 @@ public class Statistics {
 
     protected Statistics() {}
 
+    public void initTime(StatisticsType type) {
+        if (type == StatisticsType.DAILY) {
+            dailyTime = 0;
+            return;
+        }
+        if (type == StatisticsType.WEEKLY) {
+            weeklyTime = 0;
+            return;
+        }
+        if (type == StatisticsType.MONTHLY) {
+            monthlyTime = 0;
+            return;
+        }
+        totalTime = 0;
+    }
+
+    public void updateTime(StatisticsType type, Integer time) {
+        if (type == StatisticsType.WEEKLY) {
+            weeklyTime += time;
+            return;
+        }
+        if (type == StatisticsType.MONTHLY) {
+            monthlyTime += time;
+            return;
+        }
+        totalTime += time;
+    }
+
     @Builder
     public Statistics(
             Long id, int monthlyTime, int weeklyTime, int dailyTime, int totalTime, Member member) {
