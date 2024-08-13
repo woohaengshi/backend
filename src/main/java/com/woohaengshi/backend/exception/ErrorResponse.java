@@ -25,6 +25,11 @@ public class ErrorResponse {
         this.errors = errors;
     }
 
+    public ErrorResponse(int status, String message) {
+        this.status = status;
+        this.message = message;
+    }
+
     public static ErrorResponse from(ErrorCode errorCode) {
         return ErrorResponse.builder()
                 .status(errorCode.getStatus().value())
