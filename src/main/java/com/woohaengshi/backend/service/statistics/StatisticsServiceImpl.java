@@ -9,8 +9,8 @@ import com.woohaengshi.backend.dto.response.statistics.ShowRankSnapshotResponse;
 import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.StatisticsRepository;
-
 import com.woohaengshi.backend.repository.StudyRecordRepository;
+
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -37,25 +37,30 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     @Transactional(readOnly = true)
-    public ShowRankSnapshotResponse showRankData(Long memberId, StatisticsType statisticsType, Pageable pageable) {
+    public ShowRankSnapshotResponse showRankData(
+            Long memberId, StatisticsType statisticsType, Pageable pageable) {
         Statistics statistics = findStatisticsByMemberId(memberId);
-        return statisticsType == StatisticsType.DAILY ? handleDailyStatistics(memberId, pageable, statistics)
+        return statisticsType == StatisticsType.DAILY
+                ? handleDailyStatistics(memberId, pageable, statistics)
                 : handlePeriodicStatistics(statisticsType, pageable, statistics);
     }
 
-    private ShowRankSnapshotResponse handleDailyStatistics(Long memberId, Pageable pageable, Statistics statistics) {
+    private ShowRankSnapshotResponse handleDailyStatistics(
+            Long memberId, Pageable pageable, Statistics statistics) {
         StudyRecord studyRecord = findStudyRecordByMemberId(memberId);
         Slice<StudyRecord> rankSlice = getRankDataSlice(LocalDate.now(), pageable);
         return ShowRankSnapshotResponse.of(
                 statistics.getMember(),
-                studyRecordRepository.findRankByDateAndMemberId(LocalDate.now(), studyRecord.getTime()),
+                studyRecordRepository.findRankByDateAndMemberId(
+                        LocalDate.now(), studyRecord.getTime()),
                 studyRecord.getTime(),
                 statistics.getTotalTime(),
                 rankSlice.hasNext(),
                 calculationRank(rankSlice, pageable, statistics));
     }
 
-    private ShowRankSnapshotResponse handlePeriodicStatistics(StatisticsType statisticsType, Pageable pageable, Statistics statistics) {
+    private ShowRankSnapshotResponse handlePeriodicStatistics(
+            StatisticsType statisticsType, Pageable pageable, Statistics statistics) {
         Slice<Statistics> rankSlice = getRankDataSlice(statisticsType, pageable);
         return ShowRankSnapshotResponse.of(
                 statistics.getMember(),
@@ -65,6 +70,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 rankSlice.hasNext(),
                 calculationRank(rankSlice, pageable, statisticsType));
     }
+
     private int getMemberRank(StatisticsType statisticsType, Statistics statistics) {
         int time = getTimeByStatisticsType(statisticsType, statistics);
 
@@ -112,11 +118,12 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     private Slice<StudyRecord> getRankDataSlice(LocalDate targetDate, Pageable pageable) {
-        Specification<StudyRecord> specification = (root, query, cb) -> {
-            Predicate datePredicate = cb.equal(root.get("date"), targetDate);
-            query.orderBy(cb.desc(root.get("time")));
-            return cb.and(datePredicate);
-        };
+        Specification<StudyRecord> specification =
+                (root, query, cb) -> {
+                    Predicate datePredicate = cb.equal(root.get("date"), targetDate);
+                    query.orderBy(cb.desc(root.get("time")));
+                    return cb.and(datePredicate);
+                };
         return studyRecordRepository.findAll(specification, pageable);
     }
 
@@ -127,7 +134,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         return IntStream.range(0, studyRecordSlice.getNumberOfElements())
                 .mapToObj(
                         index -> {
-                            StudyRecord studyRecord= studyRecordSlice.getContent().get(index);
+                            StudyRecord studyRecord = studyRecordSlice.getContent().get(index);
                             Member member = studyRecord.getMember();
 
                             return RankDataResponse.of(
@@ -138,7 +145,6 @@ public class StatisticsServiceImpl implements StatisticsService {
                         })
                 .toList();
     }
-
 
     private int getTimeByStatisticsType(StatisticsType statisticsType, Statistics statistics) {
         if (statisticsType == StatisticsType.WEEKLY) return statistics.getWeeklyTime();

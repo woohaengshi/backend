@@ -62,8 +62,7 @@ public class Statistics {
     }
 
     @Builder
-    public Statistics(
-            Long id, int monthlyTime, int weeklyTime, int totalTime, Member member) {
+    public Statistics(Long id, int monthlyTime, int weeklyTime, int totalTime, Member member) {
         this.id = id;
         this.monthlyTime = monthlyTime;
         this.weeklyTime = weeklyTime;
