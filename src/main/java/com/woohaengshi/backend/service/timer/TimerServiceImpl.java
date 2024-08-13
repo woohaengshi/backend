@@ -2,7 +2,7 @@ package com.woohaengshi.backend.service.timer;
 
 import com.woohaengshi.backend.constant.StandardTimeConstant;
 import com.woohaengshi.backend.domain.StudyRecord;
-import com.woohaengshi.backend.domain.Subject;
+import com.woohaengshi.backend.domain.subject.Subject;
 import com.woohaengshi.backend.dto.response.timer.ShowTimerResponse;
 import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
@@ -32,7 +32,7 @@ public class TimerServiceImpl implements TimerService {
     @Transactional(readOnly = true)
     public ShowTimerResponse getTimer(Long memberId) {
         validateExistMember(memberId);
-        List<Subject> subjects = subjectRepository.findAllByMemberIdOrderByNameAsc(memberId);
+        List<Subject> subjects = subjectRepository.findAllByMemberId(memberId);
         int todayStudyTime = getTodayStudyTime(memberId, getTodayDate());
         return ShowTimerResponse.of(todayStudyTime, subjects);
     }

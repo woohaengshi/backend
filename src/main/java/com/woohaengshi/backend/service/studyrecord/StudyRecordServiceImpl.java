@@ -5,8 +5,8 @@ import static com.woohaengshi.backend.exception.ErrorCode.SUBJECT_NOT_FOUND;
 
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.StudySubject;
-import com.woohaengshi.backend.domain.Subject;
 import com.woohaengshi.backend.domain.member.Member;
+import com.woohaengshi.backend.domain.subject.Subject;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowMonthlyRecordResponse;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowYearlyRecordResponse;

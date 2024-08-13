@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 
 import com.woohaengshi.backend.domain.StudyRecord;
-import com.woohaengshi.backend.domain.Subject;
 import com.woohaengshi.backend.domain.member.Member;
+import com.woohaengshi.backend.domain.subject.Subject;
 import com.woohaengshi.backend.dto.response.timer.ShowTimerResponse;
 import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
@@ -41,8 +41,7 @@ public class TimerServiceTest {
         List<Subject> subjects = List.of(subject1, subject2);
 
         given(memberRepository.existsById(member.getId())).willReturn(true);
-        given(subjectRepository.findAllByMemberIdOrderByNameAsc(member.getId()))
-                .willReturn(subjects);
+        given(subjectRepository.findAllByMemberId(member.getId())).willReturn(subjects);
         given(studyRecordRepository.findByDateAndMemberId(LocalDate.now(), member.getId()))
                 .willReturn(Optional.of(new StudyRecord(1L, 30, LocalDate.now(), member)));
 
@@ -70,8 +69,7 @@ public class TimerServiceTest {
         List<Subject> subjects = List.of(subject1, subject2);
 
         given(memberRepository.existsById(member.getId())).willReturn(true);
-        given(subjectRepository.findAllByMemberIdOrderByNameAsc(member.getId()))
-                .willReturn(subjects);
+        given(subjectRepository.findAllByMemberId(member.getId())).willReturn(subjects);
         given(studyRecordRepository.findByDateAndMemberId(LocalDate.now(), member.getId()))
                 .willReturn(Optional.empty());
 
