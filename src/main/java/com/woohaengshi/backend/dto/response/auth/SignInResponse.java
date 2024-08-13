@@ -1,6 +1,7 @@
 package com.woohaengshi.backend.dto.response.auth;
 
 import com.woohaengshi.backend.domain.member.Member;
+
 import lombok.Getter;
 
 @Getter

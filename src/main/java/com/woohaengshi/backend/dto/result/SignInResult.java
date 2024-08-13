@@ -1,7 +1,9 @@
 package com.woohaengshi.backend.dto.result;
 
 import com.woohaengshi.backend.dto.response.auth.SignInResponse;
+
 import lombok.Getter;
+
 import org.springframework.http.ResponseCookie;
 
 @Getter

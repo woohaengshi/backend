@@ -1,6 +1,9 @@
 package com.woohaengshi.backend.service.auth;
 
+import static com.woohaengshi.backend.exception.ErrorCode.*;
+
 import com.woohaengshi.backend.exception.WoohaengshiException;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.IncorrectClaimException;
@@ -13,14 +16,14 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
 import java.util.Date;
 
-import static com.woohaengshi.backend.exception.ErrorCode.*;
+import javax.crypto.SecretKey;
 
 @Component
 public class JwtTokenProvider {
@@ -33,8 +36,9 @@ public class JwtTokenProvider {
     private Long accessExpiration;
 
     @Autowired
-    public JwtTokenProvider(@Value("${security.jwt.key}") String key,
-                            @Value("${security.jwt.expiration.access}") Long accessExpiration) {
+    public JwtTokenProvider(
+            @Value("${security.jwt.key}") String key,
+            @Value("${security.jwt.expiration.access}") Long accessExpiration) {
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(key));
         this.accessExpiration = accessExpiration;
     }

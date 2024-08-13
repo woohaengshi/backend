@@ -1,5 +1,7 @@
 package com.woohaengshi.backend.service.auth;
 
+import static com.woohaengshi.backend.exception.ErrorCode.*;
+
 import com.woohaengshi.backend.controller.auth.RefreshCookieProvider;
 import com.woohaengshi.backend.domain.RefreshToken;
 import com.woohaengshi.backend.domain.member.Member;
@@ -10,14 +12,15 @@ import com.woohaengshi.backend.dto.result.SignInResult;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.RefreshTokenRepository;
+
 import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import static com.woohaengshi.backend.exception.ErrorCode.*;
 
 @Service
 @Transactional
@@ -40,22 +43,21 @@ public class AuthServiceImpl implements AuthService {
         SignInResponse signInResponse = SignInResponse.of(accessToken, member);
         refreshTokenRepository.deleteAllByMemberId(member.getId());
         RefreshToken refreshToken = refreshTokenRepository.save(createRefreshToken(member));
-        ResponseCookie refreshTokenCookie = refreshCookieProvider.createRefreshTokenCookie(refreshToken);
+        ResponseCookie refreshTokenCookie =
+                refreshCookieProvider.createRefreshTokenCookie(refreshToken);
         return new SignInResult(refreshTokenCookie, signInResponse);
     }
 
     private RefreshToken createRefreshToken(Member member) {
-        return RefreshToken.builder()
-                .expirationSeconds(expirationSeconds)
-                .member(member)
-                .build();
+        return RefreshToken.builder().expirationSeconds(expirationSeconds).member(member).build();
     }
 
     private Member findMemberByRequest(SignInRequest request) {
-        Member member = memberRepository
-                .findByEmail(request.getEmail())
-                .orElseThrow(() -> new WoohaengshiException(FAIL_TO_SIGN_IN));
-        if(!passwordEncoder.matches(request.getPassword(), member.getPassword())){
+        Member member =
+                memberRepository
+                        .findByEmail(request.getEmail())
+                        .orElseThrow(() -> new WoohaengshiException(FAIL_TO_SIGN_IN));
+        if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
             throw new WoohaengshiException(FAIL_TO_SIGN_IN);
         }
         return member;
@@ -70,7 +72,8 @@ public class AuthServiceImpl implements AuthService {
         Member member = refreshToken.getMember();
         String accessToken = jwtTokenProvider.createAccessToken(member.getId());
         SignInResponse signInResponse = SignInResponse.of(accessToken, member);
-        ResponseCookie refreshTokenCookie = refreshCookieProvider.createRefreshTokenCookie(refreshToken);
+        ResponseCookie refreshTokenCookie =
+                refreshCookieProvider.createRefreshTokenCookie(refreshToken);
         return new SignInResult(refreshTokenCookie, signInResponse);
     }
 
@@ -100,7 +103,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private void validateExistRefreshToken(String refreshToken) {
-        if(refreshToken == null){
+        if (refreshToken == null) {
             throw new WoohaengshiException(NOT_EXIST_REFRESH_TOKEN);
         }
     }

@@ -1,24 +1,28 @@
 package com.woohaengshi.backend.controller.auth;
 
+import static com.woohaengshi.backend.controller.auth.RefreshCookieProvider.REFRESH_TOKEN;
+
+import static org.springframework.http.HttpHeaders.SET_COOKIE;
+
 import com.woohaengshi.backend.dto.request.auth.SignUpRequest;
 import com.woohaengshi.backend.dto.request.studyrecord.auth.SignInRequest;
 import com.woohaengshi.backend.dto.response.auth.SignInResponse;
 import com.woohaengshi.backend.dto.result.SignInResult;
 import com.woohaengshi.backend.service.auth.AuthService;
+
 import jakarta.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CookieValue;
 
 import java.net.URI;
-
-import static com.woohaengshi.backend.controller.auth.RefreshCookieProvider.REFRESH_TOKEN;
-import static org.springframework.http.HttpHeaders.SET_COOKIE;
 
 @RestController
 @RequiredArgsConstructor

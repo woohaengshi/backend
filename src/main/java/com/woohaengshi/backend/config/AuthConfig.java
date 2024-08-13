@@ -2,6 +2,7 @@ package com.woohaengshi.backend.config;
 
 import com.woohaengshi.backend.controller.auth.AuthArgumentResolver;
 import com.woohaengshi.backend.controller.auth.AuthInterceptor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,9 +43,10 @@ public class AuthConfig implements WebMvcConfigurer {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        DelegatingPasswordEncoder passwordEncoder = (DelegatingPasswordEncoder) PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        DelegatingPasswordEncoder passwordEncoder =
+                (DelegatingPasswordEncoder)
+                        PasswordEncoderFactories.createDelegatingPasswordEncoder();
         passwordEncoder.setDefaultPasswordEncoderForMatches(new BCryptPasswordEncoder());
         return passwordEncoder;
     }
 }
-
