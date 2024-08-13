@@ -38,7 +38,8 @@ public class StudyRecordController {
     }
 
     @GetMapping("/yearly")
-    public ShowYearlyRecordResponse getYearlyRecords(@RequestParam("year") int year, @MemberId Long memberId) {
+    public ShowYearlyRecordResponse getYearlyRecords(
+            @RequestParam("year") int year, @MemberId Long memberId) {
         return studyRecordService.showYearlyRecord(year, memberId);
     }
 }
