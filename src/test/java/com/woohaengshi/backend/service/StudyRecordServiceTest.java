@@ -16,6 +16,8 @@ import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowDailyRecordResponse;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowMonthlyRecordResponse;
+import com.woohaengshi.backend.dto.response.studyrecord.ShowYearlyRecordResponse;
+import com.woohaengshi.backend.dto.result.MonthlyTotalRecordResult;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.StudyRecordRepository;
@@ -157,7 +159,7 @@ class StudyRecordServiceTest {
         records.add(new Object[] {9, 47000, 2L, "CSS"});
         YearMonth date = YearMonth.now();
 
-        ShowMonthlyRecordResponse expected = ShowMonthlyRecordResponse.of(2024, 8, records);
+        ShowMonthlyRecordResponse expected = ShowMonthlyRecordResponse.of(date, records);
 
         given(memberRepository.existsById(member.getId())).willReturn(true);
         given(studyRecordRepository.findByYearAndMonthAndMemberId(2024, 8, member.getId()))
@@ -184,6 +186,31 @@ class StudyRecordServiceTest {
                             assertThat(daily.getSubjects().get(j).getName())
                                     .isEqualTo(expectedDaily.getSubjects().get(j).getName());
                         }
+                    }
+                });
+    }
+
+    @Test
+    void 해당하는_연도의_월_별_공부_기록을_조회_한다() {
+        List<MonthlyTotalRecordResult> expected = new ArrayList<>();
+        expected.add(new MonthlyTotalRecordResult(1, 100L));
+        expected.add(new MonthlyTotalRecordResult(2, 200L));
+
+        given(memberRepository.existsById(1L)).willReturn(true);
+        given(studyRecordRepository.findMonthlyTotalByYearAndMemberId(2024, 1L))
+                .willReturn(expected);
+
+        ShowYearlyRecordResponse response = studyRecordService.showYearlyRecord(2024, 1L);
+
+        assertAll(
+                "response",
+                () -> assertThat(response.getYear()).isEqualTo(2024),
+                () -> {
+                    for (int i = 0; i < response.getMonthly().size(); i++) {
+                        assertThat(response.getMonthly().get(i).getMonth())
+                                .isEqualTo(expected.get(i).getMonth());
+                        assertThat(response.getMonthly().get(i).getTotal())
+                                .isEqualTo(expected.get(i).getTotal());
                     }
                 });
     }

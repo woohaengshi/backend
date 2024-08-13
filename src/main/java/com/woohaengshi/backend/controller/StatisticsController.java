@@ -1,5 +1,6 @@
 package com.woohaengshi.backend.controller;
 
+import com.woohaengshi.backend.controller.auth.MemberId;
 import com.woohaengshi.backend.domain.statistics.StatisticsType;
 import com.woohaengshi.backend.dto.response.statistics.ShowRankSnapshotResponse;
 import com.woohaengshi.backend.service.statistics.StatisticsService;
@@ -23,8 +24,9 @@ public class StatisticsController {
     @GetMapping
     public ShowRankSnapshotResponse getRanking(
             @PageableDefault(size = 100) Pageable pageable,
-            @RequestParam(value = "type", defaultValue = "WEEKLY") StatisticsType statisticsType) {
+            @RequestParam(value = "type", defaultValue = "WEEKLY") StatisticsType statisticsType,
+            @MemberId Long memberId) {
 
-        return statisticsService.showRankData(1L, statisticsType, pageable);
+        return statisticsService.showRankData(memberId, statisticsType, pageable);
     }
 }
