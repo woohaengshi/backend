@@ -17,15 +17,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-import static com.woohaengshi.backend.exception.ErrorCode.FAIL_TO_SIGN_IN;
+import static com.woohaengshi.backend.exception.ErrorCode.*;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class AuthServiceImp implements AuthService {
+public class AuthServiceImpl implements AuthService {
 
     @Value("${security.refresh.expiration}")
-    private Long expirationTime;
+    private Long expirationSeconds;
 
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
@@ -45,7 +45,7 @@ public class AuthServiceImp implements AuthService {
     private RefreshToken createRefreshToken(Member member) {
         return RefreshToken.builder()
                 .token(UUID.randomUUID().toString())
-                .expirationTime(expirationTime)
+                .expirationSeconds(expirationSeconds)
                 .member(member)
                 .build();
     }
@@ -53,5 +53,34 @@ public class AuthServiceImp implements AuthService {
     private Member findMemberByRequest(SignInRequest request) {
         return memberRepository.findByEmailAndPassword(request.getEmail(), request.getPassword())
                 .orElseThrow(() -> new WoohaengshiException(FAIL_TO_SIGN_IN));
+    }
+
+    @Override
+    public SignInResult reissue(String token) {
+        validateExistRefreshToken(token);
+        RefreshToken refreshToken = findRefreshToken(token);
+        validateRefreshTokenExpired(refreshToken);
+        refreshToken.reissue(expirationSeconds);
+        Member member = refreshToken.getMember();
+        String accessToken = jwtTokenProvider.createAccessToken(member.getId());
+        SignInResponse signInResponse = SignInResponse.of(accessToken, member);
+        ResponseCookie refreshTokenCookie = refreshCookieProvider.createRefreshTokenCookie(refreshToken);
+        return new SignInResult(refreshTokenCookie, signInResponse);
+    }
+
+    private void validateRefreshTokenExpired(RefreshToken refreshToken) {
+        if (refreshToken.isExpired()) throw new WoohaengshiException(REFRESH_TOKEN_EXPIRED);
+    }
+
+    private RefreshToken findRefreshToken(String refreshToken) {
+        return refreshTokenRepository
+                .findByToken(refreshToken)
+                .orElseThrow(() -> new WoohaengshiException(REFRESH_TOKEN_NOT_FOUND));
+    }
+
+    private void validateExistRefreshToken(String refreshToken) {
+        if(refreshToken == null){
+            throw new WoohaengshiException(NOT_EXIST_REFRESH_TOKEN);
+        }
     }
 }
