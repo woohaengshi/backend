@@ -15,8 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 import static com.woohaengshi.backend.exception.ErrorCode.*;
 
 @Service
