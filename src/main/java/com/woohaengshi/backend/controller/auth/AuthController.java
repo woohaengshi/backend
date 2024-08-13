@@ -1,5 +1,6 @@
 package com.woohaengshi.backend.controller.auth;
 
+import com.woohaengshi.backend.dto.request.auth.SignUpRequest;
 import com.woohaengshi.backend.dto.request.studyrecord.auth.SignInRequest;
 import com.woohaengshi.backend.dto.response.auth.SignInResponse;
 import com.woohaengshi.backend.dto.result.SignInResult;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.CookieValue;
 
+import java.net.URI;
 
 import static com.woohaengshi.backend.controller.auth.RefreshCookieProvider.REFRESH_TOKEN;
 import static org.springframework.http.HttpHeaders.SET_COOKIE;
@@ -25,6 +27,12 @@ public class AuthController {
 
     private final AuthService authService;
 
+    @PostMapping("/sign-up")
+    public ResponseEntity<Void> signUp(@RequestBody @Valid SignUpRequest signUpRequest) {
+        authService.signUp(signUpRequest);
+        return ResponseEntity.created(URI.create("/api/v1/sign-in")).build();
+    }
+
     @PostMapping("/sign-in")
     public ResponseEntity<SignInResponse> signIn(@RequestBody @Valid SignInRequest signInRequest) {
         SignInResult result = authService.signIn(signInRequest);
@@ -34,7 +42,8 @@ public class AuthController {
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<SignInResponse> reissue(@CookieValue(name = REFRESH_TOKEN, required = false) String refreshToken){
+    public ResponseEntity<SignInResponse> reissue(
+            @CookieValue(name = REFRESH_TOKEN, required = false) String refreshToken) {
         SignInResult result = authService.reissue(refreshToken);
         return ResponseEntity.ok()
                 .header(SET_COOKIE, result.getRefreshTokenCookie().toString())
@@ -42,7 +51,8 @@ public class AuthController {
     }
 
     @PostMapping("/sign-out")
-    public ResponseEntity<Void> signOut(@CookieValue(name = REFRESH_TOKEN, required = false) String refreshToken){
+    public ResponseEntity<Void> signOut(
+            @CookieValue(name = REFRESH_TOKEN, required = false) String refreshToken) {
         ResponseCookie signOutCookie = authService.signOut(refreshToken);
         return ResponseEntity.ok().header(SET_COOKIE, signOutCookie.toString()).build();
     }
