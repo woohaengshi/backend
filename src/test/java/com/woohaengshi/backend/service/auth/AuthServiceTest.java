@@ -45,8 +45,8 @@ class AuthServiceTest {
         Member member = MemberFixture.builder().id(1L).build();
         RefreshToken refreshToken = RefreshToken.builder().expirationSeconds(1000L).build();
         given(
-                        memberRepository.findByEmailAndPassword(
-                                signInRequest.getEmail(), signInRequest.getPassword()))
+                        memberRepository.findByEmail(
+                                signInRequest.getEmail()))
                 .willReturn(Optional.of(member));
         given(jwtTokenProvider.createAccessToken(member.getId())).willReturn("fakeAccessToken");
         given(refreshTokenRepository.save(any(RefreshToken.class))).willReturn(refreshToken);
@@ -54,8 +54,8 @@ class AuthServiceTest {
                 () -> authService.signIn(signInRequest),
                 () ->
                         verify(memberRepository, times(1))
-                                .findByEmailAndPassword(
-                                        signInRequest.getEmail(), signInRequest.getPassword()),
+                                .findByEmail(
+                                        signInRequest.getEmail()),
                 () -> verify(refreshTokenRepository, times(1)).save(any(RefreshToken.class)));
     }
 
@@ -63,8 +63,8 @@ class AuthServiceTest {
     void 이메일과_비밀번호가_일치하지_않으면_예외() {
         SignInRequest signInRequest = new SignInRequest("rlfrkdms1@naver.com", "password12!@");
         given(
-                        memberRepository.findByEmailAndPassword(
-                                signInRequest.getEmail(), signInRequest.getPassword()))
+                        memberRepository.findByEmail(
+                                signInRequest.getEmail()))
                 .willReturn(Optional.empty());
         assertAll(
                 () ->
@@ -72,7 +72,7 @@ class AuthServiceTest {
                                 .isExactlyInstanceOf(WoohaengshiException.class),
                 () ->
                         verify(memberRepository, times(1))
-                                .findByEmailAndPassword(
-                                        signInRequest.getEmail(), signInRequest.getPassword()));
+                                .findByEmail(
+                                        signInRequest.getEmail()));
     }
 }
