@@ -5,6 +5,7 @@ import static com.woohaengshi.backend.controller.auth.RefreshCookieProvider.REFR
 import static org.springframework.http.HttpHeaders.SET_COOKIE;
 
 import com.woohaengshi.backend.dto.request.auth.SignInRequest;
+import com.woohaengshi.backend.dto.request.auth.SignUpRequest;
 import com.woohaengshi.backend.dto.response.auth.SignInResponse;
 import com.woohaengshi.backend.dto.result.SignInResult;
 import com.woohaengshi.backend.service.auth.AuthService;
@@ -21,12 +22,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class AuthController {
 
     private final AuthService authService;
+
+    @PostMapping("/sign-up")
+    public ResponseEntity<Void> signUp(@RequestBody @Valid SignUpRequest signUpRequest) {
+        authService.signUp(signUpRequest);
+        return ResponseEntity.created(URI.create("/api/v1/sign-in")).build();
+    }
 
     @PostMapping("/sign-in")
     public ResponseEntity<SignInResponse> signIn(@RequestBody @Valid SignInRequest signInRequest) {

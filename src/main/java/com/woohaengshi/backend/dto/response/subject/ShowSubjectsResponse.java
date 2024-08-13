@@ -1,6 +1,6 @@
 package com.woohaengshi.backend.dto.response.subject;
 
-import com.woohaengshi.backend.domain.Subject;
+import com.woohaengshi.backend.domain.subject.Subject;
 
 import lombok.Getter;
 
