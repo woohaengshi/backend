@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `refresh_token`
     `id`              BIGINT       NOT NULL auto_increment,
     `member_id`       BIGINT       NOT NULL,
     `token`           VARCHAR(255) NOT NULL,
-    `expiration_time` BIGINT       NOT NULL,
+    `expiration_time` TIMESTAMP       NOT NULL,
     PRIMARY KEY (`id`)
 )
     engine = innodb
