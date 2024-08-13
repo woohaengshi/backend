@@ -3,6 +3,7 @@ package com.woohaengshi.backend.repository;
 import com.woohaengshi.backend.domain.StudyRecord;
 
 import com.woohaengshi.backend.domain.member.Member;
+import com.woohaengshi.backend.domain.statistics.Statistics;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,6 +14,8 @@ import java.util.Optional;
 
 public interface StudyRecordRepository extends JpaRepository<StudyRecord, Long> {
     Optional<StudyRecord> findByDateAndMemberId(LocalDate date, Long memberId);
+    @Query("SELECT s FROM StudyRecord s JOIN FETCH s.member WHERE s.member.id = :memberId")
+    Optional<StudyRecord> findByMemberId(Long memberId);
 
     @Query(
             value =
@@ -29,6 +32,9 @@ public interface StudyRecordRepository extends JpaRepository<StudyRecord, Long> 
             @Param(value = "year") int year,
             @Param(value = "month") int month,
             @Param(value = "memberId") Long memberId);
+
+    @Query("SELECT COUNT(s) + 1 FROM StudyRecord s WHERE s.date = :date AND s.time > :time")
+    Integer findRankByDateAndMemberId(LocalDate date, int time);
 
     @Query("SELECT SUM(sr.time) FROM StudyRecord sr WHERE sr.member = :member AND sr.date BETWEEN :startDate AND :endDate")
     Integer sumTimeByMemberAndDateBetween(@Param("member") Member member, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
