@@ -9,6 +9,7 @@ import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.subject.Subject;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowMonthlyRecordResponse;
+import com.woohaengshi.backend.dto.response.studyrecord.ShowYearlyRecordResponse;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.StudyRecordRepository;
@@ -52,6 +53,15 @@ public class StudyRecordServiceImpl implements StudyRecordService {
                 date,
                 studyRecordRepository.findByYearAndMonthAndMemberId(
                         date.getYear(), date.getMonthValue(), memberId));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ShowYearlyRecordResponse showYearlyRecord(int year, Long memberId) {
+        validateExistMember(memberId);
+
+        return ShowYearlyRecordResponse.of(
+                year, studyRecordRepository.findMonthlyTotalByYearAndMemberId(year, memberId));
     }
 
     private void validateExistMember(Long memberId) {

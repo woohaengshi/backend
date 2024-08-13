@@ -12,12 +12,12 @@ import java.util.List;
 public class ShowMonthlyRecordResponse {
     private int year;
     private int month;
-    private List<ShowDailyRecordResponse> daily;
+    private List<ShowDailyRecordResponse> records;
 
-    private ShowMonthlyRecordResponse(int year, int month, List<ShowDailyRecordResponse> daily) {
+    private ShowMonthlyRecordResponse(int year, int month, List<ShowDailyRecordResponse> records) {
         this.year = year;
         this.month = month;
-        this.daily = daily;
+        this.records = records;
     }
 
     public static ShowMonthlyRecordResponse of(YearMonth date, List<Object[]> records) {

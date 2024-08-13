@@ -78,4 +78,33 @@ class StudyRecordControllerTest extends ControllerTest {
                 .all()
                 .statusCode(BAD_REQUEST.value());
     }
+
+    @Test
+    void 연도를_통해_공부_기록을_조회할_수_있다() {
+        RestAssured.given()
+                .log()
+                .all()
+                .contentType(ContentType.JSON)
+                .queryParam("year", 2024)
+                .when()
+                .get("/api/v1/study-record/yearly")
+                .then()
+                .log()
+                .all()
+                .statusCode(OK.value());
+    }
+
+    @Test
+    void 연도가_전달되지_않으면_공부_기록을_조회할_수_없다() {
+        RestAssured.given()
+                .log()
+                .all()
+                .contentType(ContentType.JSON)
+                .when()
+                .get("/api/v1/study-record/yearly")
+                .then()
+                .log()
+                .all()
+                .statusCode(BAD_REQUEST.value());
+    }
 }
