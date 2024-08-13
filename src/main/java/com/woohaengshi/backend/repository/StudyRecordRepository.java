@@ -33,7 +33,7 @@ public interface StudyRecordRepository
             @Param(value = "memberId") Long memberId);
 
     @Query("SELECT COUNT(s) + 1 FROM StudyRecord s WHERE s.date = :date AND s.time > :time")
-    Integer findRankByDateAndMemberId(LocalDate date, int time);
+    Integer findRankByDate(LocalDate date, int time);
 
     @Query(
             "select new com.woohaengshi.backend.dto.result.MonthlyTotalRecordResult("

@@ -51,7 +51,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 statistics.getMember(),
                 (studyRecord == null)
                         ? 0
-                        : studyRecordRepository.findRankByDateAndMemberId(
+                        : studyRecordRepository.findRankByDate(
                                 LocalDate.now(), studyRecord.getTime()),
                 (studyRecord == null) ? 0 : studyRecord.getTime(),
                 statistics.getTotalTime(),
