@@ -1,6 +1,7 @@
 package com.woohaengshi.backend.dto.response.studyrecord;
 
 import com.woohaengshi.backend.dto.result.MonthlyTotalRecordResult;
+
 import lombok.Getter;
 
 @Getter
