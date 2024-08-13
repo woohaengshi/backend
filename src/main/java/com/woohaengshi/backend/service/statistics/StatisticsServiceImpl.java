@@ -11,10 +11,7 @@ import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.StatisticsRepository;
 import com.woohaengshi.backend.repository.StudyRecordRepository;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +22,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -62,13 +61,14 @@ public class StatisticsServiceImpl implements StatisticsService {
     private ShowRankSnapshotResponse handlePeriodicStatistics(
             StatisticsType statisticsType, Pageable pageable, Statistics statistics) {
         Slice<Statistics> rankSlice = getRankDataSlice(statisticsType, pageable);
+        int studyTime = getTimeByStatisticsType(statisticsType, statistics);
         return ShowRankSnapshotResponse.of(
                 statistics.getMember(),
-                getMemberRank(statisticsType, statistics),
-                getTimeByStatisticsType(statisticsType, statistics),
+                (studyTime == 0) ? 0 : getMemberRank(statisticsType, statistics),
+                studyTime,
                 statistics.getTotalTime(),
                 rankSlice.hasNext(),
-                calculationRank(rankSlice, pageable, statisticsType));
+                (rankSlice.getContent().size() == 0) ? Collections.emptyList(): calculationRank(rankSlice, pageable, statisticsType));
     }
 
     private int getMemberRank(StatisticsType statisticsType, Statistics statistics) {
@@ -76,27 +76,47 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         Specification<Statistics> specification =
                 (Root<Statistics> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
-                    if (statisticsType == StatisticsType.WEEKLY)
-                        return cb.greaterThan(root.get("weeklyTime"), time);
-                    if (statisticsType == StatisticsType.MONTHLY)
-                        return cb.greaterThan(root.get("monthlyTime"), time);
+                    Predicate greaterThanTime = null;
+                    Predicate timeIsNotZero = null;
 
-                    throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
+                    if (statisticsType == StatisticsType.WEEKLY) {
+                        greaterThanTime = cb.greaterThan(root.get("weeklyTime"), time);
+                        timeIsNotZero = cb.notEqual(root.get("weeklyTime"), 0);
+                    } else if (statisticsType == StatisticsType.MONTHLY) {
+                        greaterThanTime = cb.greaterThan(root.get("monthlyTime"), time);
+                        timeIsNotZero = cb.notEqual(root.get("monthlyTime"), 0);
+                    } else {
+                        throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
+                    }
+
+                    return cb.and(greaterThanTime, timeIsNotZero);
                 };
         return (int) statisticsRepository.count(specification) + 1;
     }
 
+
     private Slice<Statistics> getRankDataSlice(StatisticsType statisticsType, Pageable pageable) {
-        Specification<Statistics> specification =
-                (Root<Statistics> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
-                    if (statisticsType == StatisticsType.WEEKLY)
-                        query.orderBy(cb.desc(root.get("weeklyTime")));
-                    if (statisticsType == StatisticsType.MONTHLY)
-                        query.orderBy(cb.desc(root.get("monthlyTime")));
-                    return query.getRestriction();
-                };
+        Specification<Statistics> specification = (root, query, cb) -> {
+            Predicate timeIsNotZero;
+
+             if (statisticsType == StatisticsType.WEEKLY) {
+                timeIsNotZero = cb.notEqual(root.get("weeklyTime"), 0);
+                query.orderBy(cb.desc(root.get("weeklyTime")));
+            } else if (statisticsType == StatisticsType.MONTHLY) {
+                timeIsNotZero = cb.notEqual(root.get("monthlyTime"), 0);
+                query.orderBy(cb.desc(root.get("monthlyTime")));
+            } else {
+                throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
+            }
+
+            query.where(timeIsNotZero);
+            return query.getRestriction();
+        };
+
         return statisticsRepository.findAll(specification, pageable);
     }
+
+
 
     private List<RankDataResponse> calculationRank(
             Slice<Statistics> statisticsSlice, Pageable pageable, StatisticsType statisticsType) {

@@ -31,7 +31,7 @@ public class RankDataResponse {
         this.totalTime = totalTime;
     }
 
-    public static RankDataResponse of(Member member, int rank, int time, int totalTime) {
+    public static RankDataResponse of(Member member, Integer rank, Integer time, Integer totalTime) {
         return new RankDataResponse(
                 member.getId(),
                 member.getCourse().getName(),
