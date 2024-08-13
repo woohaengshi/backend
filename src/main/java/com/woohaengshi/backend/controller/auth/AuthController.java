@@ -6,6 +6,7 @@ import com.woohaengshi.backend.dto.result.SignInResult;
 import com.woohaengshi.backend.service.auth.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,5 +39,11 @@ public class AuthController {
         return ResponseEntity.ok()
                 .header(SET_COOKIE, result.getRefreshTokenCookie().toString())
                 .body(result.getSignInResponse());
+    }
+
+    @PostMapping("/sign-out")
+    public ResponseEntity<Void> signOut(@CookieValue(name = REFRESH_TOKEN, required = false) String refreshToken){
+        ResponseCookie signOutCookie = authService.signOut(refreshToken);
+        return ResponseEntity.ok().header(SET_COOKIE, signOutCookie.toString()).build();
     }
 }
