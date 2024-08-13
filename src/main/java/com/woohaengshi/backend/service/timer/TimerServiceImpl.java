@@ -32,7 +32,7 @@ public class TimerServiceImpl implements TimerService {
     @Transactional(readOnly = true)
     public ShowTimerResponse getTimer(Long memberId) {
         validateExistMember(memberId);
-        List<Subject> subjects = subjectRepository.findAllByMemberIdOrderByNameAsc(memberId);
+        List<Subject> subjects = subjectRepository.findAllByMemberId(memberId);
         int todayStudyTime = getTodayStudyTime(memberId, getTodayDate());
         return ShowTimerResponse.of(todayStudyTime, subjects);
     }
