@@ -30,7 +30,7 @@ public class RefreshCookieProvider {
                 .sameSite(Cookie.SameSite.NONE.attributeValue());
     }
 
-    public ResponseCookie createLogoutCookie() {
+    public ResponseCookie createSignOutCookie() {
         return createBaseCookie("")
                 .maxAge(0)
                 .build();
