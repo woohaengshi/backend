@@ -52,8 +52,13 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private Member findMemberByRequest(SignInRequest request) {
-        return memberRepository.findByEmailAndPassword(request.getEmail(), request.getPassword())
+        Member member = memberRepository
+                .findByEmail(request.getEmail())
                 .orElseThrow(() -> new WoohaengshiException(FAIL_TO_SIGN_IN));
+        if(!passwordEncoder.matches(request.getPassword(), member.getPassword())){
+            throw new WoohaengshiException(FAIL_TO_SIGN_IN);
+        }
+        return member;
     }
 
     @Override
