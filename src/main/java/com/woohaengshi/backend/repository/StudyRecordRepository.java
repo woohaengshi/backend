@@ -5,6 +5,7 @@ import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.statistics.Statistics;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -12,7 +13,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public interface StudyRecordRepository extends JpaRepository<StudyRecord, Long> {
+public interface StudyRecordRepository extends JpaRepository<StudyRecord, Long>, JpaSpecificationExecutor<StudyRecord> {
     Optional<StudyRecord> findByDateAndMemberId(LocalDate date, Long memberId);
     @Query("SELECT s FROM StudyRecord s JOIN FETCH s.member WHERE s.member.id = :memberId")
     Optional<StudyRecord> findByMemberId(Long memberId);
