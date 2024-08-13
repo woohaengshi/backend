@@ -8,14 +8,15 @@ import java.util.List;
 @Getter
 public class ShowYearlyRecordResponse {
     private int year;
-    private List<MonthlyTotalRecordResult> monthly;
+    private List<ShowMonthlyTotalResponse> records;
 
-    private ShowYearlyRecordResponse(int year, List<MonthlyTotalRecordResult> monthly) {
+    private ShowYearlyRecordResponse(int year, List<ShowMonthlyTotalResponse> records) {
         this.year = year;
-        this.monthly = monthly;
+        this.records = records;
     }
 
-    public static ShowYearlyRecordResponse of(int year, List<MonthlyTotalRecordResult> monthly) {
-        return new ShowYearlyRecordResponse(year, monthly);
+    public static ShowYearlyRecordResponse of(int year, List<MonthlyTotalRecordResult> records) {
+        return new ShowYearlyRecordResponse(
+                year, records.stream().map(ShowMonthlyTotalResponse::from).toList());
     }
 }
