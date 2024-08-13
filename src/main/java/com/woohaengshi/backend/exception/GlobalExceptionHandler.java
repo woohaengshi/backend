@@ -40,14 +40,13 @@ public class GlobalExceptionHandler {
                                 METHOD_NOT_ALLOWED.value(),
                                 String.format(
                                         "요청 HTTP METHOD는 <%s>이지만, 해당 URI를 지원하는 HTTP METHOD는"
-                                            + " <%s>입니다.",
+                                                + " <%s>입니다.",
                                         exception.getMethod(), supportedMethods)));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(
-            HttpMessageNotReadableException exception
-    ) {
+            HttpMessageNotReadableException exception) {
         return ResponseEntity.status(INVALID_INPUT.getStatus())
                 .body(
                         new ErrorResponse(
