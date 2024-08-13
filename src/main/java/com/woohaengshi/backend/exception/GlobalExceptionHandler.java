@@ -1,6 +1,7 @@
 package com.woohaengshi.backend.exception;
 
 import static com.woohaengshi.backend.exception.ErrorCode.INVALID_INPUT;
+
 import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,8 @@ public class GlobalExceptionHandler {
                         new ErrorResponse(
                                 METHOD_NOT_ALLOWED.value(),
                                 String.format(
-                                        "요청 HTTP METHOD는 <%s>이지만, 해당 URI를 지원하는 HTTP METHOD는 <%s>입니다.",
+                                        "요청 HTTP METHOD는 <%s>이지만, 해당 URI를 지원하는 HTTP METHOD는"
+                                            + " <%s>입니다.",
                                         exception.getMethod(), supportedMethods)));
     }
 

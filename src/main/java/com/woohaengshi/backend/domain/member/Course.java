@@ -1,10 +1,10 @@
 package com.woohaengshi.backend.domain.member;
 
+import static com.woohaengshi.backend.exception.ErrorCode.COURSE_NOT_FOUND;
+
 import com.woohaengshi.backend.exception.WoohaengshiException;
 
 import java.util.Arrays;
-
-import static com.woohaengshi.backend.exception.ErrorCode.COURSE_NOT_FOUND;
 
 public enum Course {
     CLOUD_SERVICE("클라우드 서비스"),
