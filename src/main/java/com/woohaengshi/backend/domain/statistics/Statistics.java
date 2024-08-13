@@ -50,4 +50,8 @@ public class Statistics {
         this.member = member;
         this.totalTime = totalTime;
     }
+
+    public Statistics(Member member) {
+        this.member = member;
+    }
 }
