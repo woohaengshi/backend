@@ -32,11 +32,11 @@ public class StudyRecordController {
 
     @GetMapping("/monthly")
     public ShowMonthlyRecordResponse getMonthlyRecords(
-       @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM") YearMonth date) {
-       @MemberId Long memberId) {
+            @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM") YearMonth date,
+            @MemberId Long memberId) {
         return studyRecordService.showMonthlyRecord(date, memberId);
     }
-      
+
     @GetMapping("/yearly")
     public ShowYearlyRecordResponse getYearlyRecords(@RequestParam("year") int year) {
         return studyRecordService.showYearlyRecord(year, 16L);
