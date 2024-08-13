@@ -1,6 +1,6 @@
 package com.woohaengshi.backend.controller.auth;
 
-import com.woohaengshi.backend.dto.request.studyrecord.auth.SignInRequest;
+import com.woohaengshi.backend.dto.request.auth.SignInRequest;
 import com.woohaengshi.backend.support.ControllerTest;
 import org.junit.jupiter.api.Test;
 

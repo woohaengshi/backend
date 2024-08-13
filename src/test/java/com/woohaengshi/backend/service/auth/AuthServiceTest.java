@@ -3,7 +3,7 @@ package com.woohaengshi.backend.service.auth;
 import com.woohaengshi.backend.controller.auth.RefreshCookieProvider;
 import com.woohaengshi.backend.domain.RefreshToken;
 import com.woohaengshi.backend.domain.member.Member;
-import com.woohaengshi.backend.dto.request.studyrecord.auth.SignInRequest;
+import com.woohaengshi.backend.dto.request.auth.SignInRequest;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.RefreshTokenRepository;
