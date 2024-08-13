@@ -4,6 +4,7 @@ import com.woohaengshi.backend.controller.auth.RefreshCookieProvider;
 import com.woohaengshi.backend.domain.RefreshToken;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.request.studyrecord.auth.SignInRequest;
+import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.RefreshTokenRepository;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
@@ -17,6 +18,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -34,28 +36,43 @@ class AuthServiceTest {
 
     @BeforeEach()
     public void setUp() {
-        ReflectionTestUtils.setField(authService,
-                "expirationSeconds",
-                10000L);
+        ReflectionTestUtils.setField(authService, "expirationSeconds", 10000L);
     }
+
     @Test
-    void 로그인을_할_수_있다(){
+    void 로그인을_할_수_있다() {
         SignInRequest signInRequest = new SignInRequest("rlfrkdms1@naver.com", "password12!@");
         Member member = MemberFixture.builder().id(1L).build();
         RefreshToken refreshToken = RefreshToken.builder().expirationSeconds(1000L).build();
         given(
-                memberRepository.findByEmailAndPassword(
-                        signInRequest.getEmail(), signInRequest.getPassword())).willReturn(Optional.of(member));
+                        memberRepository.findByEmailAndPassword(
+                                signInRequest.getEmail(), signInRequest.getPassword()))
+                .willReturn(Optional.of(member));
         given(jwtTokenProvider.createAccessToken(member.getId())).willReturn("fakeAccessToken");
         given(refreshTokenRepository.save(any(RefreshToken.class))).willReturn(refreshToken);
         assertAll(
                 () -> authService.signIn(signInRequest),
-                () -> verify(memberRepository, times(1)).findByEmailAndPassword(
-                        signInRequest.getEmail(), signInRequest.getPassword()),
-                () -> verify(refreshTokenRepository, times(1)).save(any(RefreshToken.class))
-        );
+                () ->
+                        verify(memberRepository, times(1))
+                                .findByEmailAndPassword(
+                                        signInRequest.getEmail(), signInRequest.getPassword()),
+                () -> verify(refreshTokenRepository, times(1)).save(any(RefreshToken.class)));
     }
 
-
+    @Test
+    void 이메일과_비밀번호가_일치하지_않으면_예외() {
+        SignInRequest signInRequest = new SignInRequest("rlfrkdms1@naver.com", "password12!@");
+        given(
+                        memberRepository.findByEmailAndPassword(
+                                signInRequest.getEmail(), signInRequest.getPassword()))
+                .willReturn(Optional.empty());
+        assertAll(
+                () ->
+                        assertThatThrownBy(() -> authService.signIn(signInRequest))
+                                .isExactlyInstanceOf(WoohaengshiException.class),
+                () ->
+                        verify(memberRepository, times(1))
+                                .findByEmailAndPassword(
+                                        signInRequest.getEmail(), signInRequest.getPassword()));
+    }
 }
-
