@@ -206,12 +206,13 @@ class StudyRecordServiceTest {
                 "response",
                 () -> assertThat(response.getYear()).isEqualTo(2024),
                 () -> {
-                    for(int i=0; i<response.getMonthly().size(); i++) {
-                        assertThat(response.getMonthly().get(i).getMonth()).isEqualTo(expected.get(i).getMonth());
-                        assertThat(response.getMonthly().get(i).getTotal()).isEqualTo(expected.get(i).getTotal());
+                    for (int i = 0; i < response.getMonthly().size(); i++) {
+                        assertThat(response.getMonthly().get(i).getMonth())
+                                .isEqualTo(expected.get(i).getMonth());
+                        assertThat(response.getMonthly().get(i).getTotal())
+                                .isEqualTo(expected.get(i).getTotal());
                     }
-                }
-        );
+                });
     }
 
     @Test

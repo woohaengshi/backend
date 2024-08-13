@@ -97,7 +97,8 @@ public class StudyRecordRepositoryTest {
                 () -> assertThat(results.get(0).getMonth()).isEqualTo(date1.getMonth().getValue()),
                 () -> assertThat(results.get(0).getTotal()).isEqualTo(studyRecord1.getTime()),
                 () -> assertThat(results.get(1).getMonth()).isEqualTo(date2.getMonth().getValue()),
-                () -> assertThat(results.get(1).getTotal()).isEqualTo(studyRecord2.getTime() + studyRecord3.getTime())
-        );
+                () ->
+                        assertThat(results.get(1).getTotal())
+                                .isEqualTo(studyRecord2.getTime() + studyRecord3.getTime()));
     }
 }
