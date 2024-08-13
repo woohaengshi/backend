@@ -10,6 +10,7 @@ public enum ErrorCode {
     STATISTICS_TYPE_NOT_FOUND(BAD_REQUEST, "랭킹 조회에서 찾을 수 없는 유형 타입입니다."),
     STATISTICS_NOT_FOUND(NOT_FOUND, "통계를 찾을 수 없습니다"),
     SUBJECT_NOT_FOUND(NOT_FOUND, "과목을 찾을 수 없습니다."),
+    STUDY_RECORD_NOT_FOUND(NOT_FOUND, "학습 기록을 찾을 수 없습니다."),
     INVALID_INPUT(BAD_REQUEST, "잘못된 입력 값입니다.");
 
     private final HttpStatus status;

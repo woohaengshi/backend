@@ -155,9 +155,10 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     private StudyRecord findStudyRecordByMemberId(Long memberId) {
+        System.out.println(memberId);
         return studyRecordRepository
-                .findByMemberId(memberId)
-                .orElseThrow(() -> new WoohaengshiException(ErrorCode.INVALID_INPUT));
+                .findByDateAndMemberId(LocalDate.now(), memberId)
+                .orElseThrow(() -> new WoohaengshiException(ErrorCode.STUDY_RECORD_NOT_FOUND));
     }
 
     @Override
