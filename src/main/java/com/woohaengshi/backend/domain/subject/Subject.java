@@ -37,4 +37,9 @@ public class Subject {
         this.name = name;
         this.member = member;
     }
+
+    public Subject(String name, Member member) {
+        this.name = name;
+        this.member = member;
+    }
 }

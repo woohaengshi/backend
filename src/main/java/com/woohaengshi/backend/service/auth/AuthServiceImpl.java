@@ -6,6 +6,8 @@ import com.woohaengshi.backend.controller.auth.RefreshCookieProvider;
 import com.woohaengshi.backend.domain.RefreshToken;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.statistics.Statistics;
+import com.woohaengshi.backend.domain.subject.DefaultSubject;
+import com.woohaengshi.backend.domain.subject.Subject;
 import com.woohaengshi.backend.dto.request.auth.SignInRequest;
 import com.woohaengshi.backend.dto.request.auth.SignUpRequest;
 import com.woohaengshi.backend.dto.response.auth.SignInResponse;
@@ -93,6 +95,8 @@ public class AuthServiceImpl implements AuthService {
     public void signUp(SignUpRequest request) {
         Member member = request.toMember(passwordEncoder.encode(request.getPassword()));
         memberRepository.save(member);
+        DefaultSubject.getDefaultSubjects(member.getCourse())
+                .forEach(subject -> new Subject(subject, member));
         statisticsRepository.save(new Statistics(member));
     }
 
