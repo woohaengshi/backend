@@ -7,6 +7,7 @@ import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.SubjectRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,8 +18,7 @@ import java.util.List;
 @Service
 public class SubjectServiceImpl implements SubjectService {
 
-    @Autowired
-    private SubjectRepository subjectRepository;
+    @Autowired private SubjectRepository subjectRepository;
     @Autowired private MemberRepository memberRepository;
 
     public void editSubjects(Long memberId, SubjectRequest requestDTO) {
@@ -42,12 +42,11 @@ public class SubjectServiceImpl implements SubjectService {
 
     private void insertSubjects(Long memberId, List<String> addSubjects) {
         Member member = memberRepository.findById(memberId).get();
-        addSubjects
-                .forEach(
-                        subject -> {
-                            validateAlreadyExistSubject(memberId, subject);
-                            subjectRepository.save(Subject.builder().name(subject).member(member).build());
-                        });
+        addSubjects.forEach(
+                subject -> {
+                    validateAlreadyExistSubject(memberId, subject);
+                    subjectRepository.save(Subject.builder().name(subject).member(member).build());
+                });
     }
 
     private void deleteSubjects(List<Long> deleteSubjects) {

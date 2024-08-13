@@ -1,18 +1,21 @@
 package com.woohaengshi.backend.controller;
 
+import static com.woohaengshi.backend.exception.ErrorCode.SUBJECT_ALREADY_EXISTS;
+import static com.woohaengshi.backend.exception.ErrorCode.SUBJECT_NOT_FOUND;
+
+import static org.springframework.http.HttpStatus.OK;
+
 import com.woohaengshi.backend.dto.request.subject.SubjectRequest;
+
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
 import java.util.List;
-
-import static com.woohaengshi.backend.exception.ErrorCode.SUBJECT_ALREADY_EXISTS;
-import static com.woohaengshi.backend.exception.ErrorCode.SUBJECT_NOT_FOUND;
-import static org.springframework.http.HttpStatus.OK;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SubjectControllerTest {

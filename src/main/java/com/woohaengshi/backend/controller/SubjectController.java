@@ -2,7 +2,9 @@ package com.woohaengshi.backend.controller;
 
 import com.woohaengshi.backend.dto.request.subject.SubjectRequest;
 import com.woohaengshi.backend.service.subject.SubjectService;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SubjectController {
 
     private final SubjectService subjectService;
+
     @PostMapping
     public ResponseEntity<Void> edit(@RequestBody SubjectRequest request) {
         Long memberId = 1L;
