@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 @Getter
 @Entity
 public class RefreshToken {
@@ -21,16 +24,25 @@ public class RefreshToken {
     private Member member;
 
     @Column(name = "expiration_time", nullable = false)
-    private Long expirationTime;
+    private LocalDateTime expirationTime;
 
     protected RefreshToken() {
     }
 
+    public boolean isExpired(){
+        return LocalDateTime.now().isAfter(expirationTime);
+    }
+
     @Builder
-    private RefreshToken(Long expirationTime, Long id, Member member, String token) {
-        this.expirationTime = expirationTime;
+    public RefreshToken(Long expirationSeconds, Long id, Member member, String token) {
+        this.expirationTime = LocalDateTime.now().plusSeconds(expirationSeconds);
         this.id = id;
         this.member = member;
         this.token = token;
+    }
+
+    public void reissue(Long expirationSeconds) {
+        this.token = UUID.randomUUID().toString();
+        this.expirationTime = LocalDateTime.now().plusSeconds(expirationSeconds);
     }
 }
