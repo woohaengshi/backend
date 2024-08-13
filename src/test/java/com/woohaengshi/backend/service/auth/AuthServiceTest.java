@@ -2,7 +2,9 @@ package com.woohaengshi.backend.service.auth;
 
 import com.woohaengshi.backend.controller.auth.RefreshCookieProvider;
 import com.woohaengshi.backend.domain.RefreshToken;
+import com.woohaengshi.backend.domain.member.Course;
 import com.woohaengshi.backend.domain.member.Member;
+import com.woohaengshi.backend.dto.request.auth.SignUpRequest;
 import com.woohaengshi.backend.dto.request.studyrecord.auth.SignInRequest;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
@@ -98,6 +100,13 @@ class AuthServiceTest {
                         verify(memberRepository, times(1))
                                 .findByEmail(
                                         signInRequest.getEmail()));
+    }
+
+    @Test
+    void 회원가입을_할_수_있다(){
+        SignUpRequest request = new SignUpRequest("강현우", Course.CLOUD_SERVICE, "rkdgusdn@naver.com", "password12!@");
+        authService.signUp(request);
+        verify(memberRepository, times(1)).save(any(Member.class));
     }
 
 
