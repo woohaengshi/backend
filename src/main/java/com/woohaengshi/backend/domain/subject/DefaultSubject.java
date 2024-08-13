@@ -1,12 +1,13 @@
 package com.woohaengshi.backend.domain.subject;
 
+import static com.woohaengshi.backend.domain.member.Course.*;
+
 import com.woohaengshi.backend.domain.member.Course;
+
 import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.List;
-
-import static com.woohaengshi.backend.domain.member.Course.*;
 
 @Getter
 public enum DefaultSubject {
