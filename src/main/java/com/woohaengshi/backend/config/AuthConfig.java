@@ -2,6 +2,7 @@ package com.woohaengshi.backend.config;
 
 import com.woohaengshi.backend.controller.auth.AuthArgumentResolver;
 import com.woohaengshi.backend.controller.auth.AuthInterceptor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -35,4 +36,3 @@ public class AuthConfig implements WebMvcConfigurer {
         resolvers.add(authArgumentResolver);
     }
 }
-

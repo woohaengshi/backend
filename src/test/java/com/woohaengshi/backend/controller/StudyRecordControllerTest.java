@@ -6,14 +6,13 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
-
 import com.woohaengshi.backend.support.ControllerTest;
+
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
-
 
 class StudyRecordControllerTest extends ControllerTest {
 
@@ -79,5 +78,4 @@ class StudyRecordControllerTest extends ControllerTest {
                 .all()
                 .statusCode(BAD_REQUEST.value());
     }
-
 }

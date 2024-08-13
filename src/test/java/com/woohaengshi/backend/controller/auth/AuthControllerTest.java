@@ -1,11 +1,13 @@
 package com.woohaengshi.backend.controller.auth;
 
+import static com.woohaengshi.backend.controller.auth.RefreshCookieProvider.REFRESH_TOKEN;
+
+import static org.springframework.http.HttpStatus.OK;
+
 import com.woohaengshi.backend.dto.request.auth.SignInRequest;
 import com.woohaengshi.backend.support.ControllerTest;
-import org.junit.jupiter.api.Test;
 
-import static com.woohaengshi.backend.controller.auth.RefreshCookieProvider.REFRESH_TOKEN;
-import static org.springframework.http.HttpStatus.OK;
+import org.junit.jupiter.api.Test;
 
 class AuthControllerTest extends ControllerTest {
 

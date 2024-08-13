@@ -1,10 +1,11 @@
 package com.woohaengshi.backend.service.auth;
 
-import com.woohaengshi.backend.exception.WoohaengshiException;
-import org.junit.jupiter.api.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import com.woohaengshi.backend.exception.WoohaengshiException;
+
+import org.junit.jupiter.api.Test;
 
 class JwtTokenProviderTest {
 

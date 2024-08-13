@@ -1,7 +1,9 @@
 package com.woohaengshi.backend.domain;
 
 import com.woohaengshi.backend.domain.member.Member;
+
 import jakarta.persistence.*;
+
 import lombok.Builder;
 import lombok.Getter;
 
@@ -26,10 +28,9 @@ public class RefreshToken {
     @Column(name = "expiration_time", nullable = false)
     private LocalDateTime expirationTime;
 
-    protected RefreshToken() {
-    }
+    protected RefreshToken() {}
 
-    public boolean isExpired(){
+    public boolean isExpired() {
         return LocalDateTime.now().isAfter(expirationTime);
     }
 
@@ -46,8 +47,7 @@ public class RefreshToken {
         this.expirationTime = LocalDateTime.now().plusSeconds(expirationSeconds);
     }
 
-    private String createToken(){
+    private String createToken() {
         return UUID.randomUUID().toString();
-}
-
+    }
 }
