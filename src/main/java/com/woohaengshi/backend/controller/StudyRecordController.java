@@ -32,7 +32,8 @@ public class StudyRecordController {
 
     @GetMapping("/monthly")
     public ShowMonthlyRecordResponse getMonthlyRecords(
-            @RequestParam(value = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM") YearMonth date,
+            @RequestParam(value = "date", required = false) @DateTimeFormat(pattern = "yyyy-MM")
+                    YearMonth date,
             @MemberId Long memberId) {
         return studyRecordService.showMonthlyRecord(
                 date == null ? YearMonth.now() : date, memberId);
