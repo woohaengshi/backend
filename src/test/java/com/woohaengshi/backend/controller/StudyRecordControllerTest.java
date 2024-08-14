@@ -8,9 +8,6 @@ import static org.springframework.http.HttpStatus.OK;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 import com.woohaengshi.backend.support.ControllerTest;
 
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
-
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -72,14 +69,14 @@ class StudyRecordControllerTest extends ControllerTest {
     }
 
     @Test
-    void 날짜가_전달되지_않으면_현재를_기준으로_공부_기록을_조회할_수_있다() {
+    void 날짜가_전달되지_않으면_공부_기록을_조회할_수_없다() {
         baseRestAssuredWithAuth()
                 .when()
                 .get("/api/v1/study-record/monthly")
                 .then()
                 .log()
                 .all()
-                .statusCode(OK.value());
+                .statusCode(BAD_REQUEST.value());
     }
 
     @Test

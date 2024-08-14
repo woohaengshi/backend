@@ -173,9 +173,9 @@ class StudyRecordServiceTest {
                 () -> assertThat(response.getYear()).isEqualTo(expected.getYear()),
                 () -> assertThat(response.getMonth()).isEqualTo(expected.getMonth()),
                 () -> {
-                    for (int i = 0; i < response.getRecords().size(); i++) {
-                        ShowDailyRecordResponse daily = response.getRecords().get(i);
-                        ShowDailyRecordResponse expectedDaily = expected.getRecords().get(i);
+                    for (int i = 0; i < response.getDaily().size(); i++) {
+                        ShowDailyRecordResponse daily = response.getDaily().get(i);
+                        ShowDailyRecordResponse expectedDaily = expected.getDaily().get(i);
 
                         assertThat(daily.getDay()).isEqualTo(expectedDaily.getDay());
                         assertThat(daily.getTime()).isEqualTo(expectedDaily.getTime());
@@ -206,10 +206,10 @@ class StudyRecordServiceTest {
                 "response",
                 () -> assertThat(response.getYear()).isEqualTo(2024),
                 () -> {
-                    for (int i = 0; i < response.getRecords().size(); i++) {
-                        assertThat(response.getRecords().get(i).getMonth())
+                    for (int i = 0; i < response.getMonthly().size(); i++) {
+                        assertThat(response.getMonthly().get(i).getMonth())
                                 .isEqualTo(expected.get(i).getMonth());
-                        assertThat(response.getRecords().get(i).getTotal())
+                        assertThat(response.getMonthly().get(i).getTotal())
                                 .isEqualTo(expected.get(i).getTotal());
                     }
                 });
