@@ -49,7 +49,6 @@ public class StatisticsFixture {
     public Statistics build() {
         return Statistics.builder()
                 .id(id)
-                .dailyTime(dailyTime)
                 .weeklyTime(weeklyTime)
                 .monthlyTime(monthlyTime)
                 .totalTime(totalTime)

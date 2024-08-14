@@ -28,9 +28,6 @@ public class Statistics {
     @Column(name = "weekly_time")
     private int weeklyTime;
 
-    @Column(name = "daily_time")
-    private int dailyTime;
-
     @Column(name = "total_time")
     private int totalTime;
 
@@ -41,12 +38,10 @@ public class Statistics {
     protected Statistics() {}
 
     @Builder
-    public Statistics(
-            Long id, int monthlyTime, int weeklyTime, int dailyTime, int totalTime, Member member) {
+    public Statistics(Long id, int monthlyTime, int weeklyTime, int totalTime, Member member) {
         this.id = id;
         this.monthlyTime = monthlyTime;
         this.weeklyTime = weeklyTime;
-        this.dailyTime = dailyTime;
         this.member = member;
         this.totalTime = totalTime;
     }

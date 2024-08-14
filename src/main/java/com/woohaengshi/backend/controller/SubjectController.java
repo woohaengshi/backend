@@ -1,5 +1,6 @@
 package com.woohaengshi.backend.controller;
 
+import com.woohaengshi.backend.controller.auth.MemberId;
 import com.woohaengshi.backend.dto.request.subject.SubjectRequest;
 import com.woohaengshi.backend.service.subject.SubjectService;
 
@@ -19,8 +20,7 @@ public class SubjectController {
     private final SubjectService subjectService;
 
     @PostMapping
-    public ResponseEntity<Void> edit(@RequestBody SubjectRequest request) {
-        Long memberId = 1L;
+    public ResponseEntity<Void> edit(@RequestBody SubjectRequest request, @MemberId Long memberId) {
         subjectService.editSubjects(memberId, request);
         return ResponseEntity.ok().build();
     }

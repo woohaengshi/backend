@@ -3,7 +3,11 @@ package com.woohaengshi.backend.repository;
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.dto.result.MonthlyTotalRecordResult;
 
+import jakarta.persistence.criteria.Predicate;
+
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -11,7 +15,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public interface StudyRecordRepository extends JpaRepository<StudyRecord, Long> {
+public interface StudyRecordRepository
+        extends JpaRepository<StudyRecord, Long>, JpaSpecificationExecutor<StudyRecord> {
     Optional<StudyRecord> findByDateAndMemberId(LocalDate date, Long memberId);
 
     @Query(
@@ -30,6 +35,9 @@ public interface StudyRecordRepository extends JpaRepository<StudyRecord, Long> 
             @Param(value = "month") int month,
             @Param(value = "memberId") Long memberId);
 
+    @Query("SELECT COUNT(s) + 1 FROM StudyRecord s WHERE s.date = :date AND s.time > :time")
+    Integer findRankByDate(LocalDate date, int time);
+
     @Query(
             "select new com.woohaengshi.backend.dto.result.MonthlyTotalRecordResult("
                     + "MONTH(sr.date), SUM(sr.time)) "
@@ -40,4 +48,12 @@ public interface StudyRecordRepository extends JpaRepository<StudyRecord, Long> 
                     + "order by MONTH(sr.date)")
     List<MonthlyTotalRecordResult> findMonthlyTotalByYearAndMemberId(
             @Param("year") int year, @Param("memberId") Long memberId);
+
+    static Specification<StudyRecord> findStudyRecordsByDateSortedByTimeDesc(LocalDate date) {
+        return (root, query, cb) -> {
+            Predicate datePredicate = cb.equal(root.get("date"), date);
+            query.orderBy(cb.desc(root.get("time")));
+            return datePredicate;
+        };
+    }
 }
