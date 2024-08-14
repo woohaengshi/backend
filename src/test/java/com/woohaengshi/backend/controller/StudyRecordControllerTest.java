@@ -71,14 +71,14 @@ class StudyRecordControllerTest extends ControllerTest {
     }
 
     @Test
-    void 날짜가_전달되지_않으면_공부_기록을_조회할_수_없다() {
+    void 날짜가_전달되지_않으면_현재를_기준으로_공부_기록을_조회할_수_있다() {
         baseRestAssuredWithAuth()
                 .when()
                 .get("/api/v1/study-record/monthly")
                 .then()
                 .log()
                 .all()
-                .statusCode(BAD_REQUEST.value());
+                .statusCode(OK.value());
     }
 
     @Test
