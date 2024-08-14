@@ -181,8 +181,4 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .findByMemberId(memberId)
                 .orElseThrow(() -> new WoohaengshiException(ErrorCode.STATISTICS_NOT_FOUND));
     }
-
-    private Optional<StudyRecord> findStudyRecordByMemberId(Long memberId) {
-        return studyRecordRepository.findByDateAndMemberId(LocalDate.now(), memberId);
-    }
 }
