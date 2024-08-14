@@ -14,8 +14,23 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
   flyway:
     enabled: true
+  aop:
+    proxy-target-class: false
+
+security:
+  refresh:
+    expiration: 3600000
+  jwt:
+    key: ${JWT_KEY}
+    expiration:
+      access: 3600000
+
+
 woohaengshi:
   openapi:
     dev-url: "http://localhost:8080"
