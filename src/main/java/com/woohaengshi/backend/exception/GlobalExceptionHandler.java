@@ -32,11 +32,11 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ErrorResponse> handleTypeMismatchException(MethodArgumentTypeMismatchException exception) {
+    public ResponseEntity<ErrorResponse> handleTypeMismatchException(
+            MethodArgumentTypeMismatchException exception) {
         ErrorCode errorCode = ErrorCode.INVALID_INPUT;
-        return ResponseEntity
-                .status(errorCode.getStatus())
-                .body(ErrorResponse.from(errorCode));
+        return ResponseEntity.status(errorCode.getStatus()).body(ErrorResponse.from(errorCode));
+    }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ErrorResponse> handleNotSupportedHttpMethodException(
