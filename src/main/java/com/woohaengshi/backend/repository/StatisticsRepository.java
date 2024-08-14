@@ -14,7 +14,4 @@ public interface StatisticsRepository
 
     @Query("SELECT s FROM Statistics s JOIN FETCH s.member WHERE s.member.id = :memberId")
     Optional<Statistics> findByMemberId(Long memberId);
-
-    @Query("SELECT s FROM Statistics s JOIN FETCH s.member")
-    List<Statistics> findAllWithMember();
 }
