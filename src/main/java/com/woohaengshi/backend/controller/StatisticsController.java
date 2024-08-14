@@ -28,15 +28,10 @@ public class StatisticsController {
     @GetMapping
     public ShowRankSnapshotResponse getRanking(
             @PageableDefault(size = 100) Pageable pageable,
-            @RequestParam(value = "type", defaultValue = "WEEKLY") String type,
+            @RequestParam(value = "type", defaultValue = "WEEKLY") StatisticsType statisticsType,
             @MemberId Long memberId) {
 
-        try {
-            StatisticsType statisticsType = StatisticsType.valueOf(type.toUpperCase());
-            return statisticsService.showRankData(memberId, statisticsType, pageable);
-        } catch (IllegalArgumentException e) {
-            throw new WoohaengshiException(ErrorCode.EXIST_STATISTICS_TYPE);
-        }
+        return statisticsService.showRankData(memberId, statisticsType, pageable);
     }
 
 }
