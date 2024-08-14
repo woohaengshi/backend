@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 @Service
@@ -45,15 +46,16 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     private ShowRankSnapshotResponse handleDailyStatistics(
             Long memberId, Pageable pageable, Statistics statistics) {
-        StudyRecord studyRecord = findStudyRecordByMemberId(memberId);
+        Optional<StudyRecord> studyRecord =
+                studyRecordRepository.findByDateAndMemberId(LocalDate.now(), memberId);
         Slice<StudyRecord> rankSlice = getRankDataSlice(LocalDate.now(), pageable);
         return ShowRankSnapshotResponse.of(
                 statistics.getMember(),
-                (studyRecord == null)
-                        ? 0
-                        : studyRecordRepository.findRankByDate(
-                                LocalDate.now(), studyRecord.getTime()),
-                (studyRecord == null) ? 0 : studyRecord.getTime(),
+                (studyRecord.isPresent())
+                        ? studyRecordRepository.findRankByDate(
+                                LocalDate.now(), studyRecord.get().getTime())
+                        : 0,
+                (studyRecord.isPresent()) ? studyRecord.get().getTime() : 0,
                 statistics.getTotalTime(),
                 rankSlice.hasNext(),
                 calculationRank(rankSlice, pageable, statistics));
@@ -180,7 +182,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .orElseThrow(() -> new WoohaengshiException(ErrorCode.STATISTICS_NOT_FOUND));
     }
 
-    private StudyRecord findStudyRecordByMemberId(Long memberId) {
-        return studyRecordRepository.findByDateAndMemberId(LocalDate.now(), memberId).orElse(null);
+    private Optional<StudyRecord> findStudyRecordByMemberId(Long memberId) {
+        return studyRecordRepository.findByDateAndMemberId(LocalDate.now(), memberId);
     }
 }
