@@ -6,7 +6,6 @@ import static com.woohaengshi.backend.exception.ErrorCode.INVALID_INPUT;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
-import com.woohaengshi.backend.domain.member.Course;
 import com.woohaengshi.backend.dto.request.auth.SignInRequest;
 import com.woohaengshi.backend.dto.request.auth.SignUpRequest;
 import com.woohaengshi.backend.support.ControllerTest;
@@ -32,8 +31,7 @@ class AuthControllerTest extends ControllerTest {
     @Test
     void 회원가입이_가능하다() {
         SignUpRequest request =
-                new SignUpRequest(
-                        "김혜빈", Course.CLOUD_SERVICE, "rlagpqls@naver.com", "password12!@");
+                new SignUpRequest("김혜빈", "클라우드 서비스", "rlagpqls@naver.com", "password12!@");
         baseRestAssured()
                 .body(request)
                 .when()
@@ -47,7 +45,7 @@ class AuthControllerTest extends ControllerTest {
     @Test
     void 비밀번호_형식이_틀린_경우() {
         SignUpRequest request =
-                new SignUpRequest("김혜빈", Course.CLOUD_SERVICE, "rlagpqls@naver.com", "password12");
+                new SignUpRequest("김혜빈", "클라우드 서비스", "rlagpqls@naver.com", "password12");
         baseRestAssured()
                 .body(request)
                 .when()
@@ -60,8 +58,7 @@ class AuthControllerTest extends ControllerTest {
 
     @Test
     void 이메일_형식이_틀린_경우() {
-        SignUpRequest request =
-                new SignUpRequest("김혜빈", Course.CLOUD_SERVICE, "rlagpqlm", "password12!@");
+        SignUpRequest request = new SignUpRequest("김혜빈", "클라우드 서비스", "rlagpqlm", "password12!@");
         baseRestAssured()
                 .body(request)
                 .when()

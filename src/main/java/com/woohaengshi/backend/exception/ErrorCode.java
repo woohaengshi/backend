@@ -26,7 +26,8 @@ public enum ErrorCode {
     NOT_EXIST_REFRESH_TOKEN(UNAUTHORIZED, "리프레시 토큰이 존재하지 않습니다."),
     REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "리프레시 토큰을 찾을 수 없습니다."),
     REFRESH_TOKEN_EXPIRED(UNAUTHORIZED, "리프레시 토큰의 유효기간이 만료되었습니다."),
-    SUBJECT_ALREADY_EXISTS(CONFLICT, "이미 존재하는 과목입니다.");
+    SUBJECT_ALREADY_EXISTS(CONFLICT, "이미 존재하는 과목입니다."),
+    COURSE_NOT_FOUND(NOT_FOUND, "과정명을 찾을 수 없습니다. ");
 
     private final HttpStatus status;
     private final String message;
