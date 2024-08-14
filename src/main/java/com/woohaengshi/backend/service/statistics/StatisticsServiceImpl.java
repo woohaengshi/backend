@@ -11,8 +11,6 @@ import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.StatisticsRepository;
 import com.woohaengshi.backend.repository.StudyRecordRepository;
 
-import jakarta.persistence.criteria.*;
-
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Pageable;
@@ -76,49 +74,19 @@ public class StatisticsServiceImpl implements StatisticsService {
                         : calculationRank(rankSlice, pageable, statisticsType));
     }
 
-    private int getMemberRank(StatisticsType statisticsType, Statistics statistics) {
+    public int getMemberRank(StatisticsType statisticsType, Statistics statistics) {
         int time = getTimeByStatisticsType(statisticsType, statistics);
-
-        Specification<Statistics> specification =
-                (Root<Statistics> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
-                    Predicate greaterThanTime = null;
-                    Predicate timeIsNotZero = null;
-
-                    if (statisticsType == StatisticsType.WEEKLY) {
-                        greaterThanTime = cb.greaterThan(root.get("weeklyTime"), time);
-                        timeIsNotZero = cb.notEqual(root.get("weeklyTime"), 0);
-                    } else if (statisticsType == StatisticsType.MONTHLY) {
-                        greaterThanTime = cb.greaterThan(root.get("monthlyTime"), time);
-                        timeIsNotZero = cb.notEqual(root.get("monthlyTime"), 0);
-                    } else {
-                        throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
-                    }
-
-                    return cb.and(greaterThanTime, timeIsNotZero);
-                };
-        return (int) statisticsRepository.count(specification) + 1;
+        long count =
+                statisticsRepository.count(
+                        StatisticsRepository.filterStatisticsWithTimeGreaterThan(
+                                statisticsType, time));
+        return (int) count + 1;
     }
 
     private Slice<Statistics> getRankDataSlice(StatisticsType statisticsType, Pageable pageable) {
-        Specification<Statistics> specification =
-                (root, query, cb) -> {
-                    Predicate timeIsNotZero;
-
-                    if (statisticsType == StatisticsType.WEEKLY) {
-                        timeIsNotZero = cb.notEqual(root.get("weeklyTime"), 0);
-                        query.orderBy(cb.desc(root.get("weeklyTime")));
-                    } else if (statisticsType == StatisticsType.MONTHLY) {
-                        timeIsNotZero = cb.notEqual(root.get("monthlyTime"), 0);
-                        query.orderBy(cb.desc(root.get("monthlyTime")));
-                    } else {
-                        throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
-                    }
-
-                    query.where(timeIsNotZero);
-                    return query.getRestriction();
-                };
-
-        return statisticsRepository.findAll(specification, pageable);
+        Specification<Statistics> spec =
+                StatisticsRepository.filterAndSortStatisticsByType(statisticsType);
+        return statisticsRepository.findAll(spec, pageable);
     }
 
     private List<RankDataResponse> calculationRank(
@@ -142,11 +110,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     private Slice<StudyRecord> getRankDataSlice(LocalDate targetDate, Pageable pageable) {
         Specification<StudyRecord> specification =
-                (root, query, cb) -> {
-                    Predicate datePredicate = cb.equal(root.get("date"), targetDate);
-                    query.orderBy(cb.desc(root.get("time")));
-                    return cb.and(datePredicate);
-                };
+                StudyRecordRepository.findStudyRecordsByDateSortedByTimeDesc(targetDate);
         return studyRecordRepository.findAll(specification, pageable);
     }
 
