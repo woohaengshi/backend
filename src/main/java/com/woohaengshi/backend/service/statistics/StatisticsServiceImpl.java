@@ -137,25 +137,27 @@ public class StatisticsServiceImpl implements StatisticsService {
     private int getTimeByStatisticsType(StatisticsType statisticsType, Statistics statistics) {
         if (statisticsType == StatisticsType.WEEKLY) return statistics.getWeeklyTime();
         if (statisticsType == StatisticsType.MONTHLY) return statistics.getMonthlyTime();
+        else if (statisticsType == StatisticsType.TOTAL) return statistics.getMonthlyTime();
 
         throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
     }
 
     @Override
-    public void updateStatisticsWeeklyTime() {
+    public void updateStatisticsTime(StatisticsType statisticsType) {
         List<Statistics> statisticsList = statisticsRepository.findAllWithMember();
         if (statisticsList.isEmpty()) return;
 
         statisticsList.forEach(item -> {
-            Integer updateTime = item.getWeeklyTime();
+            Integer updateTime = getTimeByStatisticsType(statisticsType, item);
             LocalDate today = LocalDate.now();
             LocalDate yesterday = LocalDate.now().minusDays(1);
 
-            if(today.getDayOfWeek() == DayOfWeek.MONDAY) updateTime = 0;
+            if(statisticsType == StatisticsType.WEEKLY && today.getDayOfWeek() == DayOfWeek.MONDAY) updateTime = 0;
+            else if(statisticsType == StatisticsType.MONTHLY && today.getDayOfMonth() == 1) updateTime = 0;
 
             Optional<StudyRecord> studyRecord = studyRecordRepository.findByDateAndMemberId(yesterday, item.getMember().getId());
             updateTime += studyRecord.isPresent() ? studyRecord.get().getTime() : 0;
-            item.changeTime(StatisticsType.WEEKLY, updateTime);
+            item.changeTime(statisticsType, updateTime);
         });
     }
 
