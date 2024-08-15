@@ -19,6 +19,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -138,6 +139,24 @@ public class StatisticsServiceImpl implements StatisticsService {
         if (statisticsType == StatisticsType.MONTHLY) return statistics.getMonthlyTime();
 
         throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
+    }
+
+    @Override
+    public void updateStatisticsWeeklyTime() {
+        List<Statistics> statisticsList = statisticsRepository.findAllWithMember();
+        if (statisticsList.isEmpty()) return;
+
+        statisticsList.forEach(item -> {
+            Integer updateTime = item.getWeeklyTime();
+            LocalDate today = LocalDate.now();
+            LocalDate yesterday = LocalDate.now().minusDays(1);
+
+            if(today.getDayOfWeek() == DayOfWeek.MONDAY) updateTime = 0;
+
+            Optional<StudyRecord> studyRecord = studyRecordRepository.findByDateAndMemberId(yesterday, item.getMember().getId());
+            updateTime += studyRecord.isPresent() ? studyRecord.get().getTime() : 0;
+            item.changeTime(StatisticsType.WEEKLY, updateTime);
+        });
     }
 
     private Statistics findStatisticsByMemberId(Long memberId) {
