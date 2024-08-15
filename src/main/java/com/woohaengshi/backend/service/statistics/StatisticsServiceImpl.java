@@ -72,7 +72,11 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     private ShowRankSnapshotResponse buildRankSnapshotResponse(
-            Statistics statistics, int rank, int time, Slice<StudyRecord> rankSlice, Pageable pageable) {
+            Statistics statistics,
+            int rank,
+            int time,
+            Slice<StudyRecord> rankSlice,
+            Pageable pageable) {
         return ShowRankSnapshotResponse.of(
                 statistics.getMember(),
                 rank,
