@@ -167,7 +167,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     private int getTimeByStatisticsType(StatisticsType statisticsType, Statistics statistics) {
         if (statisticsType == StatisticsType.WEEKLY) return statistics.getWeeklyTime();
         if (statisticsType == StatisticsType.MONTHLY) return statistics.getMonthlyTime();
-        else if (statisticsType == StatisticsType.TOTAL) return statistics.getMonthlyTime();
+        if (statisticsType == StatisticsType.TOTAL) return statistics.getTotalTime();
 
         throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
     }
