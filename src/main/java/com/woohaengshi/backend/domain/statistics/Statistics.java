@@ -49,4 +49,11 @@ public class Statistics {
     public Statistics(Member member) {
         this.member = member;
     }
+
+    public void changeTime(StatisticsType statisticsType, int time){
+        if (statisticsType == StatisticsType.WEEKLY) {this.weeklyTime = time; return;}
+        if (statisticsType == StatisticsType.MONTHLY) {this.monthlyTime = time; return;}
+
+        this.totalTime = time;
+    }
 }

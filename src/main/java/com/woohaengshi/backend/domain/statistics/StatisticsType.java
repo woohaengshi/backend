@@ -3,7 +3,8 @@ package com.woohaengshi.backend.domain.statistics;
 public enum StatisticsType {
     DAILY("dailyTime"),
     WEEKLY("weeklyTime"),
-    MONTHLY("monthlyTime");
+    MONTHLY("monthlyTime"),
+    TOTAL("totalTime");
 
     private final String fieldName;
 
