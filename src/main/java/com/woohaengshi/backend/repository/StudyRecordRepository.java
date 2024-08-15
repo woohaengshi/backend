@@ -3,9 +3,6 @@ package com.woohaengshi.backend.repository;
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.dto.result.MonthlyTotalRecordResult;
 
-import jakarta.persistence.criteria.Predicate;
-
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;

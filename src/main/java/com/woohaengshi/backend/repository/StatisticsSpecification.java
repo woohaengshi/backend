@@ -2,7 +2,9 @@ package com.woohaengshi.backend.repository;
 
 import com.woohaengshi.backend.domain.statistics.Statistics;
 import com.woohaengshi.backend.domain.statistics.StatisticsType;
+
 import jakarta.persistence.criteria.Predicate;
+
 import org.springframework.data.jpa.domain.Specification;
 
 public class StatisticsSpecification {
@@ -15,7 +17,8 @@ public class StatisticsSpecification {
         };
     }
 
-    public static Specification<Statistics> filterAndSortStatisticsByType(StatisticsType statisticsType) {
+    public static Specification<Statistics> filterAndSortStatisticsByType(
+            StatisticsType statisticsType) {
         return (root, query, cb) -> {
             String fieldName = statisticsType.getFieldName();
             Predicate timeIsNotZero = cb.notEqual(root.get(fieldName), 0);
