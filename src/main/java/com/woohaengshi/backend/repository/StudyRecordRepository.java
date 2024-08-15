@@ -48,12 +48,4 @@ public interface StudyRecordRepository
                     + "order by MONTH(sr.date)")
     List<MonthlyTotalRecordResult> findMonthlyTotalByYearAndMemberId(
             @Param("year") int year, @Param("memberId") Long memberId);
-
-    static Specification<StudyRecord> findStudyRecordsByDateSortedByTimeDesc(LocalDate date) {
-        return (root, query, cb) -> {
-            Predicate datePredicate = cb.equal(root.get("date"), date);
-            query.orderBy(cb.desc(root.get("time")));
-            return datePredicate;
-        };
-    }
 }

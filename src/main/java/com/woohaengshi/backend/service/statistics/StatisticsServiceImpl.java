@@ -9,8 +9,10 @@ import com.woohaengshi.backend.dto.response.statistics.ShowRankSnapshotResponse;
 import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.StatisticsRepository;
+import com.woohaengshi.backend.repository.StatisticsSpecification;
 import com.woohaengshi.backend.repository.StudyRecordRepository;
 
+import com.woohaengshi.backend.repository.StudyRecordSpecification;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Pageable;
@@ -78,14 +80,14 @@ public class StatisticsServiceImpl implements StatisticsService {
         int time = getTimeByStatisticsType(statisticsType, statistics);
         long count =
                 statisticsRepository.count(
-                        StatisticsRepository.filterStatisticsWithTimeGreaterThan(
+                        StatisticsSpecification.filterStatisticsWithTimeGreaterThan(
                                 statisticsType, time));
         return (int) count + 1;
     }
 
     private Slice<Statistics> getRankDataSlice(StatisticsType statisticsType, Pageable pageable) {
         Specification<Statistics> spec =
-                StatisticsRepository.filterAndSortStatisticsByType(statisticsType);
+                StatisticsSpecification.filterAndSortStatisticsByType(statisticsType);
         return statisticsRepository.findAll(spec, pageable);
     }
 
@@ -110,7 +112,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     private Slice<StudyRecord> getRankDataSlice(LocalDate targetDate, Pageable pageable) {
         Specification<StudyRecord> specification =
-                StudyRecordRepository.findStudyRecordsByDateSortedByTimeDesc(targetDate);
+                StudyRecordSpecification.findStudyRecordsByDateSortedByTimeDesc(targetDate);
         return studyRecordRepository.findAll(specification, pageable);
     }
 
