@@ -138,7 +138,7 @@ public class StatisticsServiceImplTest {
         // 응답 검증
         assertAll(
                 "응답 전체 확인",
-                () -> assertEquals(10, statistics.getWeeklyTime(), "주간 시간이 올바르게 업데이트 되어야 한다"),
+                () -> assertEquals(10, statistics.getWeeklyTime(), "주간 시간이 올바르게 업데이트 되어야 한다 (월요일 이기 때문에 초기화도 이루어줘야 한다)"),
                 () -> assertEquals(10, statistics.getMonthlyTime(), "월간 시간이 올바르게 업데이트 되어야 한다 (1일기 이기 때문에 초기화도 이루어줘야 한다)"),
                 () -> assertEquals(100, statistics.getTotalTime(), "통합 시간이 올바르게 업데이트 되어야 한다"));
     }
