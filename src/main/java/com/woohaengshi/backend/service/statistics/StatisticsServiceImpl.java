@@ -134,31 +134,42 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .toList();
     }
 
+    @Override
+    public void updateStatisticsTime(StatisticsType statisticsType) {
+        List<Statistics> statisticsList = statisticsRepository.findAllWithMember();
+
+        LocalDate today = LocalDate.now();
+        LocalDate yesterday = today.minusDays(1);
+
+        statisticsList.forEach(
+                item -> updateIndividualStatistics(item, statisticsType, today, yesterday));
+    }
+
+    private void updateIndividualStatistics(
+            Statistics statistics,
+            StatisticsType statisticsType,
+            LocalDate today,
+            LocalDate yesterday) {
+        Integer updateTime = getTimeByStatisticsType(statisticsType, statistics);
+
+        if ((statisticsType == StatisticsType.WEEKLY && today.getDayOfWeek() == DayOfWeek.MONDAY)
+                || (statisticsType == StatisticsType.MONTHLY && today.getDayOfMonth() == 1)) {
+            updateTime = 0;
+        }
+        updateTime +=
+                studyRecordRepository
+                        .findByDateAndMemberId(yesterday, statistics.getMember().getId())
+                        .map(StudyRecord::getTime)
+                        .orElse(0);
+        statistics.changeTime(statisticsType, updateTime);
+    }
+
     private int getTimeByStatisticsType(StatisticsType statisticsType, Statistics statistics) {
         if (statisticsType == StatisticsType.WEEKLY) return statistics.getWeeklyTime();
         if (statisticsType == StatisticsType.MONTHLY) return statistics.getMonthlyTime();
         else if (statisticsType == StatisticsType.TOTAL) return statistics.getMonthlyTime();
 
         throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
-    }
-
-    @Override
-    public void updateStatisticsTime(StatisticsType statisticsType) {
-        List<Statistics> statisticsList = statisticsRepository.findAllWithMember();
-        if (statisticsList.isEmpty()) return;
-
-        statisticsList.forEach(item -> {
-            Integer updateTime = getTimeByStatisticsType(statisticsType, item);
-            LocalDate today = LocalDate.now();
-            LocalDate yesterday = LocalDate.now().minusDays(1);
-
-            if(statisticsType == StatisticsType.WEEKLY && today.getDayOfWeek() == DayOfWeek.MONDAY) updateTime = 0;
-            else if(statisticsType == StatisticsType.MONTHLY && today.getDayOfMonth() == 1) updateTime = 0;
-
-            Optional<StudyRecord> studyRecord = studyRecordRepository.findByDateAndMemberId(yesterday, item.getMember().getId());
-            updateTime += studyRecord.isPresent() ? studyRecord.get().getTime() : 0;
-            item.changeTime(statisticsType, updateTime);
-        });
     }
 
     private Statistics findStatisticsByMemberId(Long memberId) {

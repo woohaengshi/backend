@@ -13,7 +13,9 @@ public class StatisticsScheduler {
 
 //    @Scheduled(fixedDelay = 2000)
     @Scheduled(cron = "0 0 5 * * ?")
-    public void UpdateWeekly() {
+    public void UpdateTask() {
         statisticsService.updateStatisticsTime(StatisticsType.WEEKLY);
+        statisticsService.updateStatisticsTime(StatisticsType.MONTHLY);
+        statisticsService.updateStatisticsTime(StatisticsType.TOTAL);
     }
 }
