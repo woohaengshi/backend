@@ -7,6 +7,7 @@ import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.StudySubject;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.subject.Subject;
+import com.woohaengshi.backend.dto.result.DailyStudyRecordResult;
 import com.woohaengshi.backend.dto.result.MonthlyTotalRecordResult;
 import com.woohaengshi.backend.support.RepositoryTest;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
@@ -58,20 +59,20 @@ public class StudyRecordRepositoryTest {
         StudySubject studySubject2 =
                 저장(StudySubject.builder().studyRecord(studyRecord2).subject(subject).build());
 
-        List<Object[]> result1 =
+        List<DailyStudyRecordResult> result1 =
                 studyRecordRepository.findByYearAndMonthAndMemberId(2024, 1, member.getId());
 
         assertAll(
                 "response",
                 () -> assertThat(result1.size()).isEqualTo(1),
                 () ->
-                        assertThat(((Number) result1.get(0)[0]).intValue())
+                        assertThat(result1.get(0).getDay())
                                 .isEqualTo(date1.getDayOfMonth()),
                 () ->
-                        assertThat(((Number) result1.get(0)[1]).intValue())
+                        assertThat(result1.get(0).getTime())
                                 .isEqualTo(studyRecord1.getTime()),
-                () -> assertThat((Long) result1.get(0)[2]).isEqualTo(subject.getId()),
-                () -> assertThat((String) result1.get(0)[3]).isEqualTo(subject.getName()));
+                () -> assertThat(result1.get(0).getSubjectId()).isEqualTo(subject.getId()),
+                () -> assertThat(result1.get(0).getSubjectName()).isEqualTo(subject.getName()));
     }
 
     @Test

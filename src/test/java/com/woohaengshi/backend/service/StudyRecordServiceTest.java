@@ -17,6 +17,7 @@ import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowDailyRecordResponse;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowMonthlyRecordResponse;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowYearlyRecordResponse;
+import com.woohaengshi.backend.dto.result.DailyStudyRecordResult;
 import com.woohaengshi.backend.dto.result.MonthlyTotalRecordResult;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
@@ -151,12 +152,10 @@ class StudyRecordServiceTest {
     @Test
     void 현재_연도와_월을_통해_공부_기록을_조회_한다() {
         Member member = MemberFixture.builder().build();
-        List<Object[]> records = new ArrayList<>();
-        records.add(new Object[] {1, 36000, 2L, "CSS"});
-        records.add(new Object[] {1, 36000, 1L, "HTML"});
-        records.add(new Object[] {6, 58000, 3L, "JS"});
-        records.add(new Object[] {9, 47000, 3L, "JS"});
-        records.add(new Object[] {9, 47000, 2L, "CSS"});
+        List<DailyStudyRecordResult> records = new ArrayList<>();
+        records.add(new DailyStudyRecordResult(1, 36000, 1L, "HTML"));
+        records.add(new DailyStudyRecordResult(6, 58000, 3L, "JS"));
+        records.add(new DailyStudyRecordResult(6, 58000, 3L, "JS"));
         YearMonth date = YearMonth.now();
 
         ShowMonthlyRecordResponse expected = ShowMonthlyRecordResponse.of(date, records);
