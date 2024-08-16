@@ -12,6 +12,7 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.StudySubject;
 import com.woohaengshi.backend.domain.member.Member;
+import com.woohaengshi.backend.domain.statistics.Statistics;
 import com.woohaengshi.backend.domain.subject.Subject;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowDailyRecordResponse;
@@ -20,11 +21,13 @@ import com.woohaengshi.backend.dto.response.studyrecord.ShowYearlyRecordResponse
 import com.woohaengshi.backend.dto.result.MonthlyTotalRecordResult;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
+import com.woohaengshi.backend.repository.StatisticsRepository;
 import com.woohaengshi.backend.repository.StudyRecordRepository;
 import com.woohaengshi.backend.repository.StudySubjectRepository;
 import com.woohaengshi.backend.repository.SubjectRepository;
 import com.woohaengshi.backend.service.studyrecord.StudyRecordServiceImpl;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
+import com.woohaengshi.backend.support.fixture.StatisticsFixture;
 import com.woohaengshi.backend.support.fixture.StudyRecordFixture;
 
 import org.junit.jupiter.api.Test;
@@ -45,15 +48,21 @@ class StudyRecordServiceTest {
     @Mock private StudyRecordRepository studyRecordRepository;
     @Mock private SubjectRepository subjectRepository;
     @Mock private StudySubjectRepository studySubjectRepository;
+    @Mock private StatisticsRepository statisticsRepository;
     @InjectMocks private StudyRecordServiceImpl studyRecordService;
 
     @Test
     void 첫_공부_기록을_저장할_수_있다() {
-        Member member = MemberFixture.builder().build();
+        int MONTHLY_TIME = 100;
+        Member member = MemberFixture.builder().id(1L).build();
         SaveRecordRequest request = new SaveRecordRequest(LocalDate.now(), 10, List.of(1L, 2L));
         StudyRecord studyRecord = StudyRecordFixture.from(request, 1L);
+        Statistics statistics =
+                StatisticsFixture.builder().monthlyTime(MONTHLY_TIME).member(member).id(1L).build();
 
         given(memberRepository.existsById(member.getId())).willReturn(true);
+        given(statisticsRepository.findByMemberId(member.getId()))
+                .willReturn(Optional.of(statistics));
         given(studyRecordRepository.findByDateAndMemberId(request.getDate(), member.getId()))
                 .willReturn(Optional.empty());
         given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
@@ -75,17 +84,25 @@ class StudyRecordServiceTest {
                 () -> verify(memberRepository, times(1)).findById(member.getId()),
                 () -> verify(studyRecordRepository, times(1)).save(any(StudyRecord.class)),
                 () -> verify(subjectRepository, times(2)).findById(any(Long.class)),
-                () -> verify(studySubjectRepository, times(2)).save(any(StudySubject.class)));
+                () -> verify(studySubjectRepository, times(2)).save(any(StudySubject.class)),
+                () ->
+                        assertThat(statistics.getMonthlyTime())
+                                .isEqualTo(MONTHLY_TIME + request.getTime()));
     }
 
     @Test
     void 이미_공부한_과목의_기록을_누적해_저장할_수_있다() {
+        int MONTHLY_TIME = 100;
         Member member = MemberFixture.builder().id(1L).build();
         StudyRecord existStudyRecord =
                 StudyRecordFixture.builder().member(member).id(1L).time(20).build();
-        SaveRecordRequest request = new SaveRecordRequest(LocalDate.now(), 10, List.of(1L, 2L));
+        SaveRecordRequest request = new SaveRecordRequest(LocalDate.now(), 30, List.of(1L, 2L));
+        Statistics statistics =
+                StatisticsFixture.builder().monthlyTime(MONTHLY_TIME).member(member).id(1L).build();
 
         given(memberRepository.existsById(member.getId())).willReturn(true);
+        given(statisticsRepository.findByMemberId(member.getId()))
+                .willReturn(Optional.of(statistics));
         given(studyRecordRepository.findByDateAndMemberId(request.getDate(), member.getId()))
                 .willReturn(Optional.of(existStudyRecord));
         request.getSubjects()
@@ -108,17 +125,23 @@ class StudyRecordServiceTest {
                         verify(studySubjectRepository, times(2))
                                 .existsBySubjectIdAndStudyRecordId(
                                         any(Long.class), any(Long.class)),
-                () -> verify(studySubjectRepository, never()).save(any(StudySubject.class)));
+                () -> verify(studySubjectRepository, never()).save(any(StudySubject.class)),
+                () -> assertThat(statistics.getMonthlyTime()).isEqualTo(MONTHLY_TIME + 10));
     }
 
     @Test
     void 처음_공부한_과목의_기록을_누적해_저장할_수_있다() {
+        int MONTHLY_TIME = 100;
         Member member = MemberFixture.builder().id(1L).build();
         StudyRecord existStudyRecord =
                 StudyRecordFixture.builder().member(member).id(1L).time(20).build();
-        SaveRecordRequest request = new SaveRecordRequest(LocalDate.now(), 10, List.of(1L, 2L));
+        SaveRecordRequest request = new SaveRecordRequest(LocalDate.now(), 30, List.of(1L, 2L));
+        Statistics statistics =
+                StatisticsFixture.builder().monthlyTime(MONTHLY_TIME).member(member).id(1L).build();
 
         given(memberRepository.existsById(member.getId())).willReturn(true);
+        given(statisticsRepository.findByMemberId(member.getId()))
+                .willReturn(Optional.of(statistics));
         given(studyRecordRepository.findByDateAndMemberId(request.getDate(), member.getId()))
                 .willReturn(Optional.of(existStudyRecord));
         request.getSubjects()
@@ -145,7 +168,8 @@ class StudyRecordServiceTest {
                                 .existsBySubjectIdAndStudyRecordId(
                                         any(Long.class), any(Long.class)),
                 () -> verify(subjectRepository, times(2)).findById(any(Long.class)),
-                () -> verify(studySubjectRepository, times(2)).save(any(StudySubject.class)));
+                () -> verify(studySubjectRepository, times(2)).save(any(StudySubject.class)),
+                () -> assertThat(statistics.getMonthlyTime()).isEqualTo(MONTHLY_TIME + 10));
     }
 
     @Test
