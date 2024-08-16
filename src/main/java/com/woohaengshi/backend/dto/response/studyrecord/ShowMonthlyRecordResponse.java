@@ -39,8 +39,7 @@ public class ShowMonthlyRecordResponse {
         List<ShowDailyRecordResponse> records = new ArrayList<>();
         for (int day = 1; day <= date.lengthOfMonth(); day++) {
             List<ShowSubjectsResponse> subjects = subjectsMap.getOrDefault(day, new ArrayList<>());
-            int time = timeMap.getOrDefault(day, 0);
-            records.add(ShowDailyRecordResponse.of(day, time, subjects));
+            records.add(ShowDailyRecordResponse.of(day, timeMap.getOrDefault(day, 0), subjects));
         }
 
         return new ShowMonthlyRecordResponse(date.getYear(), date.getMonthValue(), records);
