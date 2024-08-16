@@ -8,7 +8,6 @@ public class StatisticsFixture {
     private Long id;
     private int monthlyTime = 100;
     private int weeklyTime = 12;
-    private int dailyTime = 4;
     private int totalTime = 104;
     private Member member;
 
@@ -18,11 +17,6 @@ public class StatisticsFixture {
 
     public StatisticsFixture id(Long id) {
         this.id = id;
-        return this;
-    }
-
-    public StatisticsFixture dailyTime(int time) {
-        this.dailyTime = time;
         return this;
     }
 
