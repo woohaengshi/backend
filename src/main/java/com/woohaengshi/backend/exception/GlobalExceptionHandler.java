@@ -38,6 +38,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(errorCode.getStatus()).body(ErrorResponse.from(errorCode));
     }
 
+    private static final String METHOD_NOT_SUPPORTED_FORMAT =
+            "요청 HTTP METHOD는 <%s>이지만, 해당 URI를 지원하는 HTTP METHOD는 <%s>입니다.";
+
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ErrorResponse> handleNotSupportedHttpMethodException(
             HttpRequestMethodNotSupportedException exception) {
@@ -47,9 +50,9 @@ public class GlobalExceptionHandler {
                         new ErrorResponse(
                                 METHOD_NOT_ALLOWED.value(),
                                 String.format(
-                                        "요청 HTTP METHOD는 <%s>이지만, 해당 URI를 지원하는 HTTP METHOD는"
-                                                + " <%s>입니다.",
-                                        exception.getMethod(), supportedMethods)));
+                                        METHOD_NOT_SUPPORTED_FORMAT,
+                                        exception.getMethod(),
+                                        supportedMethods)));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
