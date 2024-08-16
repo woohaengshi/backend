@@ -1,8 +1,8 @@
 package com.woohaengshi.backend.dto.response.studyrecord;
 
 import com.woohaengshi.backend.dto.response.subject.ShowSubjectsResponse;
-
 import com.woohaengshi.backend.dto.result.DailyStudyRecordResult;
+
 import lombok.Getter;
 
 import java.time.YearMonth;
@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 @Getter
 public class ShowMonthlyRecordResponse {
