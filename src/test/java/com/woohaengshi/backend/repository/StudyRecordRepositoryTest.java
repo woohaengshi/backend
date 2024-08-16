@@ -65,12 +65,8 @@ public class StudyRecordRepositoryTest {
         assertAll(
                 "response",
                 () -> assertThat(result1.size()).isEqualTo(1),
-                () ->
-                        assertThat(result1.get(0).getDay())
-                                .isEqualTo(date1.getDayOfMonth()),
-                () ->
-                        assertThat(result1.get(0).getTime())
-                                .isEqualTo(studyRecord1.getTime()),
+                () -> assertThat(result1.get(0).getDay()).isEqualTo(date1.getDayOfMonth()),
+                () -> assertThat(result1.get(0).getTime()).isEqualTo(studyRecord1.getTime()),
                 () -> assertThat(result1.get(0).getSubjectId()).isEqualTo(subject.getId()),
                 () -> assertThat(result1.get(0).getSubjectName()).isEqualTo(subject.getName()));
     }
