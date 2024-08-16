@@ -37,10 +37,12 @@ public class ShowMonthlyRecordResponse {
         }
 
         List<ShowDailyRecordResponse> records = new ArrayList<>();
-        for (int day = 1; day <= date.lengthOfMonth(); day++) {
-            List<ShowSubjectsResponse> subjects = subjectsMap.getOrDefault(day, new ArrayList<>());
-            records.add(ShowDailyRecordResponse.of(day, timeMap.getOrDefault(day, 0), subjects));
-        }
+        for (int day = 1; day <= date.lengthOfMonth(); day++)
+            records.add(
+                    ShowDailyRecordResponse.of(
+                            day,
+                            timeMap.getOrDefault(day, 0),
+                            subjectsMap.getOrDefault(day, new ArrayList<>())));
 
         return new ShowMonthlyRecordResponse(date.getYear(), date.getMonthValue(), records);
     }
