@@ -8,6 +8,7 @@ import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
@@ -36,4 +37,13 @@ public interface StatisticsRepository
             return query.getRestriction();
         };
     }
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("UPDATE Statistics s set s.weeklyTime = 0")
+    void initWeeklyTime();
+
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Statistics s set s.monthlyTime = 0")
+    void initMonthlyTime();
 }
