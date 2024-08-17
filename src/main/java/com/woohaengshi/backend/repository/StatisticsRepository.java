@@ -15,11 +15,9 @@ public interface StatisticsRepository
     @Query("SELECT s FROM Statistics s JOIN FETCH s.member WHERE s.member.id = :memberId")
     Optional<Statistics> findByMemberId(Long memberId);
 
-
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Statistics s SET s.weeklyTime = 0")
     void initWeeklyTime();
-
 
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Statistics s SET s.monthlyTime = 0")

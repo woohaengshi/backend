@@ -1,16 +1,17 @@
 package com.woohaengshi.backend.repository;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.statistics.Statistics;
 import com.woohaengshi.backend.support.RepositoryTest;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
 import com.woohaengshi.backend.support.fixture.StatisticsFixture;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @RepositoryTest
 class StatisticsRepositoryTest {

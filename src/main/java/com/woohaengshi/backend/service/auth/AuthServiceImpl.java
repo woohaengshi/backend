@@ -7,7 +7,6 @@ import com.woohaengshi.backend.controller.auth.RefreshCookieProvider;
 import com.woohaengshi.backend.domain.RefreshToken;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.statistics.Statistics;
-import com.woohaengshi.backend.domain.subject.DefaultSubject;
 import com.woohaengshi.backend.domain.subject.Subject;
 import com.woohaengshi.backend.dto.request.auth.SignInRequest;
 import com.woohaengshi.backend.dto.request.auth.SignUpRequest;
@@ -105,7 +104,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private void validateAlreadyExistEmail(SignUpRequest request) {
-        if(memberRepository.existsAllByEmail(request.getEmail())){
+        if (memberRepository.existsAllByEmail(request.getEmail())) {
             throw new WoohaengshiException(ALREADY_EXIST_EMAIL);
         }
     }

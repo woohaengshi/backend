@@ -1,5 +1,10 @@
 package com.woohaengshi.backend.service.studyrecord;
 
+import static com.woohaengshi.backend.exception.ErrorCode.MEMBER_NOT_FOUND;
+import static com.woohaengshi.backend.exception.ErrorCode.STATISTICS_NOT_FOUND;
+import static com.woohaengshi.backend.exception.ErrorCode.SUBJECT_NOT_FOUND;
+import static com.woohaengshi.backend.exception.ErrorCode.TIME_HAVE_TO_GREATER_THAN_EXIST;
+
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.StudySubject;
 import com.woohaengshi.backend.domain.member.Member;
@@ -9,12 +14,12 @@ import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowMonthlyRecordResponse;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowYearlyRecordResponse;
 import com.woohaengshi.backend.exception.WoohaengshiException;
-
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.StatisticsRepository;
 import com.woohaengshi.backend.repository.StudyRecordRepository;
 import com.woohaengshi.backend.repository.StudySubjectRepository;
 import com.woohaengshi.backend.repository.SubjectRepository;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -23,11 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
-
-import static com.woohaengshi.backend.exception.ErrorCode.MEMBER_NOT_FOUND;
-import static com.woohaengshi.backend.exception.ErrorCode.STATISTICS_NOT_FOUND;
-import static com.woohaengshi.backend.exception.ErrorCode.SUBJECT_NOT_FOUND;
-import static com.woohaengshi.backend.exception.ErrorCode.TIME_HAVE_TO_GREATER_THAN_EXIST;
 
 @Service
 @RequiredArgsConstructor
@@ -90,7 +90,10 @@ public class StudyRecordServiceImpl implements StudyRecordService {
         return studyRecordRepository.save(request.toStudyRecord(findMemberById(memberId)));
     }
 
-    private StudyRecord updateStudyRecordAndStatistics(SaveRecordRequest request, Statistics statistics, Optional<StudyRecord> optionalStudyRecord) {
+    private StudyRecord updateStudyRecordAndStatistics(
+            SaveRecordRequest request,
+            Statistics statistics,
+            Optional<StudyRecord> optionalStudyRecord) {
         StudyRecord studyRecord = optionalStudyRecord.get();
         validateTimeIsGreaterThanExistTime(request, studyRecord);
         statistics.update(request.getTime() - studyRecord.getTime());
@@ -98,8 +101,9 @@ public class StudyRecordServiceImpl implements StudyRecordService {
         return studyRecord;
     }
 
-    private void validateTimeIsGreaterThanExistTime(SaveRecordRequest request, StudyRecord studyRecord) {
-        if(request.getTime() <= studyRecord.getTime()) {
+    private void validateTimeIsGreaterThanExistTime(
+            SaveRecordRequest request, StudyRecord studyRecord) {
+        if (request.getTime() <= studyRecord.getTime()) {
             throw new WoohaengshiException(TIME_HAVE_TO_GREATER_THAN_EXIST);
         }
     }
