@@ -165,8 +165,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     public void updateStatisticsTime(StatisticsType statisticsType) {
         List<Statistics> statisticsList = statisticsRepository.findAllWithMember();
-        statisticsList.forEach(
-                item -> item.changeTime(statisticsType, 0));
+        statisticsList.forEach(item -> item.changeTime(statisticsType, 0));
     }
 
     private int getTimeByStatisticsType(StatisticsType statisticsType, Statistics statistics) {
