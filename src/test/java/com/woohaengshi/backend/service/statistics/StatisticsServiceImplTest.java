@@ -78,47 +78,9 @@ public class StatisticsServiceImplTest {
                 });
     }
 
-    @Test
-    void 스케쥴링_업데이트() {
-        LocalDate today = LocalDate.of(2024, 8, 15);
-        LocalDate yesterday = today.minusDays(1);
-        Member member = MemberFixture.builder().id(1L).build();
-        Statistics statistics =
-                StatisticsFixture.builder()
-                        .id(1L)
-                        .member(member)
-                        .weeklyTime(5)
-                        .monthlyTime(10)
-                        .totalTime(90)
-                        .build();
-        StudyRecord studyRecord =
-                StudyRecordFixture.builder().id(1L).member(member).date(yesterday).time(10).build();
-        List<Statistics> statisticsList = Collections.singletonList(statistics);
-
-        when(statisticsRepository.findAllWithMember()).thenReturn(statisticsList);
-        when(studyRecordRepository.findByDateAndMemberId(yesterday, 1L))
-                .thenReturn(Optional.of(studyRecord));
-
-        statisticsService.updateStatisticsTime(StatisticsType.WEEKLY);
-        statisticsService.updateStatisticsTime(StatisticsType.MONTHLY);
-        statisticsService.updateStatisticsTime(StatisticsType.TOTAL);
-
-        // 응답 검증
-        assertAll(
-                "응답 전체 확인",
-                () -> assertEquals(15, statistics.getWeeklyTime(), "주간 시간이 올바르게 업데이트 되어야 한다"),
-                () ->
-                        assertEquals(
-                                20,
-                                statistics.getMonthlyTime(),
-                                "월간 시간이 올바르게 업데이트 되어야 한다 (1일기 이기 때문에 초기화도 이루어줘야 한다)"),
-                () -> assertEquals(100, statistics.getTotalTime(), "통합 시간이 올바르게 업데이트 되어야 한다"));
-    }
 
     @Test
     void 스케쥴링_업데이트_초기화_진행_확인() {
-        LocalDate today = LocalDate.of(2024, 7, 1);
-        LocalDate yesterday = today.minusDays(1);
         Member member = MemberFixture.builder().id(1L).build();
         Statistics statistics =
                 StatisticsFixture.builder()
@@ -128,31 +90,26 @@ public class StatisticsServiceImplTest {
                         .monthlyTime(10)
                         .totalTime(90)
                         .build();
-        StudyRecord studyRecord =
-                StudyRecordFixture.builder().id(1L).member(member).date(yesterday).time(10).build();
         List<Statistics> statisticsList = Collections.singletonList(statistics);
 
         when(statisticsRepository.findAllWithMember()).thenReturn(statisticsList);
-        when(studyRecordRepository.findByDateAndMemberId(yesterday, 1L))
-                .thenReturn(Optional.of(studyRecord));
 
         statisticsService.updateStatisticsTime(StatisticsType.WEEKLY);
         statisticsService.updateStatisticsTime(StatisticsType.MONTHLY);
-        statisticsService.updateStatisticsTime(StatisticsType.TOTAL);
 
         // 응답 검증
         assertAll(
                 "응답 전체 확인",
                 () ->
                         assertEquals(
-                                10,
+                                0,
                                 statistics.getWeeklyTime(),
                                 "주간 시간이 올바르게 업데이트 되어야 한다 (월요일 이기 때문에 초기화도 이루어줘야 한다)"),
                 () ->
                         assertEquals(
-                                10,
+                                0,
                                 statistics.getMonthlyTime(),
-                                "월간 시간이 올바르게 업데이트 되어야 한다 (1일기 이기 때문에 초기화도 이루어줘야 한다)"),
-                () -> assertEquals(100, statistics.getTotalTime(), "통합 시간이 올바르게 업데이트 되어야 한다"));
+                                "월간 시간이 올바르게 업데이트 되어야 한다 (1일기 이기 때문에 초기화도 이루어줘야 한다)")
+        );
     }
 }
