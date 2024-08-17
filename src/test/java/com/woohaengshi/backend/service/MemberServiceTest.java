@@ -1,5 +1,11 @@
 package com.woohaengshi.backend.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.response.member.ShowMemberResponse;
 import com.woohaengshi.backend.exception.ErrorCode;
@@ -7,6 +13,7 @@ import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.service.member.MemberServiceImpl;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,13 +21,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 
 @ExtendWith(MockitoExtension.class)
 public class MemberServiceTest {
@@ -41,8 +41,7 @@ public class MemberServiceTest {
                 () -> assertThat(response.getPassword()).isEqualTo(member.getPassword()),
                 () -> assertThat(response.getEmail()).isEqualTo(member.getEmail()),
                 () -> assertThat(response.getImage()).isEqualTo(member.getImage()),
-                () -> assertThat(response.getCourse()).isEqualTo(member.getCourse().getName())
-        );
+                () -> assertThat(response.getCourse()).isEqualTo(member.getCourse().getName()));
     }
 
     @Test
@@ -51,7 +50,10 @@ public class MemberServiceTest {
 
         given(memberRepository.findById(member.getId())).willReturn(Optional.empty());
 
-        WoohaengshiException exception = assertThrows(WoohaengshiException.class, () -> memberService.getMemberInfo(member.getId()));
+        WoohaengshiException exception =
+                assertThrows(
+                        WoohaengshiException.class,
+                        () -> memberService.getMemberInfo(member.getId()));
         assertEquals(ErrorCode.MEMBER_NOT_FOUND, exception.getErrorCode());
     }
 }

@@ -5,7 +5,9 @@ import com.woohaengshi.backend.dto.response.member.ShowMemberResponse;
 import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,21 +16,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class MemberServiceImpl implements MemberService {
 
-  private final MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
-  @Override
-  public ShowMemberResponse getMemberInfo(Long memberId) {
-    Member member =
-        memberRepository
-            .findById(memberId)
-            .orElseThrow(() -> new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND));
+    @Override
+    public ShowMemberResponse getMemberInfo(Long memberId) {
+        Member member =
+                memberRepository
+                        .findById(memberId)
+                        .orElseThrow(() -> new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND));
 
-    return new ShowMemberResponse(
-        member.getId(),
-        member.getName(),
-        member.getEmail(),
-        member.getPassword(),
-        member.getImage(),
-        member.getCourse().getName());
-  }
+        return new ShowMemberResponse(
+                member.getId(),
+                member.getName(),
+                member.getEmail(),
+                member.getPassword(),
+                member.getImage(),
+                member.getCourse().getName());
+    }
 }

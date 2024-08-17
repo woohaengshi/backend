@@ -11,7 +11,8 @@ public class ShowMemberResponse {
     private String image;
     private String course;
 
-    public ShowMemberResponse(Long id, String name, String email, String password, String image, String course) {
+    public ShowMemberResponse(
+            Long id, String name, String email, String password, String image, String course) {
         this.id = id;
         this.name = name;
         this.email = email;
