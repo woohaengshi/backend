@@ -73,7 +73,6 @@ public class StatisticsServiceImplTest {
                 });
     }
 
-
     @Test
     void 스케쥴링_업데이트_초기화_진행_확인() {
         Member member = MemberFixture.builder().id(1L).build();
@@ -104,7 +103,6 @@ public class StatisticsServiceImplTest {
                         assertEquals(
                                 0,
                                 statistics.getMonthlyTime(),
-                                "월간 시간이 올바르게 업데이트 되어야 한다 (1일기 이기 때문에 초기화도 이루어줘야 한다)")
-        );
+                                "월간 시간이 올바르게 업데이트 되어야 한다 (1일기 이기 때문에 초기화도 이루어줘야 한다)"));
     }
 }
