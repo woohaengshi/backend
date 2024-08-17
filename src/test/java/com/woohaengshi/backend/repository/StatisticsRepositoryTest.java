@@ -37,4 +37,16 @@ class StatisticsRepositoryTest {
         List<Statistics> allStatistics = statisticsRepository.findAll();
         allStatistics.forEach(statistics -> assertThat(statistics.getWeeklyTime()).isEqualTo(0));
     }
+
+    @Test
+    void 월단위_통계를_초기화_할_수_있다() {
+        Member member = 저장(MemberFixture.builder().build());
+        저장(StatisticsFixture.builder().member(member).monthlyTime(10).build());
+        저장(StatisticsFixture.builder().member(member).monthlyTime(10).build());
+
+        statisticsRepository.initMonthlyTime();
+
+        List<Statistics> allStatistics = statisticsRepository.findAll();
+        allStatistics.forEach(statistics -> assertThat(statistics.getMonthlyTime()).isEqualTo(0));
+    }
 }
