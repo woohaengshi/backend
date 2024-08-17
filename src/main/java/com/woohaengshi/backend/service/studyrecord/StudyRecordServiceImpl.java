@@ -1,20 +1,16 @@
 package com.woohaengshi.backend.service.studyrecord;
 
-import static com.woohaengshi.backend.exception.ErrorCode.MEMBER_NOT_FOUND;
-import static com.woohaengshi.backend.exception.ErrorCode.SUBJECT_NOT_FOUND;
-
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.StudySubject;
 import com.woohaengshi.backend.domain.member.Member;
+import com.woohaengshi.backend.domain.statistics.Statistics;
+import com.woohaengshi.backend.domain.statistics.StatisticsType;
 import com.woohaengshi.backend.domain.subject.Subject;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowMonthlyRecordResponse;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowYearlyRecordResponse;
 import com.woohaengshi.backend.exception.WoohaengshiException;
-import com.woohaengshi.backend.repository.MemberRepository;
-import com.woohaengshi.backend.repository.StudyRecordRepository;
-import com.woohaengshi.backend.repository.StudySubjectRepository;
-import com.woohaengshi.backend.repository.SubjectRepository;
+import com.woohaengshi.backend.repository.*;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +21,8 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
+import static com.woohaengshi.backend.exception.ErrorCode.*;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -34,6 +32,7 @@ public class StudyRecordServiceImpl implements StudyRecordService {
     private final StudyRecordRepository studyRecordRepository;
     private final SubjectRepository subjectRepository;
     private final StudySubjectRepository studySubjectRepository;
+    private final StatisticsRepository statisticsRepository;
 
     @Override
     public void save(SaveRecordRequest request, Long memberId) {
@@ -74,9 +73,17 @@ public class StudyRecordServiceImpl implements StudyRecordService {
         if (optionalStudyRecord.isPresent()) {
             StudyRecord studyRecord = optionalStudyRecord.get();
             studyRecord.updateTime(request.getTime());
+            updateStatisticsTime(memberId, request.getTime());
             return studyRecord;
         }
         return studyRecordRepository.save(request.toStudyRecord(findMemberById(memberId)));
+    }
+
+    private void updateStatisticsTime(Long memberId, int studyTime) {
+        Statistics statistics = findStatisticsByMemberId(memberId);
+        statistics.changeTime(StatisticsType.WEEKLY, statistics.getWeeklyTime() + studyTime);
+        statistics.changeTime(StatisticsType.MONTHLY, statistics.getMonthlyTime() + studyTime);
+        statistics.changeTime(StatisticsType.TOTAL, statistics.getTotalTime() + studyTime);
     }
 
     private void saveSubjects(List<Long> subjects, StudyRecord studyRecord) {
@@ -103,5 +110,11 @@ public class StudyRecordServiceImpl implements StudyRecordService {
         return memberRepository
                 .findById(memberId)
                 .orElseThrow(() -> new WoohaengshiException(MEMBER_NOT_FOUND));
+    }
+
+    private Statistics findStatisticsByMemberId(Long memberId) {
+        return statisticsRepository
+                .findByMemberId(memberId)
+                .orElseThrow(() -> new WoohaengshiException(STATISTICS_NOT_FOUND));
     }
 }
