@@ -7,17 +7,14 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
-import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.statistics.Statistics;
 import com.woohaengshi.backend.domain.statistics.StatisticsType;
 import com.woohaengshi.backend.dto.response.statistics.ShowRankSnapshotResponse;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.StatisticsRepository;
-import com.woohaengshi.backend.repository.StudyRecordRepository;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
 import com.woohaengshi.backend.support.fixture.StatisticsFixture;
-import com.woohaengshi.backend.support.fixture.StudyRecordFixture;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +24,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +32,6 @@ import java.util.Optional;
 public class StatisticsServiceImplTest {
 
     @Mock private StatisticsRepository statisticsRepository;
-    @Mock private StudyRecordRepository studyRecordRepository;
     @InjectMocks private StatisticsServiceImpl statisticsService;
 
     @Test
