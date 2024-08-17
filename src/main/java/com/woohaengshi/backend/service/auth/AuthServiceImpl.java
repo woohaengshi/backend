@@ -1,5 +1,6 @@
 package com.woohaengshi.backend.service.auth;
 
+import static com.woohaengshi.backend.domain.subject.DefaultSubject.getDefaultSubjects;
 import static com.woohaengshi.backend.exception.ErrorCode.*;
 
 import com.woohaengshi.backend.controller.auth.RefreshCookieProvider;
@@ -95,11 +96,18 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void signUp(SignUpRequest request) {
+        validateAlreadyExistEmail(request);
         Member member = request.toMember(passwordEncoder.encode(request.getPassword()));
         memberRepository.save(member);
-        DefaultSubject.getDefaultSubjects(member.getCourse())
+        getDefaultSubjects(member.getCourse())
                 .forEach(subject -> subjectRepository.save(new Subject(subject, member)));
         statisticsRepository.save(new Statistics(member));
+    }
+
+    private void validateAlreadyExistEmail(SignUpRequest request) {
+        if(memberRepository.existsAllByEmail(request.getEmail())){
+            throw new WoohaengshiException(ALREADY_EXIST_EMAIL);
+        }
     }
 
     private void validateRefreshTokenExpired(RefreshToken refreshToken) {
