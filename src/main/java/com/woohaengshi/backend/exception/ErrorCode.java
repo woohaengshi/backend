@@ -1,8 +1,8 @@
 package com.woohaengshi.backend.exception;
 
-import org.springframework.http.HttpStatus;
-
 import static org.springframework.http.HttpStatus.*;
+
+import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {
     MEMBER_NOT_FOUND(NOT_FOUND, "회원을 찾을 수 없습니다."),
