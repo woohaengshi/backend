@@ -38,12 +38,12 @@ public interface StatisticsRepository
         };
     }
 
-    @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query("UPDATE Statistics s set s.weeklyTime = 0")
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Statistics s SET s.weeklyTime = 0")
     void initWeeklyTime();
 
 
     @Modifying(clearAutomatically = true)
-    @Query("UPDATE Statistics s set s.monthlyTime = 0")
+    @Query("UPDATE Statistics s SET s.monthlyTime = 0")
     void initMonthlyTime();
 }
