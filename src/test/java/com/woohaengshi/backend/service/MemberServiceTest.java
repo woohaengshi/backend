@@ -2,9 +2,12 @@ package com.woohaengshi.backend.service;
 
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.response.member.ShowMemberResponse;
+import com.woohaengshi.backend.exception.ErrorCode;
+import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.service.member.MemberServiceImpl;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,7 +17,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -44,5 +48,13 @@ public class MemberServiceTest {
         );
     }
 
+    @Test
+    void 회원이_존재하지_않을_경우_예외를_던진다() {
+        Member member = MemberFixture.builder().build();
 
+        given(memberRepository.existsById(member.getId())).willReturn(false);
+
+        WoohaengshiException exception = assertThrows(WoohaengshiException.class, () -> memberService.getMemberInfo(member.getId()));
+        assertEquals(ErrorCode.MEMBER_NOT_FOUND, exception.getErrorCode());
+    }
 }
