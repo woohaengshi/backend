@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class StatisticsScheduler {
     private final StatisticsService statisticsService;
 
-//        @Scheduled(fixedDelay = 2000)
+//    @Scheduled(fixedDelay = 2000)
     @Scheduled(cron = "0 0 5 1 * ?")
     public void scheduleMonthlyTask() {
         statisticsService.updateStatisticsTime(StatisticsType.WEEKLY);

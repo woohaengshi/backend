@@ -162,6 +162,13 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .toList();
     }
 
+    @Override
+    public void updateStatisticsTime(StatisticsType statisticsType) {
+        List<Statistics> statisticsList = statisticsRepository.findAllWithMember();
+        statisticsList.forEach(
+                item -> item.changeTime(statisticsType, 0));
+    }
+
     private int getTimeByStatisticsType(StatisticsType statisticsType, Statistics statistics) {
         if (statisticsType == StatisticsType.WEEKLY) return statistics.getWeeklyTime();
         if (statisticsType == StatisticsType.MONTHLY) return statistics.getMonthlyTime();
