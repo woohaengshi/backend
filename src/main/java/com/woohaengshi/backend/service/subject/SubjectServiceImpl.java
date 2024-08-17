@@ -40,17 +40,17 @@ public class SubjectServiceImpl implements SubjectService {
             throw new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND);
     }
 
-    private void insertSubjects(Long memberId, List<String> addSubjects) {
+    private void insertSubjects(Long memberId, List<String> addedSubjects) {
         Member member = memberRepository.findById(memberId).get();
-        addSubjects.forEach(
+        addedSubjects.forEach(
                 subject -> {
                     validateAlreadyExistSubject(memberId, subject);
                     subjectRepository.save(Subject.builder().name(subject).member(member).build());
                 });
     }
 
-    private void deleteSubjects(List<Long> deleteSubjects) {
-        deleteSubjects.forEach(
+    private void deleteSubjects(List<Long> deletedSubjects) {
+        deletedSubjects.forEach(
                 subjectId -> {
                     validateNotExistSubject(subjectId);
                     subjectRepository.deleteById(subjectId);
