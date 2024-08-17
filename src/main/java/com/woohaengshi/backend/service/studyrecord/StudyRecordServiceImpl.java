@@ -1,5 +1,7 @@
 package com.woohaengshi.backend.service.studyrecord;
 
+import static com.woohaengshi.backend.exception.ErrorCode.*;
+
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.StudySubject;
 import com.woohaengshi.backend.domain.member.Member;
@@ -20,8 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
-
-import static com.woohaengshi.backend.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
