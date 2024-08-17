@@ -3,6 +3,7 @@ package com.woohaengshi.backend.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
@@ -12,6 +13,7 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.StudySubject;
 import com.woohaengshi.backend.domain.member.Member;
+import com.woohaengshi.backend.domain.statistics.Statistics;
 import com.woohaengshi.backend.domain.subject.Subject;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowDailyRecordResponse;
@@ -19,12 +21,10 @@ import com.woohaengshi.backend.dto.response.studyrecord.ShowMonthlyRecordRespons
 import com.woohaengshi.backend.dto.response.studyrecord.ShowYearlyRecordResponse;
 import com.woohaengshi.backend.dto.result.MonthlyTotalRecordResult;
 import com.woohaengshi.backend.exception.WoohaengshiException;
-import com.woohaengshi.backend.repository.MemberRepository;
-import com.woohaengshi.backend.repository.StudyRecordRepository;
-import com.woohaengshi.backend.repository.StudySubjectRepository;
-import com.woohaengshi.backend.repository.SubjectRepository;
+import com.woohaengshi.backend.repository.*;
 import com.woohaengshi.backend.service.studyrecord.StudyRecordServiceImpl;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
+import com.woohaengshi.backend.support.fixture.StatisticsFixture;
 import com.woohaengshi.backend.support.fixture.StudyRecordFixture;
 
 import org.junit.jupiter.api.Test;
@@ -45,15 +45,24 @@ class StudyRecordServiceTest {
     @Mock private StudyRecordRepository studyRecordRepository;
     @Mock private SubjectRepository subjectRepository;
     @Mock private StudySubjectRepository studySubjectRepository;
+    @Mock private StatisticsRepository statisticsRepository;
     @InjectMocks private StudyRecordServiceImpl studyRecordService;
 
     @Test
     void 첫_공부_기록을_저장할_수_있다() {
-        Member member = MemberFixture.builder().build();
+        Member member = MemberFixture.builder().id(1L).build();
         SaveRecordRequest request = new SaveRecordRequest(LocalDate.now(), 10, List.of(1L, 2L));
         StudyRecord studyRecord = StudyRecordFixture.from(request, 1L);
-
+        Statistics statistics =
+                StatisticsFixture.builder()
+                        .weeklyTime(0)
+                        .monthlyTime(0)
+                        .monthlyTime(0)
+                        .member(member)
+                        .build();
         given(memberRepository.existsById(member.getId())).willReturn(true);
+        given(statisticsRepository.findByMemberId(member.getId()))
+                .willReturn(Optional.of(statistics));
         given(studyRecordRepository.findByDateAndMemberId(request.getDate(), member.getId()))
                 .willReturn(Optional.empty());
         given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
@@ -69,6 +78,9 @@ class StudyRecordServiceTest {
 
         assertAll(
                 () -> studyRecordService.save(request, member.getId()),
+                () -> assertEquals(10, statistics.getWeeklyTime(), "주간"),
+                () -> assertEquals(10, statistics.getWeeklyTime(), "월간"),
+                () -> assertEquals(10, statistics.getWeeklyTime(), "통합"),
                 () ->
                         verify(studyRecordRepository, times(1))
                                 .findByDateAndMemberId(request.getDate(), member.getId()),
