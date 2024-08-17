@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
@@ -101,5 +102,17 @@ class AuthServiceTest {
         verify(subjectRepository, times(3)).save(any(Subject.class));
         verify(statisticsRepository, times(1)).save(any(Statistics.class));
         verify(memberRepository, times(1)).save(any(Member.class));
+    }
+
+    @Test
+    void 이미_존재하는_이메일이라면_회원가입을_할_수_없다() {
+        SignUpRequest request =
+                new SignUpRequest("강현우", "클라우드 서비스", "rkdgusdn@naver.com", "password12!@");
+        given(memberRepository.existsAllByEmail(request.getEmail())).willReturn(true);
+        assertThatThrownBy(() -> authService.signUp(request))
+                .isExactlyInstanceOf(WoohaengshiException.class);
+        verify(subjectRepository, never()).save(any(Subject.class));
+        verify(statisticsRepository, never()).save(any(Statistics.class));
+        verify(memberRepository, never()).save(any(Member.class));
     }
 }
