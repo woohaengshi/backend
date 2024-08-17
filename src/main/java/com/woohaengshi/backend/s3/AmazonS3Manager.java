@@ -34,7 +34,7 @@ public class AmazonS3Manager {
         return amazonS3.getUrl(s3Config.getBucket(), keyName).toString();
     }
 
-    public static String makeKeyName(Filepath filepath) {
+    public String makeKeyName(Filepath filepath) {
         String uuid = UUID.randomUUID().toString();
         return filepath.toString() + '/' + uuid;
     }
