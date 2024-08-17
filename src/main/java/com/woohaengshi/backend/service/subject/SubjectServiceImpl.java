@@ -24,12 +24,12 @@ public class SubjectServiceImpl implements SubjectService {
     public void editSubjects(Long memberId, SubjectRequest requestDTO) {
         validateMemberExist(memberId);
 
-        List<String> addedSubjects = requestDTO.getAddSubjects();
+        List<String> addedSubjects = requestDTO.getAddedSubjects();
         if (addedSubjects != null && !addedSubjects.isEmpty()) {
             insertSubjects(memberId, addedSubjects);
         }
 
-        List<Long> deletedSubjects = requestDTO.getDeleteSubjects();
+        List<Long> deletedSubjects = requestDTO.getDeletedSubjects();
         if (deletedSubjects != null && !deletedSubjects.isEmpty()) {
             deleteSubjects(deletedSubjects);
         }
