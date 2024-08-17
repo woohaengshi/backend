@@ -20,8 +20,7 @@ public class FileService {
     private String bucket;
     private final AmazonS3 amazonS3;
 
-    public String getUploadPreSignedUrl(String prefix, String filename) {
-        String path = createAndGetPath(prefix, filename);
+    public String getUploadPreSignedUrl(String path) {
         GeneratePresignedUrlRequest uploadRequest = generatePresignedUrlRequest(bucket, path, HttpMethod.PUT);
         URL url = amazonS3.generatePresignedUrl(uploadRequest);
         return url.toString();
@@ -33,7 +32,7 @@ public class FileService {
         return url.toString();
     }
 
-    private String createAndGetPath(String prefix, String filename) {
+    public static String createAndGetPath(String prefix, String filename) {
         String fileId = UUID.randomUUID().toString();
         return String.format("%s/%s", prefix, fileId + filename);
     }
