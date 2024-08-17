@@ -31,7 +31,6 @@ public class MemberServiceTest {
     void 회원_정보를_조회한다() {
         Member member = MemberFixture.builder().build();
 
-        given(memberRepository.existsById(member.getId())).willReturn(true);
         given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
 
         ShowMemberResponse response = memberService.getMemberInfo(member.getId());
@@ -50,7 +49,7 @@ public class MemberServiceTest {
     void 회원이_존재하지_않을_경우_예외를_던진다() {
         Member member = MemberFixture.builder().build();
 
-        given(memberRepository.existsById(member.getId())).willReturn(false);
+        given(memberRepository.findById(member.getId())).willReturn(Optional.empty());
 
         WoohaengshiException exception = assertThrows(WoohaengshiException.class, () -> memberService.getMemberInfo(member.getId()));
         assertEquals(ErrorCode.MEMBER_NOT_FOUND, exception.getErrorCode());
