@@ -9,27 +9,26 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class MemberServiceImpl implements MemberService{
+public class MemberServiceImpl implements MemberService {
 
-    private final MemberRepository memberRepository;
+  private final MemberRepository memberRepository;
 
-    @Override
-    public ShowMemberResponse getMemberInfo(Long memberId) {
-        validateMemberExist(memberId);
-        Member member = memberRepository.findById(memberId).get();
+  @Override
+  public ShowMemberResponse getMemberInfo(Long memberId) {
+    Member member =
+        memberRepository
+            .findById(memberId)
+            .orElseThrow(() -> new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND));
 
-        return new ShowMemberResponse(memberId, member.getName(), member.getEmail(), member.getPassword(), member.getImage(), member.getCourse().getName());
-    }
-
-    private void validateMemberExist(Long memberId) {
-        if (!memberRepository.existsById(memberId)) {
-            throw new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND);
-        }
-    }
+    return new ShowMemberResponse(
+        member.getId(),
+        member.getName(),
+        member.getEmail(),
+        member.getPassword(),
+        member.getImage(),
+        member.getCourse().getName());
+  }
 }
-
