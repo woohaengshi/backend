@@ -137,31 +137,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     public void updateStatisticsTime(StatisticsType statisticsType) {
         List<Statistics> statisticsList = statisticsRepository.findAllWithMember();
-
-        LocalDate today = LocalDate.now();
-        LocalDate yesterday = today.minusDays(1);
-
         statisticsList.forEach(
-                item -> updateIndividualStatistics(item, statisticsType, today, yesterday));
-    }
-
-    private void updateIndividualStatistics(
-            Statistics statistics,
-            StatisticsType statisticsType,
-            LocalDate today,
-            LocalDate yesterday) {
-        Integer updateTime = getTimeByStatisticsType(statisticsType, statistics);
-
-        if ((statisticsType == StatisticsType.WEEKLY && today.getDayOfWeek() == DayOfWeek.MONDAY)
-                || (statisticsType == StatisticsType.MONTHLY && today.getDayOfMonth() == 1)) {
-            updateTime = 0;
-        }
-        updateTime +=
-                studyRecordRepository
-                        .findByDateAndMemberId(yesterday, statistics.getMember().getId())
-                        .map(StudyRecord::getTime)
-                        .orElse(0);
-        statistics.changeTime(statisticsType, updateTime);
+                item -> item.changeTime(statisticsType, 0));
     }
 
     private int getTimeByStatisticsType(StatisticsType statisticsType, Statistics statistics) {

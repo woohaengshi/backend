@@ -59,7 +59,5 @@ public class Statistics {
             this.monthlyTime = time;
             return;
         }
-
-        this.totalTime = time;
     }
 }

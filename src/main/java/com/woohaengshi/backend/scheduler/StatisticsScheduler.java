@@ -13,11 +13,14 @@ import org.springframework.stereotype.Component;
 public class StatisticsScheduler {
     private final StatisticsService statisticsService;
 
-    //    @Scheduled(fixedDelay = 2000)
-    @Scheduled(cron = "0 0 5 * * ?")
-    public void UpdateTask() {
+//        @Scheduled(fixedDelay = 2000)
+    @Scheduled(cron = "0 0 5 1 * ?")
+    public void scheduleMonthlyTask() {
         statisticsService.updateStatisticsTime(StatisticsType.WEEKLY);
+    }
+
+    @Scheduled(cron = "0 0 5 * * MON")
+    public void scheduleWeeklyTask() {
         statisticsService.updateStatisticsTime(StatisticsType.MONTHLY);
-        statisticsService.updateStatisticsTime(StatisticsType.TOTAL);
     }
 }
