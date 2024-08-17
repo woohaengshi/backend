@@ -70,10 +70,11 @@ public class StudyRecordServiceImpl implements StudyRecordService {
 
     private StudyRecord saveStudyRecord(
             SaveRecordRequest request, Long memberId, Optional<StudyRecord> optionalStudyRecord) {
+        updateStatisticsTime(memberId, request.getTime());
+
         if (optionalStudyRecord.isPresent()) {
             StudyRecord studyRecord = optionalStudyRecord.get();
             studyRecord.updateTime(request.getTime());
-            updateStatisticsTime(memberId, request.getTime());
             return studyRecord;
         }
         return studyRecordRepository.save(request.toStudyRecord(findMemberById(memberId)));
