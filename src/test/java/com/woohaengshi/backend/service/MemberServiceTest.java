@@ -38,7 +38,6 @@ public class MemberServiceTest {
         assertAll(
                 () -> verify(memberRepository, times(1)).findById(member.getId()),
                 () -> assertThat(response.getName()).isEqualTo(member.getName()),
-                () -> assertThat(response.getPassword()).isEqualTo(member.getPassword()),
                 () -> assertThat(response.getEmail()).isEqualTo(member.getEmail()),
                 () -> assertThat(response.getImage()).isEqualTo(member.getImage()),
                 () -> assertThat(response.getCourse()).isEqualTo(member.getCourse().getName())

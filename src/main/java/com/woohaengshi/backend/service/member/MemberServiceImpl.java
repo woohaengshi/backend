@@ -27,7 +27,6 @@ public class MemberServiceImpl implements MemberService {
         member.getId(),
         member.getName(),
         member.getEmail(),
-        member.getPassword(),
         member.getImage(),
         member.getCourse().getName());
   }
