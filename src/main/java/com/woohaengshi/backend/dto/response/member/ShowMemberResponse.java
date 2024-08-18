@@ -10,11 +10,15 @@ public class ShowMemberResponse {
     private String image;
     private String course;
 
-    public ShowMemberResponse(Long id, String name, String email, String image, String course) {
+    private ShowMemberResponse(Long id, String name, String email, String image, String course) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.image = image;
         this.course = course;
+    }
+
+    public static ShowMemberResponse of(Long id, String name, String email, String image, String course) {
+        return new ShowMemberResponse(id, name, email, image, course);
     }
 }

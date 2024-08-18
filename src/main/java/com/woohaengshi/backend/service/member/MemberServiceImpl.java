@@ -23,11 +23,6 @@ public class MemberServiceImpl implements MemberService {
             .findById(memberId)
             .orElseThrow(() -> new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND));
 
-    return new ShowMemberResponse(
-        member.getId(),
-        member.getName(),
-        member.getEmail(),
-        member.getImage(),
-        member.getCourse().getName());
+    return ShowMemberResponse.of(member.getId(), member.getName(), member.getEmail(), member.getImage(), member.getCourse().getName());
   }
 }
