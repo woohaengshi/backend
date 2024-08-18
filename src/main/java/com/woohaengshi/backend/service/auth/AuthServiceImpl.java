@@ -105,7 +105,7 @@ public class AuthServiceImpl implements AuthService {
 
     private void validateAlreadyExistEmail(SignUpRequest request) {
         if (memberRepository.existsAllByEmail(request.getEmail())) {
-            throw new WoohaengshiException(ALREADY_EXIST_EMAIL);
+            throw new WoohaengshiException(EMAIL_ALREADY_EXIST);
         }
     }
 
