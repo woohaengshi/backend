@@ -26,7 +26,7 @@ public class MemberControllerTest {
                 .all()
                 .contentType(ContentType.JSON)
                 .when()
-                .get("/api/v1/members/info")
+                .get("/api/v1/members")
                 .then()
                 .log()
                 .all()
