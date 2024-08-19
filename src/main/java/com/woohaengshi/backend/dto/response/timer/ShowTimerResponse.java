@@ -23,7 +23,7 @@ public class ShowTimerResponse {
         return new ShowTimerResponse(
                 time,
                 subjects.stream()
-                        .map(subject -> ShowSubjectsResponse.of(subject.getId(), subject.getName()))
+                        .map(ShowSubjectsResponse::from)
                         .toList());
     }
 }
