@@ -9,7 +9,6 @@ import static org.mockito.Mockito.verify;
 
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.response.member.ShowMemberResponse;
-import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.service.member.MemberServiceImpl;
