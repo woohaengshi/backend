@@ -19,10 +19,12 @@ import com.woohaengshi.backend.dto.response.studyrecord.ShowDailyRecordResponse;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowMonthlyRecordResponse;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowYearlyRecordResponse;
 import com.woohaengshi.backend.dto.result.MonthlyTotalRecordResult;
+import com.woohaengshi.backend.dto.result.ShowCalendarResult;
+import com.woohaengshi.backend.dto.result.SubjectResult;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.StatisticsRepository;
-import com.woohaengshi.backend.repository.StudyRecordRepository;
+import com.woohaengshi.backend.repository.studyrecord.StudyRecordRepository;
 import com.woohaengshi.backend.repository.StudySubjectRepository;
 import com.woohaengshi.backend.repository.SubjectRepository;
 import com.woohaengshi.backend.service.studyrecord.StudyRecordServiceImpl;
@@ -173,49 +175,32 @@ class StudyRecordServiceTest {
     }
 
     @Test
-    void 현재_연도와_월을_통해_공부_기록을_조회_한다() {
-        Member member = MemberFixture.builder().build();
-        List<Object[]> records = new ArrayList<>();
-        records.add(new Object[] {1, 36000, 2L, "CSS"});
-        records.add(new Object[] {1, 36000, 1L, "HTML"});
-        records.add(new Object[] {6, 58000, 3L, "JS"});
-        records.add(new Object[] {9, 47000, 3L, "JS"});
-        records.add(new Object[] {9, 47000, 2L, "CSS"});
+    void 월_단위_공부_기록을_조회_할_수_있다(){
         YearMonth date = YearMonth.now();
-
-        ShowMonthlyRecordResponse expected = ShowMonthlyRecordResponse.of(date, records);
-
-        given(memberRepository.existsById(member.getId())).willReturn(true);
-        given(studyRecordRepository.findByYearAndMonthAndMemberId(2024, 8, member.getId()))
-                .willReturn(records);
-
-        ShowMonthlyRecordResponse response =
-                studyRecordService.showMonthlyRecord(date, member.getId());
-
+        SubjectResult subjectResult1 = new SubjectResult(1L, "HTML");
+        SubjectResult subjectResult2 = new SubjectResult(2L, "CSS");
+        SubjectResult subjectResult3 = new SubjectResult(3L, "JAVA");
+        ShowCalendarResult showCalendarResult1 = new ShowCalendarResult(12, 10, List.of(subjectResult1, subjectResult2));
+        ShowCalendarResult showCalendarResult2 = new ShowCalendarResult(13, 100, List.of(subjectResult3));
+        ShowCalendarResult showCalendarResult3 = new ShowCalendarResult(14, 200, List.of(subjectResult1, subjectResult3));
+        List<ShowCalendarResult> result = List.of(showCalendarResult1, showCalendarResult2, showCalendarResult3);
+        given(memberRepository.existsById(1L)).willReturn(true);
+        given(studyRecordRepository.findStudyRecordInCalendar(date.getYear(), date.getMonthValue(), 1L)).willReturn(result);
+        ShowMonthlyRecordResponse response = studyRecordService.getMonthlyRecord(date, 1L);
         assertAll(
-                "response",
-                () -> assertThat(response.getYear()).isEqualTo(expected.getYear()),
-                () -> assertThat(response.getMonth()).isEqualTo(expected.getMonth()),
-                () -> {
-                    for (int i = 0; i < response.getRecords().size(); i++) {
-                        ShowDailyRecordResponse daily = response.getRecords().get(i);
-                        ShowDailyRecordResponse expectedDaily = expected.getRecords().get(i);
-
-                        assertThat(daily.getDay()).isEqualTo(expectedDaily.getDay());
-                        assertThat(daily.getTime()).isEqualTo(expectedDaily.getTime());
-
-                        for (int j = 0; j < daily.getSubjects().size(); j++) {
-                            assertThat(daily.getSubjects().get(j).getId())
-                                    .isEqualTo(expectedDaily.getSubjects().get(j).getId());
-                            assertThat(daily.getSubjects().get(j).getName())
-                                    .isEqualTo(expectedDaily.getSubjects().get(j).getName());
-                        }
-                    }
-                });
+                () -> assertThat(response.getYear()).isEqualTo(date.getYear()),
+                () -> assertThat(response.getMonth()).isEqualTo(date.getMonthValue()),
+                () -> assertThat(response.getRecords().size()).isEqualTo(date.atEndOfMonth().getDayOfMonth()),
+                () -> assertThat(response.getRecords().get(0).getTime()).isEqualTo(0),
+                () -> assertThat(response.getRecords().get(11).getTime()).isEqualTo(showCalendarResult1.getTime()),
+                () -> assertThat(response.getRecords().get(12).getTime()).isEqualTo(showCalendarResult2.getTime()),
+                () -> assertThat(response.getRecords().get(13).getTime()).isEqualTo(showCalendarResult3.getTime())
+        );
     }
 
     @Test
     void 해당하는_연도의_월_별_공부_기록을_조회_한다() {
+        
         List<MonthlyTotalRecordResult> expected = new ArrayList<>();
         expected.add(new MonthlyTotalRecordResult(1, 100L));
         expected.add(new MonthlyTotalRecordResult(2, 200L));
