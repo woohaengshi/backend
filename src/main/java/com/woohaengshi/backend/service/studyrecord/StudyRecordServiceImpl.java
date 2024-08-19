@@ -76,7 +76,7 @@ public class StudyRecordServiceImpl implements StudyRecordService {
         Map<Integer, ShowCalendarResult> calendar =
                 studyRecordInCalendar.stream()
                         .collect(
-                                Collectors.toMap(ShowCalendarResult::getDate, Function.identity()));
+                                Collectors.toMap(ShowCalendarResult::getDay, Function.identity()));
 
         return IntStream.rangeClosed(1, date.atEndOfMonth().getDayOfMonth())
                 .boxed()

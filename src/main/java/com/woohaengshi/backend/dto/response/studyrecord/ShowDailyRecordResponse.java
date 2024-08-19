@@ -21,7 +21,7 @@ public class ShowDailyRecordResponse {
 
     public static ShowDailyRecordResponse from(ShowCalendarResult result) {
         return new ShowDailyRecordResponse(
-                result.getDate(),
+                result.getDay(),
                 result.getTime(),
                 result.getSubjects().stream().map(ShowSubjectsResponse::from).toList());
     }
