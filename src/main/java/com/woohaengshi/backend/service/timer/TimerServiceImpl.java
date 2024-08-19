@@ -7,7 +7,7 @@ import com.woohaengshi.backend.dto.response.timer.ShowTimerResponse;
 import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
-import com.woohaengshi.backend.repository.StudyRecordRepository;
+import com.woohaengshi.backend.repository.studyrecord.StudyRecordRepository;
 import com.woohaengshi.backend.repository.SubjectRepository;
 
 import lombok.RequiredArgsConstructor;

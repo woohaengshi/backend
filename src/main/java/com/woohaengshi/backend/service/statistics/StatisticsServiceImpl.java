@@ -10,7 +10,7 @@ import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.StatisticsRepository;
 import com.woohaengshi.backend.repository.StatisticsSpecification;
-import com.woohaengshi.backend.repository.StudyRecordRepository;
+import com.woohaengshi.backend.repository.studyrecord.StudyRecordRepository;
 import com.woohaengshi.backend.repository.StudyRecordSpecification;
 
 import lombok.RequiredArgsConstructor;
