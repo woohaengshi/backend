@@ -5,7 +5,9 @@ import com.woohaengshi.backend.dto.response.member.ShowMemberResponse;
 import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +26,11 @@ public class MemberServiceImpl implements MemberService {
                         .findById(memberId)
                         .orElseThrow(() -> new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND));
 
-        return ShowMemberResponse.of(member.getId(), member.getName(), member.getEmail(), member.getImage(), member.getCourse().getName());
+        return ShowMemberResponse.of(
+                member.getId(),
+                member.getName(),
+                member.getEmail(),
+                member.getImage(),
+                member.getCourse().getName());
     }
 }
