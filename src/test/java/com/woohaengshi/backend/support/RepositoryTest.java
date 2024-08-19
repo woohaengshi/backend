@@ -1,6 +1,7 @@
 package com.woohaengshi.backend.support;
 
 import com.woohaengshi.backend.config.QueryDslConfig;
+
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

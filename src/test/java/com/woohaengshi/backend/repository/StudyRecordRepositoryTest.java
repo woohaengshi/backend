@@ -12,14 +12,13 @@ import com.woohaengshi.backend.dto.result.ShowCalendarResult;
 import com.woohaengshi.backend.repository.studyrecord.StudyRecordRepository;
 import com.woohaengshi.backend.support.RepositoryTest;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
-
 import com.woohaengshi.backend.support.fixture.SubjectFixture;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.List;
 
 @RepositoryTest
@@ -82,18 +81,18 @@ public class StudyRecordRepositoryTest {
         LocalDate date3 = LocalDate.of(2024, 2, 20);
 
         저장(StudyRecord.builder().member(member).time(400).date(date1).build());
-        StudyRecord studyRecord = 저장(StudyRecord.builder().member(member).time(500).date(date2).build());
+        StudyRecord studyRecord =
+                저장(StudyRecord.builder().member(member).time(500).date(date2).build());
         저장(StudyRecord.builder().member(member).time(1000).date(date3).build());
         Subject subject = 저장(SubjectFixture.builder().member(member).build());
         저장(StudySubject.builder().studyRecord(studyRecord).subject(subject).build());
 
-        List<ShowCalendarResult> result = studyRecordRepository.findStudyRecordInCalendar(2024, 2, member.getId());
+        List<ShowCalendarResult> result =
+                studyRecordRepository.findStudyRecordInCalendar(2024, 2, member.getId());
         assertAll(
                 () -> assertThat(result.size()).isEqualTo(2),
                 () -> assertThat(result.get(0).getSubjects().size()).isEqualTo(1),
                 () -> assertThat(result.get(0).getTime()).isEqualTo(studyRecord.getTime()),
-                () -> assertThat(result.get(1).getSubjects().size()).isEqualTo(0)
-        );
-
+                () -> assertThat(result.get(1).getSubjects().size()).isEqualTo(0));
     }
 }

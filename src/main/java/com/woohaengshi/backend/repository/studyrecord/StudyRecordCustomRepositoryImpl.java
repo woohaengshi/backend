@@ -1,18 +1,19 @@
 package com.woohaengshi.backend.repository.studyrecord;
 
-import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.woohaengshi.backend.dto.result.ShowCalendarResult;
-import com.woohaengshi.backend.dto.result.SubjectResult;
-import lombok.RequiredArgsConstructor;
-
-import java.util.List;
-
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 import static com.woohaengshi.backend.domain.QStudyRecord.studyRecord;
 import static com.woohaengshi.backend.domain.QStudySubject.studySubject;
 import static com.woohaengshi.backend.domain.subject.QSubject.subject;
+
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.woohaengshi.backend.dto.result.ShowCalendarResult;
+import com.woohaengshi.backend.dto.result.SubjectResult;
+
+import lombok.RequiredArgsConstructor;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 public class StudyRecordCustomRepositoryImpl implements StudyRecordCustomRepository {
@@ -39,8 +40,9 @@ public class StudyRecordCustomRepositoryImpl implements StudyRecordCustomReposit
                                                 studyRecord.time,
                                                 list(
                                                         Projections.constructor(
-                                                                SubjectResult.class,
-                                                                subject.id,
-                                                                subject.name).skipNulls()))));
+                                                                        SubjectResult.class,
+                                                                        subject.id,
+                                                                        subject.name)
+                                                                .skipNulls()))));
     }
 }

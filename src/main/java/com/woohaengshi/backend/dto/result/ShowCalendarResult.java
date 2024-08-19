@@ -18,7 +18,7 @@ public class ShowCalendarResult {
     private int time;
     private List<SubjectResult> subjects = new ArrayList<>();
 
-    public static ShowCalendarResult init(int date){
+    public static ShowCalendarResult init(int date) {
         return new ShowCalendarResult(date, 0, new ArrayList<>());
     }
 }

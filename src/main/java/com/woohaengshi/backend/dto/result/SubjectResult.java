@@ -1,6 +1,5 @@
 package com.woohaengshi.backend.dto.result;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

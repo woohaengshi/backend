@@ -1,8 +1,8 @@
 package com.woohaengshi.backend.dto.response.studyrecord;
 
 import com.woohaengshi.backend.dto.response.subject.ShowSubjectsResponse;
-
 import com.woohaengshi.backend.dto.result.ShowCalendarResult;
+
 import lombok.Getter;
 
 import java.util.List;

@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface StudyRecordRepository
-        extends JpaRepository<StudyRecord, Long>, JpaSpecificationExecutor<StudyRecord>, StudyRecordCustomRepository{
+        extends JpaRepository<StudyRecord, Long>,
+                JpaSpecificationExecutor<StudyRecord>,
+                StudyRecordCustomRepository {
     Optional<StudyRecord> findByDateAndMemberId(LocalDate date, Long memberId);
 
     @Query("SELECT COUNT(s) + 1 FROM StudyRecord s WHERE s.date = :date AND s.time > :time")
