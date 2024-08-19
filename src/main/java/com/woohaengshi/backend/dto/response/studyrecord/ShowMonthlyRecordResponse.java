@@ -1,12 +1,15 @@
 package com.woohaengshi.backend.dto.response.studyrecord;
 
-import com.woohaengshi.backend.domain.subject.Subject;
 import com.woohaengshi.backend.dto.response.subject.ShowSubjectsResponse;
+import com.woohaengshi.backend.dto.result.DailyStudyRecordResult;
 
 import lombok.Getter;
 
 import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 public class ShowMonthlyRecordResponse {
@@ -20,22 +23,26 @@ public class ShowMonthlyRecordResponse {
         this.records = records;
     }
 
-    public static ShowMonthlyRecordResponse of(YearMonth date, List<Object[]> records) {
-        return new ShowMonthlyRecordResponse(
-                date.getYear(),
-                date.getMonthValue(),
-                records.stream()
-                        .map(
-                                record ->
-                                        ShowDailyRecordResponse.of(
-                                                ((Number) record[0]).intValue(),
-                                                ((Number) record[1]).intValue(),
-                                                List.of(
-                                                        ShowSubjectsResponse.from(
-                                                                Subject.builder()
-                                                                        .id((Long) record[2])
-                                                                        .name((String) record[3])
-                                                                        .build()))))
-                        .toList());
+    public static ShowMonthlyRecordResponse of(
+            YearMonth date, List<DailyStudyRecordResult> results) {
+        Map<Integer, List<ShowSubjectsResponse>> subjectsMap = new HashMap<>();
+        Map<Integer, Integer> timeMap = new HashMap<>();
+
+        for (DailyStudyRecordResult result : results) {
+            subjectsMap
+                    .computeIfAbsent(result.getDay(), k -> new ArrayList<>())
+                    .add(ShowSubjectsResponse.of(result.getSubjectId(), result.getSubjectName()));
+            timeMap.putIfAbsent(result.getDay(), result.getTime());
+        }
+
+        List<ShowDailyRecordResponse> records = new ArrayList<>();
+        for (int day = 1; day <= date.lengthOfMonth(); day++)
+            records.add(
+                    ShowDailyRecordResponse.of(
+                            day,
+                            timeMap.getOrDefault(day, 0),
+                            subjectsMap.getOrDefault(day, new ArrayList<>())));
+
+        return new ShowMonthlyRecordResponse(date.getYear(), date.getMonthValue(), records);
     }
 }

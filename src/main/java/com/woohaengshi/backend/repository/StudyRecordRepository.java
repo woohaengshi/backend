@@ -1,11 +1,9 @@
 package com.woohaengshi.backend.repository;
 
 import com.woohaengshi.backend.domain.StudyRecord;
+import com.woohaengshi.backend.dto.result.DailyStudyRecordResult;
 import com.woohaengshi.backend.dto.result.MonthlyTotalRecordResult;
 
-import jakarta.persistence.criteria.Predicate;
-
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -20,20 +18,17 @@ public interface StudyRecordRepository
     Optional<StudyRecord> findByDateAndMemberId(LocalDate date, Long memberId);
 
     @Query(
-            value =
-                    "SELECT DAY(r.date), r.time, sb.id, sb.name\n"
-                            + "FROM study_record r\n"
-                            + "INNER JOIN study_subject st ON r.id = st.study_record_id\n"
-                            + "INNER JOIN subject sb ON st.subject_id = sb.id\n"
-                            + "WHERE YEAR(r.date) = :year\n"
-                            + "  AND MONTH(r.date) = :month\n"
-                            + "  AND r.member_id = :memberId\n"
-                            + "ORDER BY r.date ASC;",
-            nativeQuery = true)
-    List<Object[]> findByYearAndMonthAndMemberId(
-            @Param(value = "year") int year,
-            @Param(value = "month") int month,
-            @Param(value = "memberId") Long memberId);
+            "select new com.woohaengshi.backend.dto.result.DailyStudyRecordResult("
+                    + "DAY(sr.date), sr.time, sb.id, sb.name) "
+                    + "FROM StudyRecord sr "
+                    + "JOIN sr.studySubjects ss "
+                    + "JOIN ss.subject sb "
+                    + "WHERE YEAR(sr.date) = :year "
+                    + "AND MONTH(sr.date) = :month "
+                    + "AND sr.member.id = :memberId "
+                    + "ORDER BY sr.date, sr.id")
+    List<DailyStudyRecordResult> findByYearAndMonthAndMemberId(
+            @Param("year") int year, @Param("month") int month, @Param("memberId") Long memberId);
 
     @Query("SELECT COUNT(s) + 1 FROM StudyRecord s WHERE s.date = :date AND s.time > :time")
     Integer findRankByDate(LocalDate date, int time);
@@ -48,12 +43,4 @@ public interface StudyRecordRepository
                     + "order by MONTH(sr.date)")
     List<MonthlyTotalRecordResult> findMonthlyTotalByYearAndMemberId(
             @Param("year") int year, @Param("memberId") Long memberId);
-
-    static Specification<StudyRecord> findStudyRecordsByDateSortedByTimeDesc(LocalDate date) {
-        return (root, query, cb) -> {
-            Predicate datePredicate = cb.equal(root.get("date"), date);
-            query.orderBy(cb.desc(root.get("time")));
-            return datePredicate;
-        };
-    }
 }

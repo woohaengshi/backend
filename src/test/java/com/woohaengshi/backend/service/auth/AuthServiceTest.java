@@ -4,17 +4,22 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.woohaengshi.backend.controller.auth.RefreshCookieProvider;
 import com.woohaengshi.backend.domain.RefreshToken;
 import com.woohaengshi.backend.domain.member.Member;
+import com.woohaengshi.backend.domain.statistics.Statistics;
+import com.woohaengshi.backend.domain.subject.Subject;
 import com.woohaengshi.backend.dto.request.auth.SignInRequest;
 import com.woohaengshi.backend.dto.request.auth.SignUpRequest;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.RefreshTokenRepository;
+import com.woohaengshi.backend.repository.StatisticsRepository;
+import com.woohaengshi.backend.repository.SubjectRepository;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +41,8 @@ class AuthServiceTest {
     @Mock private RefreshCookieProvider refreshCookieProvider;
     @Mock private RefreshTokenRepository refreshTokenRepository;
     @Mock private PasswordEncoder passwordEncoder;
+    @Mock private SubjectRepository subjectRepository;
+    @Mock private StatisticsRepository statisticsRepository;
     @InjectMocks private AuthServiceImpl authService;
 
     @BeforeEach()
@@ -90,7 +97,22 @@ class AuthServiceTest {
     void 회원가입을_할_수_있다() {
         SignUpRequest request =
                 new SignUpRequest("강현우", "클라우드 서비스", "rkdgusdn@naver.com", "password12!@");
+        given(memberRepository.existsAllByEmail(request.getEmail())).willReturn(false);
         authService.signUp(request);
+        verify(subjectRepository, times(3)).save(any(Subject.class));
+        verify(statisticsRepository, times(1)).save(any(Statistics.class));
         verify(memberRepository, times(1)).save(any(Member.class));
+    }
+
+    @Test
+    void 이미_존재하는_이메일이라면_회원가입을_할_수_없다() {
+        SignUpRequest request =
+                new SignUpRequest("강현우", "클라우드 서비스", "rkdgusdn@naver.com", "password12!@");
+        given(memberRepository.existsAllByEmail(request.getEmail())).willReturn(true);
+        assertThatThrownBy(() -> authService.signUp(request))
+                .isExactlyInstanceOf(WoohaengshiException.class);
+        verify(subjectRepository, never()).save(any(Subject.class));
+        verify(statisticsRepository, never()).save(any(Statistics.class));
+        verify(memberRepository, never()).save(any(Member.class));
     }
 }
