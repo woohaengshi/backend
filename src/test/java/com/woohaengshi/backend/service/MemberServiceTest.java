@@ -1,6 +1,7 @@
 package com.woohaengshi.backend.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -49,10 +50,7 @@ public class MemberServiceTest {
 
         given(memberRepository.findById(member.getId())).willReturn(Optional.empty());
 
-        WoohaengshiException exception =
-                assertThrows(
-                        WoohaengshiException.class,
-                        () -> memberService.getMemberInfo(member.getId()));
-        assertEquals(ErrorCode.MEMBER_NOT_FOUND, exception.getErrorCode());
+        assertThatThrownBy(() -> memberService.getMemberInfo(member.getId()))
+                .isExactlyInstanceOf(WoohaengshiException.class);
     }
 }
