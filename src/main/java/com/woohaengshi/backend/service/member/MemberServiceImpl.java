@@ -21,11 +21,13 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional(readOnly = true)
     public ShowMemberResponse getMemberInfo(Long memberId) {
-        Member member =
-                memberRepository
-                        .findById(memberId)
-                        .orElseThrow(() -> new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND));
-
+        Member member = findMemberById(memberId);
         return ShowMemberResponse.from(member);
+    }
+
+    private Member findMemberById(Long memberId) {
+        return memberRepository
+                .findById(memberId)
+                .orElseThrow(() -> new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND));
     }
 }
