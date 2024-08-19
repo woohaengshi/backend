@@ -16,18 +16,24 @@ import com.woohaengshi.backend.dto.response.studyrecord.ShowYearlyRecordResponse
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.StatisticsRepository;
-import com.woohaengshi.backend.repository.StudyRecordRepository;
+import com.woohaengshi.backend.repository.studyrecord.StudyRecordRepository;
 import com.woohaengshi.backend.repository.StudySubjectRepository;
 import com.woohaengshi.backend.repository.SubjectRepository;
 
+import com.woohaengshi.backend.dto.result.ShowCalendarResult;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 import java.time.YearMonth;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -56,13 +62,32 @@ public class StudyRecordServiceImpl implements StudyRecordService {
 
     @Override
     @Transactional(readOnly = true)
-    public ShowMonthlyRecordResponse showMonthlyRecord(YearMonth date, Long memberId) {
+    public ShowMonthlyRecordResponse getMonthlyRecord(YearMonth date, Long memberId) {
         validateExistMember(memberId);
 
-        return ShowMonthlyRecordResponse.of(
-                date,
-                studyRecordRepository.findByYearAndMonthAndMemberId(
-                        date.getYear(), date.getMonthValue(), memberId));
+        List<ShowCalendarResult> studyRecordInCalendar =
+                studyRecordRepository.findStudyRecordInCalendar(
+                        date.getYear(), date.getMonthValue(), memberId);
+
+        return ShowMonthlyRecordResponse.of(date, createCalendar(date, studyRecordInCalendar));
+    }
+
+    private Map<Integer, ShowCalendarResult> createCalendar(
+            YearMonth date, List<ShowCalendarResult> studyRecordInCalendar) {
+        Map<Integer, ShowCalendarResult> calendar =
+                studyRecordInCalendar.stream()
+                        .collect(
+                                Collectors.toMap(ShowCalendarResult::getDate, Function.identity()));
+
+        return IntStream.rangeClosed(1, date.atEndOfMonth().getDayOfMonth())
+                .boxed()
+                .collect(
+                        Collectors.toMap(
+                                Function.identity(),
+                                day ->
+                                        calendar.containsKey(day)
+                                                ? calendar.get(day)
+                                                : ShowCalendarResult.init(day)));
     }
 
     @Override
