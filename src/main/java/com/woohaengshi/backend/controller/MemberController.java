@@ -18,7 +18,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping
-    public ShowMemberResponse getMemberInfo(@MemberId Long memberId) {
+    public ShowMemberResponse showMemberInfo(@MemberId Long memberId) {
         return memberService.getMemberInfo(memberId);
     }
 }
