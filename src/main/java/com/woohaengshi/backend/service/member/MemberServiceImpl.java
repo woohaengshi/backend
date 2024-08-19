@@ -14,16 +14,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class MemberServiceImpl implements MemberService {
 
-  private final MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
-  @Override
-  @Transactional(readOnly = true)
-  public ShowMemberResponse getMemberInfo(Long memberId) {
-    Member member =
-        memberRepository
-            .findById(memberId)
-            .orElseThrow(() -> new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND));
+    @Override
+    @Transactional(readOnly = true)
+    public ShowMemberResponse getMemberInfo(Long memberId) {
+        Member member =
+                memberRepository
+                        .findById(memberId)
+                        .orElseThrow(() -> new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND));
 
-    return ShowMemberResponse.of(member.getId(), member.getName(), member.getEmail(), member.getImage(), member.getCourse().getName());
-  }
+        return ShowMemberResponse.of(member.getId(), member.getName(), member.getEmail(), member.getImage(), member.getCourse().getName());
+    }
 }

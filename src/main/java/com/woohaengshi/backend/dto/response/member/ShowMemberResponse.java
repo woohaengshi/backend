@@ -18,7 +18,8 @@ public class ShowMemberResponse {
         this.course = course;
     }
 
-    public static ShowMemberResponse of(Long id, String name, String email, String image, String course) {
+    public static ShowMemberResponse of(
+            Long id, String name, String email, String image, String course) {
         return new ShowMemberResponse(id, name, email, image, course);
     }
 }
