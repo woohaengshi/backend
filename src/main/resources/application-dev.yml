@@ -29,7 +29,17 @@ security:
     key: ${JWT_KEY}
     expiration:
       access: 3600000
-
+cloud:
+  aws:
+    credentials:
+      accessKey: ${S3_KEY}
+      secretKey: ${S3_SECRET_KEY}
+    s3:
+      bucket: "woohaengshi-s3"
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
 
 woohaengshi:
   openapi:
