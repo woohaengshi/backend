@@ -14,8 +14,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
-import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -63,13 +64,9 @@ public class GlobalExceptionHandler {
         if (!ENUM_CLASSES.contains(requiredType)) {
             return requiredType;
         }
-        Field[] fields = exception.getRequiredType().getFields();
-        StringJoiner stringJoiner = new StringJoiner(", ");
-        for (Field field : fields) {
-            field.setAccessible(true);
-            stringJoiner.add(field.getName());
-        }
-        return stringJoiner.toString();
+        return Arrays.stream(exception.getRequiredType().getFields())
+                .map(Field::getName)
+                .collect(Collectors.joining(", "));
     }
 
     private static final String METHOD_NOT_SUPPORTED_FORMAT =
