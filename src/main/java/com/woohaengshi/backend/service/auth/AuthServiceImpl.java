@@ -1,12 +1,12 @@
 package com.woohaengshi.backend.service.auth;
 
+import static com.woohaengshi.backend.domain.subject.DefaultSubject.getDefaultSubjects;
 import static com.woohaengshi.backend.exception.ErrorCode.*;
 
 import com.woohaengshi.backend.controller.auth.RefreshCookieProvider;
 import com.woohaengshi.backend.domain.RefreshToken;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.statistics.Statistics;
-import com.woohaengshi.backend.domain.subject.DefaultSubject;
 import com.woohaengshi.backend.domain.subject.Subject;
 import com.woohaengshi.backend.dto.request.auth.SignInRequest;
 import com.woohaengshi.backend.dto.request.auth.SignUpRequest;
@@ -95,11 +95,18 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void signUp(SignUpRequest request) {
+        validateAlreadyExistEmail(request);
         Member member = request.toMember(passwordEncoder.encode(request.getPassword()));
         memberRepository.save(member);
-        DefaultSubject.getDefaultSubjects(member.getCourse())
+        getDefaultSubjects(member.getCourse())
                 .forEach(subject -> subjectRepository.save(new Subject(subject, member)));
         statisticsRepository.save(new Statistics(member));
+    }
+
+    private void validateAlreadyExistEmail(SignUpRequest request) {
+        if (memberRepository.existsAllByEmail(request.getEmail())) {
+            throw new WoohaengshiException(EMAIL_ALREADY_EXIST);
+        }
     }
 
     private void validateRefreshTokenExpired(RefreshToken refreshToken) {

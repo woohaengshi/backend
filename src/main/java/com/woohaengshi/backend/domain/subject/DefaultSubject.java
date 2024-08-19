@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 public enum DefaultSubject {
     JAVA(CLOUD_SERVICE, "Java"),
-    JAVA_SCRIPT(CLOUD_SERVICE, "Java Script"),
+    JAVA_SCRIPT(CLOUD_SERVICE, "JavaScript"),
     DATABASE(CLOUD_SERVICE, "Database"),
     LINUX(CLOUD_ENGINEERING, "Linux"),
     DEVOPS(CLOUD_ENGINEERING, "DevOps"),

@@ -49,4 +49,10 @@ public class Statistics {
     public Statistics(Member member) {
         this.member = member;
     }
+
+    public void update(int time) {
+        this.monthlyTime += time;
+        this.weeklyTime += time;
+        this.totalTime += time;
+    }
 }

@@ -45,6 +45,6 @@ public class StudyRecord {
     }
 
     public void updateTime(int time) {
-        this.time += time;
+        this.time = time;
     }
 }
