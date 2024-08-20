@@ -20,6 +20,7 @@ public enum ErrorCode {
     INCORRECT_CONSTRUCT_HEADER(UNAUTHORIZED, "잘못된 형식의 인증 헤더입니다."),
     SUBJECT_NOT_FOUND(NOT_FOUND, "과목을 찾을 수 없습니다."),
     FAIL_TO_SIGN_IN(BAD_REQUEST, "로그인에 실패했습니다."),
+    PASSWORD_INCORRECT(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     NOT_EXIST_REFRESH_TOKEN(UNAUTHORIZED, "리프레시 토큰이 존재하지 않습니다."),
     REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "리프레시 토큰을 찾을 수 없습니다."),
     REFRESH_TOKEN_EXPIRED(UNAUTHORIZED, "리프레시 토큰의 유효기간이 만료되었습니다."),
