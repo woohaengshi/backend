@@ -84,4 +84,8 @@ public class Member {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+
+    public void changePassword(String password) {
+        this.password = password;
+    }
 }

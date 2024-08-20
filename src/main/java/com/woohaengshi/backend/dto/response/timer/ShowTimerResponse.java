@@ -21,9 +21,6 @@ public class ShowTimerResponse {
 
     public static ShowTimerResponse of(int time, List<Subject> subjects) {
         return new ShowTimerResponse(
-                time,
-                subjects.stream()
-                        .map(subject -> ShowSubjectsResponse.of(subject.getId(), subject.getName()))
-                        .toList());
+                time, subjects.stream().map(ShowSubjectsResponse::from).toList());
     }
 }

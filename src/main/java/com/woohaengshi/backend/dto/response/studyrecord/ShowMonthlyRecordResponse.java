@@ -1,13 +1,10 @@
 package com.woohaengshi.backend.dto.response.studyrecord;
 
-import com.woohaengshi.backend.dto.response.subject.ShowSubjectsResponse;
-import com.woohaengshi.backend.dto.result.DailyStudyRecordResult;
+import com.woohaengshi.backend.dto.result.ShowCalendarResult;
 
 import lombok.Getter;
 
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,25 +21,11 @@ public class ShowMonthlyRecordResponse {
     }
 
     public static ShowMonthlyRecordResponse of(
-            YearMonth date, List<DailyStudyRecordResult> results) {
-        Map<Integer, List<ShowSubjectsResponse>> subjectsMap = new HashMap<>();
-        Map<Integer, Integer> timeMap = new HashMap<>();
-
-        for (DailyStudyRecordResult result : results) {
-            subjectsMap
-                    .computeIfAbsent(result.getDay(), k -> new ArrayList<>())
-                    .add(ShowSubjectsResponse.of(result.getSubjectId(), result.getSubjectName()));
-            timeMap.putIfAbsent(result.getDay(), result.getTime());
-        }
-
-        List<ShowDailyRecordResponse> records = new ArrayList<>();
-        for (int day = 1; day <= date.lengthOfMonth(); day++)
-            records.add(
-                    ShowDailyRecordResponse.of(
-                            day,
-                            timeMap.getOrDefault(day, 0),
-                            subjectsMap.getOrDefault(day, new ArrayList<>())));
-
+            YearMonth date, Map<Integer, ShowCalendarResult> calendar) {
+        List<ShowDailyRecordResponse> records =
+                calendar.keySet().stream()
+                        .map(result -> ShowDailyRecordResponse.from(calendar.get(result)))
+                        .toList();
         return new ShowMonthlyRecordResponse(date.getYear(), date.getMonthValue(), records);
     }
 }

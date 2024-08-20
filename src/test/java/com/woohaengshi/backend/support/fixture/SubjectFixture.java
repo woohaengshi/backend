@@ -6,7 +6,7 @@ import com.woohaengshi.backend.domain.subject.Subject;
 
 public class SubjectFixture {
     private Long id;
-    private String name;
+    private String name = "HTML";
     private Member member;
     private StudyRecord studyRecord;
 
@@ -35,6 +35,6 @@ public class SubjectFixture {
     }
 
     public Subject build() {
-        return Subject.builder().id(id).member(member).build();
+        return Subject.builder().id(id).name(name).member(member).build();
     }
 }

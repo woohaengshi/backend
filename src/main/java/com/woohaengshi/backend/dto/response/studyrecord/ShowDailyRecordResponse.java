@@ -1,6 +1,7 @@
 package com.woohaengshi.backend.dto.response.studyrecord;
 
 import com.woohaengshi.backend.dto.response.subject.ShowSubjectsResponse;
+import com.woohaengshi.backend.dto.result.ShowCalendarResult;
 
 import lombok.Getter;
 
@@ -18,8 +19,10 @@ public class ShowDailyRecordResponse {
         this.subjects = subjects;
     }
 
-    public static ShowDailyRecordResponse of(
-            int day, int time, List<ShowSubjectsResponse> subjects) {
-        return new ShowDailyRecordResponse(day, time, subjects);
+    public static ShowDailyRecordResponse from(ShowCalendarResult result) {
+        return new ShowDailyRecordResponse(
+                result.getDay(),
+                result.getTime(),
+                result.getSubjects().stream().map(ShowSubjectsResponse::from).toList());
     }
 }

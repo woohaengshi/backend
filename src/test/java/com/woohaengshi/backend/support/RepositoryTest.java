@@ -1,8 +1,11 @@
 package com.woohaengshi.backend.support;
 
+import com.woohaengshi.backend.config.QueryDslConfig;
+
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -13,4 +16,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @DataJpaTest(showSql = true)
+@Import(QueryDslConfig.class)
 public @interface RepositoryTest {}
