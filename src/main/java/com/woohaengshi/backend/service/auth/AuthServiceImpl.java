@@ -60,14 +60,21 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private Member findMemberByRequest(SignInRequest request) {
-        Member member =
-                memberRepository
-                        .findByEmail(request.getEmail())
-                        .orElseThrow(() -> new WoohaengshiException(FAIL_TO_SIGN_IN));
-        if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
-            throw new WoohaengshiException(FAIL_TO_SIGN_IN);
-        }
+        Member member = findMemberByEmail(request);
+        validateCorrectPassword(request, member);
         return member;
+    }
+
+    private Member findMemberByEmail(SignInRequest request) {
+        return memberRepository
+                .findByEmail(request.getEmail())
+                .orElseThrow(() -> new WoohaengshiException(FAIL_TO_SIGN_IN));
+    }
+
+    private void validateCorrectPassword(SignInRequest request, Member member) {
+        if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
+            throw new WoohaengshiException(PASSWORD_INCORRECT);
+        }
     }
 
     @Override
