@@ -1,6 +1,7 @@
 package com.woohaengshi.backend.dto.response.member;
 
 import com.woohaengshi.backend.domain.member.Member;
+
 import lombok.Getter;
 
 @Getter
@@ -20,6 +21,11 @@ public class ShowMemberResponse {
     }
 
     public static ShowMemberResponse from(Member member) {
-        return new ShowMemberResponse(member.getId(), member.getName(), member.getEmail(), member.getImage(), member.getCourse().getName());
+        return new ShowMemberResponse(
+                member.getId(),
+                member.getName(),
+                member.getEmail(),
+                member.getImage(),
+                member.getCourse().getName());
     }
 }
