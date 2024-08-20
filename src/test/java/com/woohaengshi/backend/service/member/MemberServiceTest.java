@@ -46,5 +46,14 @@ class MemberServiceTest {
         assertThatThrownBy(() -> memberService.changePassword(request, member.getId()))
                 .isExactlyInstanceOf(WoohaengshiException.class);
     }
+
+    @Test
+    void 회원_존재하지_않을_시_예외(){
+        Long NOT_EXIST_MEMBER_ID = 1L;
+        ChangePasswordRequest request = new ChangePasswordRequest("oldPassword12!@", "newPassword12!@");
+        given(memberRepository.findById(NOT_EXIST_MEMBER_ID)).willReturn(Optional.empty());
+        assertThatThrownBy(() -> memberService.changePassword(request, NOT_EXIST_MEMBER_ID))
+                .isExactlyInstanceOf(WoohaengshiException.class);
+    }
 }
 
