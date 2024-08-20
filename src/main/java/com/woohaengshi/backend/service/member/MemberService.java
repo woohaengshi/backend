@@ -6,6 +6,6 @@ import com.woohaengshi.backend.dto.response.member.ShowMemberResponse;
 public interface MemberService {
 
     void changePassword(ChangePasswordRequest request, Long memberId);
+
     ShowMemberResponse getMemberInfo(Long memberId);
-  
 }
