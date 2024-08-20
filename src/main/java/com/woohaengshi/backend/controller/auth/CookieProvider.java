@@ -1,7 +1,5 @@
 package com.woohaengshi.backend.controller.auth;
 
-import com.woohaengshi.backend.domain.RefreshToken;
-
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -11,18 +9,18 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class RefreshCookieProvider {
+public class CookieProvider {
 
     public static final String REFRESH_TOKEN = "refresh_token";
 
     @Value("${security.refresh.expiration}")
     private Long expirationSeconds;
 
-    public ResponseCookie createRefreshTokenCookie(RefreshToken refreshToken) {
-        return createBaseCookie(refreshToken.getToken()).maxAge(expirationSeconds).build();
+    public ResponseCookie createRefreshTokenCookie(String refreshToken) {
+        return createBaseRefreshTokenCookie(refreshToken).maxAge(expirationSeconds).build();
     }
 
-    public ResponseCookie.ResponseCookieBuilder createBaseCookie(String cookieValue) {
+    private ResponseCookie.ResponseCookieBuilder createBaseRefreshTokenCookie(String cookieValue) {
         return ResponseCookie.from(REFRESH_TOKEN, cookieValue)
                 .httpOnly(true)
                 .secure(true)
@@ -31,6 +29,6 @@ public class RefreshCookieProvider {
     }
 
     public ResponseCookie createSignOutCookie() {
-        return createBaseCookie("").maxAge(0).build();
+        return createBaseRefreshTokenCookie("").maxAge(0).build();
     }
 }
