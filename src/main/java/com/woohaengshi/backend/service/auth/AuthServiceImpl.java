@@ -4,12 +4,14 @@ import static com.woohaengshi.backend.domain.subject.DefaultSubject.getDefaultSu
 import static com.woohaengshi.backend.exception.ErrorCode.EMAIL_ALREADY_EXIST;
 import static com.woohaengshi.backend.exception.ErrorCode.FAIL_TO_SIGN_IN;
 import static com.woohaengshi.backend.exception.ErrorCode.NOT_EXIST_REFRESH_TOKEN;
+import static com.woohaengshi.backend.exception.ErrorCode.QUIT_MEMBER;
 import static com.woohaengshi.backend.exception.ErrorCode.REFRESH_TOKEN_EXPIRED;
 import static com.woohaengshi.backend.exception.ErrorCode.REFRESH_TOKEN_NOT_FOUND;
 
 import com.woohaengshi.backend.controller.auth.RefreshCookieProvider;
 import com.woohaengshi.backend.domain.RefreshToken;
 import com.woohaengshi.backend.domain.member.Member;
+import com.woohaengshi.backend.domain.member.State;
 import com.woohaengshi.backend.domain.statistics.Statistics;
 import com.woohaengshi.backend.domain.subject.Subject;
 import com.woohaengshi.backend.dto.request.auth.SignInRequest;
@@ -66,7 +68,14 @@ public class AuthServiceImpl implements AuthService {
     private Member findMemberByRequest(SignInRequest request) {
         Member member = findMemberByEmail(request);
         validateCorrectPassword(request, member);
+        validateQuitMember(member);
         return member;
+    }
+
+    private void validateQuitMember(Member member) {
+        if(member.getState() == State.QUIT){
+            throw new WoohaengshiException(QUIT_MEMBER);
+        }
     }
 
     private Member findMemberByEmail(SignInRequest request) {
