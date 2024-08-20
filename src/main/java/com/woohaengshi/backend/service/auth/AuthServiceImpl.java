@@ -1,7 +1,11 @@
 package com.woohaengshi.backend.service.auth;
 
 import static com.woohaengshi.backend.domain.subject.DefaultSubject.getDefaultSubjects;
-import static com.woohaengshi.backend.exception.ErrorCode.*;
+import static com.woohaengshi.backend.exception.ErrorCode.EMAIL_ALREADY_EXIST;
+import static com.woohaengshi.backend.exception.ErrorCode.FAIL_TO_SIGN_IN;
+import static com.woohaengshi.backend.exception.ErrorCode.NOT_EXIST_REFRESH_TOKEN;
+import static com.woohaengshi.backend.exception.ErrorCode.REFRESH_TOKEN_EXPIRED;
+import static com.woohaengshi.backend.exception.ErrorCode.REFRESH_TOKEN_NOT_FOUND;
 
 import com.woohaengshi.backend.controller.auth.RefreshCookieProvider;
 import com.woohaengshi.backend.domain.RefreshToken;
@@ -60,14 +64,21 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private Member findMemberByRequest(SignInRequest request) {
-        Member member =
-                memberRepository
-                        .findByEmail(request.getEmail())
-                        .orElseThrow(() -> new WoohaengshiException(FAIL_TO_SIGN_IN));
+        Member member = findMemberByEmail(request);
+        validateCorrectPassword(request, member);
+        return member;
+    }
+
+    private Member findMemberByEmail(SignInRequest request) {
+        return memberRepository
+                .findByEmail(request.getEmail())
+                .orElseThrow(() -> new WoohaengshiException(FAIL_TO_SIGN_IN));
+    }
+
+    private void validateCorrectPassword(SignInRequest request, Member member) {
         if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
             throw new WoohaengshiException(FAIL_TO_SIGN_IN);
         }
-        return member;
     }
 
     @Override

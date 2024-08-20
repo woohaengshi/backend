@@ -1,0 +1,63 @@
+package com.woohaengshi.backend.service.member;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
+
+import com.woohaengshi.backend.domain.member.Member;
+import com.woohaengshi.backend.dto.request.member.ChangePasswordRequest;
+import com.woohaengshi.backend.exception.WoohaengshiException;
+import com.woohaengshi.backend.repository.MemberRepository;
+import com.woohaengshi.backend.support.fixture.MemberFixture;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.Optional;
+
+@ExtendWith(MockitoExtension.class)
+class MemberServiceTest {
+
+    @Mock private MemberRepository memberRepository;
+    @Mock private PasswordEncoder passwordEncoder;
+    @InjectMocks private MemberServiceImpl memberService;
+
+    @Test
+    void 비밀번호를_변경할_수_있다() {
+        Member member = MemberFixture.builder().id(1L).build();
+        ChangePasswordRequest request =
+                new ChangePasswordRequest(member.getPassword(), "newPassword12!@");
+        given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+        given(passwordEncoder.matches(request.getOldPassword(), member.getPassword()))
+                .willReturn(true);
+        given(passwordEncoder.encode(request.getNewPassword())).willReturn("encodedPassword");
+        memberService.changePassword(request, member.getId());
+        assertThat(member.getPassword()).isEqualTo("encodedPassword");
+    }
+
+    @Test
+    void 기존_비밀번호가_일치하지_않을_시_예외() {
+        Member member = MemberFixture.builder().id(1L).build();
+        ChangePasswordRequest request =
+                new ChangePasswordRequest(member.getPassword(), "newPassword12!@");
+        given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+        given(passwordEncoder.matches(request.getOldPassword(), member.getPassword()))
+                .willReturn(false);
+        assertThatThrownBy(() -> memberService.changePassword(request, member.getId()))
+                .isExactlyInstanceOf(WoohaengshiException.class);
+    }
+
+    @Test
+    void 회원_존재하지_않을_시_예외() {
+        Long NOT_EXIST_MEMBER_ID = 1L;
+        ChangePasswordRequest request =
+                new ChangePasswordRequest("oldPassword12!@", "newPassword12!@");
+        given(memberRepository.findById(NOT_EXIST_MEMBER_ID)).willReturn(Optional.empty());
+        assertThatThrownBy(() -> memberService.changePassword(request, NOT_EXIST_MEMBER_ID))
+                .isExactlyInstanceOf(WoohaengshiException.class);
+    }
+}

@@ -12,7 +12,7 @@ public class MemberFixture {
     private Long id;
     private String name = "길가은";
     private String email = "rlfrkdms1@naver.com";
-    private String password = "password";
+    private String password = "password12!@";
     private Course course = Course.CLOUD_SERVICE;
     private State state = State.ACTIVE;
     private String image = "https://image.com/virtual.png";
