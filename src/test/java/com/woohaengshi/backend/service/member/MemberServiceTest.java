@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,5 +32,6 @@ class MemberServiceTest {
         given(passwordEncoder.matches(request.getOldPassword(), member.getPassword())).willReturn(true);
         given(passwordEncoder.encode(request.getNewPassword())).willReturn("encodedPassword");
         memberService.changePassword(request, member.getId());
+        assertThat(member.getPassword()).isEqualTo("encodedPassword");
     }
 }
