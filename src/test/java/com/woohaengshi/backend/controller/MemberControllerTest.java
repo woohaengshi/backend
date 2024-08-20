@@ -4,12 +4,7 @@ import static org.springframework.http.HttpStatus.OK;
 
 import com.woohaengshi.backend.support.ControllerTest;
 
-import io.restassured.RestAssured;
-
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
 
 public class MemberControllerTest extends ControllerTest {
     @Test
