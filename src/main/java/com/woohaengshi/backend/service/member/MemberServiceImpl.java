@@ -9,12 +9,12 @@ import com.woohaengshi.backend.dto.response.member.ShowMemberResponse;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 
-import jakarta.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
@@ -35,6 +35,7 @@ public class MemberServiceImpl implements MemberService {
         if (!passwordEncoder.matches(request.getOldPassword(), member.getPassword())) {
             throw new WoohaengshiException(PASSWORD_INCORRECT);
         }
+    }
 
     @Override
     @Transactional(readOnly = true)

@@ -30,8 +30,9 @@ public class MemberController {
             @RequestBody @Valid ChangePasswordRequest request, @MemberId Long memberId) {
         memberService.changePassword(request, memberId);
         return ResponseEntity.ok().build();
+    }
 
-   @GetMapping
+    @GetMapping
     public ShowMemberResponse showMemberInfo(@MemberId Long memberId) {
         return memberService.getMemberInfo(memberId);
     }
