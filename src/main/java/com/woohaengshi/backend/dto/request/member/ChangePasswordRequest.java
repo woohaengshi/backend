@@ -1,6 +1,7 @@
 package com.woohaengshi.backend.dto.request.member;
 
 import jakarta.validation.constraints.Pattern;
+
 import lombok.Getter;
 
 @Getter
