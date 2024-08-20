@@ -2,6 +2,7 @@ package com.woohaengshi.backend.controller;
 
 import static com.woohaengshi.backend.exception.ErrorCode.INVALID_INPUT;
 
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
 
 import com.woohaengshi.backend.dto.request.member.ChangePasswordRequest;
@@ -48,4 +49,16 @@ class MemberControllerTest extends ControllerTest {
                 .all()
                 .statusCode(INVALID_INPUT.getStatus().value());
     }
+
+    @Test
+    void 회원은_탈퇴할_수_있다(){
+        baseRestAssuredWithAuth()
+                .when()
+                .delete("/api/v1/members")
+                .then()
+                .log()
+                .all()
+                .statusCode(NO_CONTENT.value());
 }
+}
+
