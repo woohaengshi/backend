@@ -2,6 +2,7 @@ package com.woohaengshi.backend.service.member;
 
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.request.member.ChangePasswordRequest;
+import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,4 +36,15 @@ class MemberServiceTest {
         memberService.changePassword(request, member.getId());
         assertThat(member.getPassword()).isEqualTo("encodedPassword");
     }
+
+    @Test
+    void 기존_비밀번호가_일치하지_않을_시_예외(){
+        Member member = MemberFixture.builder().id(1L).build();
+        ChangePasswordRequest request = new ChangePasswordRequest(member.getPassword(), "newPassword12!@");
+        given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+        given(passwordEncoder.matches(request.getOldPassword(), member.getPassword())).willReturn(false);
+        assertThatThrownBy(() -> memberService.changePassword(request, member.getId()))
+                .isExactlyInstanceOf(WoohaengshiException.class);
+    }
 }
+
