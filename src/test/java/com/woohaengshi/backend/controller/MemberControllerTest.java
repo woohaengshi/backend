@@ -1,7 +1,6 @@
 package com.woohaengshi.backend.controller;
 
 import static com.woohaengshi.backend.exception.ErrorCode.INVALID_INPUT;
-
 import static org.springframework.http.HttpStatus.OK;
 
 import com.woohaengshi.backend.dto.request.member.ChangePasswordRequest;
@@ -19,6 +18,17 @@ class MemberControllerTest extends ControllerTest {
                 .body(request)
                 .when()
                 .post("/api/v1/members")
+                .then()
+                .log()
+                .all()
+                .statusCode(OK.value());
+    }
+    
+    @Test
+    void 회원_정보를_조회한다() {
+        baseRestAssuredWithAuth()
+                .when()
+                .get("/api/v1/members")
                 .then()
                 .log()
                 .all()

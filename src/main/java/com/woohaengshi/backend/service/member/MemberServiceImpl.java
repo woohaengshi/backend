@@ -5,6 +5,7 @@ import static com.woohaengshi.backend.exception.ErrorCode.PASSWORD_INCORRECT;
 
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.request.member.ChangePasswordRequest;
+import com.woohaengshi.backend.dto.response.member.ShowMemberResponse;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 
@@ -34,6 +35,12 @@ public class MemberServiceImpl implements MemberService {
         if (!passwordEncoder.matches(request.getOldPassword(), member.getPassword())) {
             throw new WoohaengshiException(PASSWORD_INCORRECT);
         }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ShowMemberResponse getMemberInfo(Long memberId) {
+        Member member = findMemberById(memberId);
+        return ShowMemberResponse.from(member);
     }
 
     private Member findMemberById(Long memberId) {
