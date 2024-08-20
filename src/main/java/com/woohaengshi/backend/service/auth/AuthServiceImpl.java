@@ -66,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private void validateQuitMember(Member member) {
-        if(member.getState() == State.QUIT){
+        if (member.getState() == State.QUIT) {
             throw new WoohaengshiException(QUIT_MEMBER);
         }
     }
