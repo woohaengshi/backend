@@ -11,7 +11,7 @@ public interface AuthService {
 
     SignInResult reissue(String refreshToken);
 
-    ResponseCookie signOut(String token);
+    void signOut(String refreshToken);
 
     void signUp(SignUpRequest request);
 }
