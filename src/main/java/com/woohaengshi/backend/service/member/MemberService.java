@@ -8,4 +8,6 @@ public interface MemberService {
     void changePassword(ChangePasswordRequest request, Long memberId);
 
     ShowMemberResponse getMemberInfo(Long memberId);
+
+    void quit(Long memberId, String refreshToken);
 }
