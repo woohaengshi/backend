@@ -8,7 +8,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    private static final String CLIENT_LOCALHOST = "http://localhost:3000,https://localhost:3000,https://woohangshi.vercel.app";
+    private static final String CLIENT_LOCALHOST =
+            "http://localhost:3000,https://localhost:3000,https://woohangshi.vercel.app";
     private static final String CORS_ALLOWED_METHODS =
             "GET,POST,HEAD,PUT,PATCH,DELETE,TRACE,OPTIONS";
 
