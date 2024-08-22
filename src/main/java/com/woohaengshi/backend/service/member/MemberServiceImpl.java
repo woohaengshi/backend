@@ -3,6 +3,7 @@ package com.woohaengshi.backend.service.member;
 import static com.woohaengshi.backend.exception.ErrorCode.MEMBER_NOT_FOUND;
 import static com.woohaengshi.backend.exception.ErrorCode.PASSWORD_INCORRECT;
 import static com.woohaengshi.backend.exception.ErrorCode.REFRESH_TOKEN_NOT_FOUND;
+import static java.util.Objects.isNull;
 
 import com.woohaengshi.backend.domain.RefreshToken;
 import com.woohaengshi.backend.domain.member.Member;
@@ -49,7 +50,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void quit(Long memberId, String refreshToken) {
-        if (refreshToken != null) {
+        if (!isNull(refreshToken)) {
             refreshTokenRepository.delete(findRefreshToken(refreshToken));
         }
         Member member = findMemberById(memberId);
