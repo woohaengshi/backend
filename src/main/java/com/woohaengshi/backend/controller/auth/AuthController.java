@@ -1,6 +1,6 @@
 package com.woohaengshi.backend.controller.auth;
 
-import static com.woohaengshi.backend.controller.auth.RefreshCookieProvider.REFRESH_TOKEN;
+import static com.woohaengshi.backend.controller.auth.CookieProvider.REFRESH_TOKEN;
 
 import static org.springframework.http.HttpHeaders.SET_COOKIE;
 
@@ -14,7 +14,6 @@ import jakarta.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +29,7 @@ import java.net.URI;
 public class AuthController {
 
     private final AuthService authService;
+    private final CookieProvider cookieProvider;
 
     @PostMapping("/sign-up")
     public ResponseEntity<Void> signUp(@RequestBody @Valid SignUpRequest signUpRequest) {
@@ -41,7 +41,11 @@ public class AuthController {
     public ResponseEntity<SignInResponse> signIn(@RequestBody @Valid SignInRequest signInRequest) {
         SignInResult result = authService.signIn(signInRequest);
         return ResponseEntity.ok()
-                .header(SET_COOKIE, result.getRefreshTokenCookie().toString())
+                .header(
+                        SET_COOKIE,
+                        cookieProvider
+                                .createRefreshTokenCookie(result.getRefreshToken())
+                                .toString())
                 .body(result.getSignInResponse());
     }
 
@@ -50,14 +54,20 @@ public class AuthController {
             @CookieValue(name = REFRESH_TOKEN, required = false) String refreshToken) {
         SignInResult result = authService.reissue(refreshToken);
         return ResponseEntity.ok()
-                .header(SET_COOKIE, result.getRefreshTokenCookie().toString())
+                .header(
+                        SET_COOKIE,
+                        cookieProvider
+                                .createRefreshTokenCookie(result.getRefreshToken())
+                                .toString())
                 .body(result.getSignInResponse());
     }
 
     @PostMapping("/sign-out")
     public ResponseEntity<Void> signOut(
             @CookieValue(name = REFRESH_TOKEN, required = false) String refreshToken) {
-        ResponseCookie signOutCookie = authService.signOut(refreshToken);
-        return ResponseEntity.ok().header(SET_COOKIE, signOutCookie.toString()).build();
+        authService.signOut(refreshToken);
+        return ResponseEntity.noContent()
+                .header(SET_COOKIE, cookieProvider.createSignOutCookie().toString())
+                .build();
     }
 }

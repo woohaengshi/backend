@@ -8,7 +8,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
-import com.woohaengshi.backend.controller.auth.RefreshCookieProvider;
+import com.woohaengshi.backend.controller.auth.CookieProvider;
 import com.woohaengshi.backend.domain.RefreshToken;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.statistics.Statistics;
@@ -38,7 +38,7 @@ class AuthServiceTest {
 
     @Mock private MemberRepository memberRepository;
     @Mock private JwtTokenProvider jwtTokenProvider;
-    @Mock private RefreshCookieProvider refreshCookieProvider;
+    @Mock private CookieProvider cookieProvider;
     @Mock private RefreshTokenRepository refreshTokenRepository;
     @Mock private PasswordEncoder passwordEncoder;
     @Mock private SubjectRepository subjectRepository;

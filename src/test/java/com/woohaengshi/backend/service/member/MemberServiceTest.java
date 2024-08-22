@@ -1,13 +1,20 @@
 package com.woohaengshi.backend.service.member;
 
+import static com.woohaengshi.backend.domain.member.State.QUIT;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
+import com.woohaengshi.backend.domain.RefreshToken;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.request.member.ChangePasswordRequest;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
+import com.woohaengshi.backend.repository.RefreshTokenRepository;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
 
 import org.junit.jupiter.api.Test;
@@ -24,6 +31,7 @@ class MemberServiceTest {
 
     @Mock private MemberRepository memberRepository;
     @Mock private PasswordEncoder passwordEncoder;
+    @Mock private RefreshTokenRepository refreshTokenRepository;
     @InjectMocks private MemberServiceImpl memberService;
 
     @Test
@@ -59,5 +67,17 @@ class MemberServiceTest {
         given(memberRepository.findById(NOT_EXIST_MEMBER_ID)).willReturn(Optional.empty());
         assertThatThrownBy(() -> memberService.changePassword(request, NOT_EXIST_MEMBER_ID))
                 .isExactlyInstanceOf(WoohaengshiException.class);
+    }
+
+    @Test
+    void 회원은_탈퇴할_수_있다() {
+        Member member = MemberFixture.builder().id(1L).build();
+        RefreshToken refreshToken = new RefreshToken(100L, 1L, member);
+        given(refreshTokenRepository.findByToken(refreshToken.getToken()))
+                .willReturn(Optional.of(refreshToken));
+        given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+        memberService.quit(member.getId(), refreshToken.getToken());
+        assertThat(member.getState()).isEqualTo(QUIT);
+        verify(refreshTokenRepository, times(1)).delete(any(RefreshToken.class));
     }
 }
