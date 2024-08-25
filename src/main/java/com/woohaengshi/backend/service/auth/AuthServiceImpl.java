@@ -7,10 +7,10 @@ import static com.woohaengshi.backend.exception.ErrorCode.NOT_EXIST_REFRESH_TOKE
 import static com.woohaengshi.backend.exception.ErrorCode.QUIT_MEMBER;
 import static com.woohaengshi.backend.exception.ErrorCode.REFRESH_TOKEN_EXPIRED;
 import static com.woohaengshi.backend.exception.ErrorCode.REFRESH_TOKEN_NOT_FOUND;
+import static java.util.Objects.isNull;
 
 import com.woohaengshi.backend.domain.RefreshToken;
 import com.woohaengshi.backend.domain.member.Member;
-import com.woohaengshi.backend.domain.member.State;
 import com.woohaengshi.backend.domain.statistics.Statistics;
 import com.woohaengshi.backend.domain.subject.Subject;
 import com.woohaengshi.backend.dto.request.auth.SignInRequest;
@@ -66,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private void validateQuitMember(Member member) {
-        if(member.getState() == State.QUIT){
+        if(!member.isActive()){
             throw new WoohaengshiException(QUIT_MEMBER);
         }
     }
@@ -96,7 +96,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void signOut(String refreshToken) {
-        if (refreshToken != null) {
+        if (!isNull(refreshToken)) {
             refreshTokenRepository.delete(findRefreshToken(refreshToken));
         }
     }
