@@ -8,8 +8,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    private static final String CLIENT_LOCALHOST =
-            "http://localhost:3000,https://localhost:3000,https://woohangshi.vercel.app";
+    private static final String CLIENT_LOCALHOST = "http://localhost:3000";
+    private static final String CLIENT_SECURE_LOCALHOST = "https://localhost:3000";
+    private static final String CLIENT_VERCEL = "https://woohangshi.vercel.app";
+
     private static final String CORS_ALLOWED_METHODS =
             "GET,POST,HEAD,PUT,PATCH,DELETE,TRACE,OPTIONS";
 
@@ -17,7 +19,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
                 .allowedMethods(CORS_ALLOWED_METHODS.split(","))
-                .allowedOrigins(CLIENT_LOCALHOST)
+                .allowedOrigins(CLIENT_LOCALHOST, CLIENT_SECURE_LOCALHOST, CLIENT_VERCEL)
                 .exposedHeaders(HttpHeaders.SET_COOKIE, HttpHeaders.LOCATION)
                 .allowCredentials(true);
     }
