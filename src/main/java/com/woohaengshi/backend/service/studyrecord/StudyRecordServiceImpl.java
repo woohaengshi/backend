@@ -1,6 +1,7 @@
 package com.woohaengshi.backend.service.studyrecord;
 
 import static com.woohaengshi.backend.exception.ErrorCode.MEMBER_NOT_FOUND;
+import static com.woohaengshi.backend.exception.ErrorCode.QUIT_MEMBER;
 import static com.woohaengshi.backend.exception.ErrorCode.STATISTICS_NOT_FOUND;
 import static com.woohaengshi.backend.exception.ErrorCode.SUBJECT_NOT_FOUND;
 import static com.woohaengshi.backend.exception.ErrorCode.TIME_HAVE_TO_GREATER_THAN_EXIST;
@@ -47,10 +48,21 @@ public class StudyRecordServiceImpl implements StudyRecordService {
 
     @Override
     public void save(SaveRecordRequest request, Long memberId) {
-        validateExistMember(memberId);
+        validateMember(memberId);
         Statistics statistics = findStatisticsByMemberId(memberId);
         StudyRecord studyRecord = saveStudyRecordAndUpdateStatistics(request, memberId, statistics);
         saveSubjects(request.getSubjects(), studyRecord);
+    }
+
+    private void validateMember(Long memberId) {
+        Member member = findMemberById(memberId);
+        validateQuitMember(member);
+    }
+
+    private void validateQuitMember(Member member) {
+        if(!member.isActive()){
+            throw new WoohaengshiException(QUIT_MEMBER);
+        }
     }
 
     private Statistics findStatisticsByMemberId(Long memberId) {

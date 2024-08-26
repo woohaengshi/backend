@@ -92,4 +92,8 @@ public class Member {
     public void quit() {
         this.state = State.QUIT;
     }
+
+    public boolean isActive() {
+        return state == State.ACTIVE;
+    }
 }
