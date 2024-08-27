@@ -83,7 +83,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 time,
                 statistics.getTotalTime(),
                 rankSlice.hasNext(),
-                calculateDailyRank(rankSlice, pageable, statistics));
+                calculateDailyRank(rankSlice, pageable));
     }
 
     private ShowRankSnapshotResponse buildRankSnapshotResponse(
@@ -125,7 +125,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     private List<RankDataResponse> calculateDailyRank(
-            Slice<StudyRecord> rankSlice, Pageable pageable, Statistics statistics) {
+            Slice<StudyRecord> rankSlice, Pageable pageable) {
         int startRank = pageable.getPageNumber() * pageable.getPageSize() + 1;
 
         return IntStream.range(0, rankSlice.getNumberOfElements())
@@ -133,6 +133,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                         index -> {
                             StudyRecord studyRecord = rankSlice.getContent().get(index);
                             Member member = studyRecord.getMember();
+                            Statistics statistics = findStatisticsByMemberId(member.getId());
 
                             return RankDataResponse.of(
                                     member,
