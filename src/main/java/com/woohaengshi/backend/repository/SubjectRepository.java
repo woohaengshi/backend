@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SubjectRepository extends JpaRepository<Subject, Long> {
-    List<Subject> findAllByMemberId(Long memberId);
+    List<Subject> findAllByMemberIdAndIsActiveTrue(Long memberId);
 
     Optional<Subject> findByMemberIdAndName(Long memberId, String name);
 
