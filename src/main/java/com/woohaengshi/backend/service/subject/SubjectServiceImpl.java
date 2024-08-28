@@ -1,5 +1,7 @@
 package com.woohaengshi.backend.service.subject;
 
+import static com.woohaengshi.backend.exception.ErrorCode.*;
+
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.subject.Subject;
 import com.woohaengshi.backend.dto.request.subject.SubjectRequest;
@@ -14,8 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-
-import static com.woohaengshi.backend.exception.ErrorCode.*;
 
 @Transactional
 @Service
