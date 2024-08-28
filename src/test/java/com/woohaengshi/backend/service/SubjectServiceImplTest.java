@@ -38,9 +38,6 @@ class SubjectServiceTest {
 
         given(memberRepository.existsById(member.getId())).willReturn(true);
         given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
-        given(subjectRepository.existsByMemberIdAndName(member.getId(), "Java")).willReturn(false);
-        given(subjectRepository.existsByMemberIdAndName(member.getId(), "Spring"))
-                .willReturn(false);
 
         // When
         subjectService.editSubjects(member.getId(), request);
@@ -120,7 +117,6 @@ class SubjectServiceTest {
 
         given(memberRepository.existsById(member.getId())).willReturn(true);
         given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
-        given(subjectRepository.existsByMemberIdAndName(member.getId(), "Spring")).willReturn(true);
 
         SubjectRequest request = new SubjectRequest(List.of("Spring", "Java"), List.of());
 
