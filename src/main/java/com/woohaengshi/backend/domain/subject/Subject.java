@@ -25,6 +25,9 @@ public class Subject {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "is_active", nullable = false)
+    private boolean isActive;
+
     @JoinColumn(name = "member_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
