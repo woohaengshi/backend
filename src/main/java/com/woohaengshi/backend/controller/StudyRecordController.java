@@ -36,7 +36,7 @@ public class StudyRecordController {
                     @DateTimeFormat(pattern = "yyyy-MM")
                     YearMonth date,
             @MemberId Long memberId) {
-        return studyRecordService.showMonthlyRecord(date, memberId);
+        return studyRecordService.getMonthlyRecord(date, memberId);
     }
 
     @GetMapping("/yearly")

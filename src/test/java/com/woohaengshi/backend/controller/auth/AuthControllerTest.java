@@ -1,6 +1,6 @@
 package com.woohaengshi.backend.controller.auth;
 
-import static com.woohaengshi.backend.controller.auth.RefreshCookieProvider.REFRESH_TOKEN;
+import static com.woohaengshi.backend.controller.auth.CookieProvider.REFRESH_TOKEN;
 import static com.woohaengshi.backend.exception.ErrorCode.INVALID_INPUT;
 
 import static org.springframework.http.HttpStatus.CREATED;

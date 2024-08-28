@@ -1,12 +1,12 @@
 package com.woohaengshi.backend.dto.response.studyrecord;
 
-import com.woohaengshi.backend.domain.subject.Subject;
-import com.woohaengshi.backend.dto.response.subject.ShowSubjectsResponse;
+import com.woohaengshi.backend.dto.result.ShowCalendarResult;
 
 import lombok.Getter;
 
 import java.time.YearMonth;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 public class ShowMonthlyRecordResponse {
@@ -20,22 +20,12 @@ public class ShowMonthlyRecordResponse {
         this.records = records;
     }
 
-    public static ShowMonthlyRecordResponse of(YearMonth date, List<Object[]> records) {
-        return new ShowMonthlyRecordResponse(
-                date.getYear(),
-                date.getMonthValue(),
-                records.stream()
-                        .map(
-                                record ->
-                                        ShowDailyRecordResponse.of(
-                                                ((Number) record[0]).intValue(),
-                                                ((Number) record[1]).intValue(),
-                                                List.of(
-                                                        ShowSubjectsResponse.from(
-                                                                Subject.builder()
-                                                                        .id((Long) record[2])
-                                                                        .name((String) record[3])
-                                                                        .build()))))
-                        .toList());
+    public static ShowMonthlyRecordResponse of(
+            YearMonth date, Map<Integer, ShowCalendarResult> calendar) {
+        List<ShowDailyRecordResponse> records =
+                calendar.keySet().stream()
+                        .map(result -> ShowDailyRecordResponse.from(calendar.get(result)))
+                        .toList();
+        return new ShowMonthlyRecordResponse(date.getYear(), date.getMonthValue(), records);
     }
 }

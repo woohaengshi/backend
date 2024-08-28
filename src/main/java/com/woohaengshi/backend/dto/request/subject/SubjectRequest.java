@@ -6,12 +6,12 @@ import java.util.List;
 
 @Getter
 public class SubjectRequest {
-    private List<String> addSubjects;
-    private List<Long> deleteSubjects;
+    private List<String> addedSubjects;
+    private List<Long> deletedSubjects;
 
-    public SubjectRequest(List<String> addSubjects, List<Long> deleteSubjects) {
-        this.addSubjects = addSubjects;
-        this.deleteSubjects = deleteSubjects;
+    public SubjectRequest(List<String> addedSubjects, List<Long> deletedSubjects) {
+        this.addedSubjects = addedSubjects;
+        this.deletedSubjects = deletedSubjects;
     }
 
     public SubjectRequest() {

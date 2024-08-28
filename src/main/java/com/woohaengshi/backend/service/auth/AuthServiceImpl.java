@@ -1,16 +1,20 @@
 package com.woohaengshi.backend.service.auth;
 
-import static com.woohaengshi.backend.exception.ErrorCode.*;
+import static com.woohaengshi.backend.domain.subject.DefaultSubject.getDefaultSubjects;
+import static com.woohaengshi.backend.exception.ErrorCode.EMAIL_ALREADY_EXIST;
+import static com.woohaengshi.backend.exception.ErrorCode.FAIL_TO_SIGN_IN;
+import static com.woohaengshi.backend.exception.ErrorCode.NOT_EXIST_REFRESH_TOKEN;
+import static com.woohaengshi.backend.exception.ErrorCode.QUIT_MEMBER;
+import static com.woohaengshi.backend.exception.ErrorCode.REFRESH_TOKEN_EXPIRED;
+import static com.woohaengshi.backend.exception.ErrorCode.REFRESH_TOKEN_NOT_FOUND;
 
-import com.woohaengshi.backend.controller.auth.RefreshCookieProvider;
 import com.woohaengshi.backend.domain.RefreshToken;
 import com.woohaengshi.backend.domain.member.Member;
+import com.woohaengshi.backend.domain.member.State;
 import com.woohaengshi.backend.domain.statistics.Statistics;
-import com.woohaengshi.backend.domain.subject.DefaultSubject;
 import com.woohaengshi.backend.domain.subject.Subject;
 import com.woohaengshi.backend.dto.request.auth.SignInRequest;
 import com.woohaengshi.backend.dto.request.auth.SignUpRequest;
-import com.woohaengshi.backend.dto.response.auth.SignInResponse;
 import com.woohaengshi.backend.dto.result.SignInResult;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
@@ -23,7 +27,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +40,6 @@ public class AuthServiceImpl implements AuthService {
 
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
-    private final RefreshCookieProvider refreshCookieProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final StatisticsRepository statisticsRepository;
@@ -47,12 +49,9 @@ public class AuthServiceImpl implements AuthService {
     public SignInResult signIn(SignInRequest request) {
         Member member = findMemberByRequest(request);
         String accessToken = jwtTokenProvider.createAccessToken(member.getId());
-        SignInResponse signInResponse = SignInResponse.of(accessToken, member);
         refreshTokenRepository.deleteAllByMemberId(member.getId());
         RefreshToken refreshToken = refreshTokenRepository.save(createRefreshToken(member));
-        ResponseCookie refreshTokenCookie =
-                refreshCookieProvider.createRefreshTokenCookie(refreshToken);
-        return new SignInResult(refreshTokenCookie, signInResponse);
+        return SignInResult.of(refreshToken.getToken(), accessToken, member);
     }
 
     private RefreshToken createRefreshToken(Member member) {
@@ -60,14 +59,28 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private Member findMemberByRequest(SignInRequest request) {
-        Member member =
-                memberRepository
-                        .findByEmail(request.getEmail())
-                        .orElseThrow(() -> new WoohaengshiException(FAIL_TO_SIGN_IN));
+        Member member = findMemberByEmail(request);
+        validateCorrectPassword(request, member);
+        validateQuitMember(member);
+        return member;
+    }
+
+    private void validateQuitMember(Member member) {
+        if (member.getState() == State.QUIT) {
+            throw new WoohaengshiException(QUIT_MEMBER);
+        }
+    }
+
+    private Member findMemberByEmail(SignInRequest request) {
+        return memberRepository
+                .findByEmail(request.getEmail())
+                .orElseThrow(() -> new WoohaengshiException(FAIL_TO_SIGN_IN));
+    }
+
+    private void validateCorrectPassword(SignInRequest request, Member member) {
         if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
             throw new WoohaengshiException(FAIL_TO_SIGN_IN);
         }
-        return member;
     }
 
     @Override
@@ -78,28 +91,30 @@ public class AuthServiceImpl implements AuthService {
         refreshToken.reissue(expirationSeconds);
         Member member = refreshToken.getMember();
         String accessToken = jwtTokenProvider.createAccessToken(member.getId());
-        SignInResponse signInResponse = SignInResponse.of(accessToken, member);
-        ResponseCookie refreshTokenCookie =
-                refreshCookieProvider.createRefreshTokenCookie(refreshToken);
-        return new SignInResult(refreshTokenCookie, signInResponse);
+        return SignInResult.of(refreshToken.getToken(), accessToken, member);
     }
 
     @Override
-    public ResponseCookie signOut(String token) {
-        if (token != null) {
-            RefreshToken refreshToken = findRefreshToken(token);
-            refreshTokenRepository.delete(refreshToken);
+    public void signOut(String refreshToken) {
+        if (refreshToken != null) {
+            refreshTokenRepository.delete(findRefreshToken(refreshToken));
         }
-        return refreshCookieProvider.createSignOutCookie();
     }
 
     @Override
     public void signUp(SignUpRequest request) {
+        validateAlreadyExistEmail(request);
         Member member = request.toMember(passwordEncoder.encode(request.getPassword()));
         memberRepository.save(member);
-        DefaultSubject.getDefaultSubjects(member.getCourse())
+        getDefaultSubjects(member.getCourse())
                 .forEach(subject -> subjectRepository.save(new Subject(subject, member)));
         statisticsRepository.save(new Statistics(member));
+    }
+
+    private void validateAlreadyExistEmail(SignUpRequest request) {
+        if (memberRepository.existsAllByEmail(request.getEmail())) {
+            throw new WoohaengshiException(EMAIL_ALREADY_EXIST);
+        }
     }
 
     private void validateRefreshTokenExpired(RefreshToken refreshToken) {
