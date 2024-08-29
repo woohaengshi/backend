@@ -10,13 +10,11 @@ import com.woohaengshi.backend.dto.response.statistics.ShowRankSnapshotResponse;
 import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.statistics.StatisticsRepository;
-import com.woohaengshi.backend.repository.StudyRecordSpecification;
 import com.woohaengshi.backend.repository.studyrecord.StudyRecordRepository;
 
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.*;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

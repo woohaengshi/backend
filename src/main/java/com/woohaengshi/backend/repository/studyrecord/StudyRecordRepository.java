@@ -14,7 +14,6 @@ import java.util.Optional;
 
 public interface StudyRecordRepository
         extends JpaRepository<StudyRecord, Long>,
-                JpaSpecificationExecutor<StudyRecord>,
                 StudyRecordCustomRepository {
     Optional<StudyRecord> findByDateAndMemberId(LocalDate date, Long memberId);
 
