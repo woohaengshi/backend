@@ -126,11 +126,18 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
 
-    private Slice<StudyRecord> getDailyRankDataSlice(LocalDate targetDate, Pageable pageable) {
-        Specification<StudyRecord> spec =
-                StudyRecordSpecification.findStudyRecordsByDateSortedByTimeDesc(targetDate);
-        return studyRecordRepository.findAll(spec, pageable);
+    public Slice<StudyRecord> getDailyRankDataSlice(LocalDate targetDate, Pageable pageable) {
+
+        Pageable extendedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize() + 1, pageable.getSort());
+        List<StudyRecord> content = studyRecordRepository.findStudyRecordsByDateSortedByTimeDesc(targetDate, extendedPageable);
+
+        boolean hasNext = content.size() > pageable.getPageSize();
+
+        List<StudyRecord> pageContent = hasNext ? content.subList(0, pageable.getPageSize()) : content;
+
+        return new SliceImpl<>(pageContent, pageable, hasNext);
     }
+
 
     private List<RankDataResponse> calculateDailyRank(
             Slice<StudyRecord> rankSlice, Pageable pageable) {
