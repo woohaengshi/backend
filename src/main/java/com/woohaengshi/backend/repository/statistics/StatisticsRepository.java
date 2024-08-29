@@ -1,4 +1,4 @@
-package com.woohaengshi.backend.repository;
+package com.woohaengshi.backend.repository.statistics;
 
 import com.woohaengshi.backend.domain.statistics.Statistics;
 
