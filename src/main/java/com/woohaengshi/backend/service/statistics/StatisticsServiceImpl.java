@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -46,7 +47,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     private ShowRankSnapshotResponse handleDailyStatistics(
             Long memberId, Pageable pageable, Statistics statistics) {
-        LocalDate today = LocalDate.now();
+        LocalDate today = getDate();
+
         Optional<StudyRecord> studyRecord =
                 studyRecordRepository.findByDateAndMemberId(today, memberId);
         Slice<StudyRecord> rankSlice = getDailyRankDataSlice(today, pageable);
@@ -55,6 +57,16 @@ public class StatisticsServiceImpl implements StatisticsService {
         int time = studyRecord.map(StudyRecord::getTime).orElse(0);
 
         return buildRankSnapshotResponse(statistics, rank, time, rankSlice, pageable);
+    }
+
+    private LocalDate getDate() {
+        LocalTime now = LocalTime.now();
+        LocalDate today = LocalDate.now();
+        if (now.getHour() >= 0 && now.getHour() <= 5) {
+            return today.minusDays(1);
+        } else {
+            return today;
+        }
     }
 
     private ShowRankSnapshotResponse handlePeriodicStatistics(
