@@ -47,7 +47,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     private ShowRankSnapshotResponse handleDailyStatistics(
             Long memberId, Pageable pageable, Statistics statistics) {
-        LocalDate today = getDate();
+        LocalDate today = getShowDate();
 
         Optional<StudyRecord> studyRecord =
                 studyRecordRepository.findByDateAndMemberId(today, memberId);
@@ -59,7 +59,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         return buildRankSnapshotResponse(statistics, rank, time, rankSlice, pageable);
     }
 
-    private LocalDate getDate() {
+    private LocalDate getShowDate() {
         LocalTime now = LocalTime.now();
         LocalDate today = LocalDate.now();
         if (now.getHour() >= 0 && now.getHour() <= 5) {
