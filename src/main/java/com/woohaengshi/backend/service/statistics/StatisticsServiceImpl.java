@@ -60,13 +60,14 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     private LocalDate getShowDate() {
-        LocalTime now = LocalTime.now();
+        LocalTime nowTime = LocalTime.now();
         LocalDate today = LocalDate.now();
-        if (now.getHour() >= 0 && now.getHour() <= 5) {
+
+        if (nowTime.getHour() >= 0 && nowTime.getHour() <= 5) {
             return today.minusDays(1);
-        } else {
-            return today;
         }
+
+        return today;
     }
 
     private ShowRankSnapshotResponse handlePeriodicStatistics(
