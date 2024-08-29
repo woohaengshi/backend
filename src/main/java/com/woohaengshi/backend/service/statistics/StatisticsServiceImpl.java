@@ -1,5 +1,6 @@
 package com.woohaengshi.backend.service.statistics;
 
+import com.woohaengshi.backend.constant.StandardTimeConstant;
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.statistics.Statistics;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -46,7 +48,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     private ShowRankSnapshotResponse handleDailyStatistics(
             Long memberId, Pageable pageable, Statistics statistics) {
-        LocalDate today = LocalDate.now();
+        LocalDate today = getShowDate();
+
         Optional<StudyRecord> studyRecord =
                 studyRecordRepository.findByDateAndMemberId(today, memberId);
         Slice<StudyRecord> rankSlice = getDailyRankDataSlice(today, pageable);
@@ -55,6 +58,17 @@ public class StatisticsServiceImpl implements StatisticsService {
         int time = studyRecord.map(StudyRecord::getTime).orElse(0);
 
         return buildRankSnapshotResponse(statistics, rank, time, rankSlice, pageable);
+    }
+
+    private LocalDate getShowDate() {
+        LocalTime nowTime = LocalTime.now();
+        LocalDate today = LocalDate.now();
+
+        if (nowTime.isBefore(StandardTimeConstant.STANDARD_TIME)) {
+            return today.minusDays(1);
+        }
+
+        return today;
     }
 
     private ShowRankSnapshotResponse handlePeriodicStatistics(
