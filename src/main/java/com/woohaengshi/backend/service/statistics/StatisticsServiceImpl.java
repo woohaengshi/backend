@@ -16,8 +16,7 @@ import com.woohaengshi.backend.repository.studyrecord.StudyRecordRepository;
 
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,7 +74,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             StatisticsType statisticsType, Pageable pageable, Statistics statistics) {
         Slice<Statistics> rankSlice = getPeriodicRankDataSlice(statisticsType, pageable);
         int studyTime = getTimeByStatisticsType(statisticsType, statistics);
-        int rank = studyTime > 0 ? getMemberRank(statisticsType, statistics) : 0;
+        int rank = studyTime > 0 ?  statisticsRepository.getMemberRank(statisticsType, statistics) : 0;
 
         return buildRankSnapshotResponse(
                 statistics, rank, studyTime, rankSlice, pageable, statisticsType);
@@ -116,21 +115,17 @@ public class StatisticsServiceImpl implements StatisticsService {
                 calculatePeriodicRank(rankSlice, pageable, statisticsType));
     }
 
-    private int getMemberRank(StatisticsType statisticsType, Statistics statistics) {
-        int time = getTimeByStatisticsType(statisticsType, statistics);
-        long count =
-                statisticsRepository.count(
-                        StatisticsSpecification.filterStatisticsWithTimeGreaterThan(
-                                statisticsType, time));
-        return (int) count + 1;
+    public Slice<Statistics> getPeriodicRankDataSlice(StatisticsType statisticsType, Pageable pageable) {
+        Pageable extendedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize() + 1, pageable.getSort());
+        List<Statistics> content = statisticsRepository.filterAndSortStatisticsByType(statisticsType, extendedPageable);
+
+        boolean hasNext = content.size() > pageable.getPageSize();
+
+        List<Statistics> pageContent = hasNext ? content.subList(0, pageable.getPageSize()) : content;
+
+        return new SliceImpl<>(pageContent, pageable, hasNext);
     }
 
-    private Slice<Statistics> getPeriodicRankDataSlice(
-            StatisticsType statisticsType, Pageable pageable) {
-        Specification<Statistics> spec =
-                StatisticsSpecification.filterAndSortStatisticsByType(statisticsType);
-        return statisticsRepository.findAll(spec, pageable);
-    }
 
     private Slice<StudyRecord> getDailyRankDataSlice(LocalDate targetDate, Pageable pageable) {
         Specification<StudyRecord> spec =
