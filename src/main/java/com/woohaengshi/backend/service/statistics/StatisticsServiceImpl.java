@@ -1,5 +1,6 @@
 package com.woohaengshi.backend.service.statistics;
 
+import com.woohaengshi.backend.constant.StandardTimeConstant;
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.statistics.Statistics;
@@ -63,7 +64,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         LocalTime nowTime = LocalTime.now();
         LocalDate today = LocalDate.now();
 
-        if (nowTime.getHour() >= 0 && nowTime.getHour() <= 5) {
+        if (nowTime.isBefore(StandardTimeConstant.STANDARD_TIME)) {
             return today.minusDays(1);
         }
 
