@@ -49,8 +49,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         Optional<StudyRecord> studyRecord =
                 studyRecordRepository.findByDateAndMemberId(today, memberId);
         Slice<StudyRecord> rankSlice = getDailyRankDataSlice(today, pageable);
-
-        int rank = studyRecord.map(record -> findDailyRank(today, record.getTime())).orElse(0);
+        int rank = studyRecord.map(record -> studyRecordRepository.findRankByDate(today, record.getTime())).orElse(0);
         int time = studyRecord.map(StudyRecord::getTime).orElse(0);
 
         return buildRankSnapshotResponse(statistics, rank, time, rankSlice, pageable);
@@ -77,9 +76,6 @@ public class StatisticsServiceImpl implements StatisticsService {
                 statistics, rank, studyTime, rankSlice, pageable, statisticsType);
     }
 
-    private int findDailyRank(LocalDate date, int time) {
-        return studyRecordRepository.findRankByDate(date, time);
-    }
 
     private ShowRankSnapshotResponse buildRankSnapshotResponse(
             Statistics statistics,
