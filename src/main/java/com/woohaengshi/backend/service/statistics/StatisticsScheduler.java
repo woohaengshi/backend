@@ -12,11 +12,11 @@ public class StatisticsScheduler {
     private final StatisticsRepository statisticsRepository;
     @Scheduled(cron = "0 0 5 1 * ?", zone = "Asia/Seoul")
     private void initMonthlyStatistics() {
-        statisticsRepository.initWeeklyTime();
+        statisticsRepository.initMonthlyTime();
     }
 
     @Scheduled(cron = "0 0 5 * * MON", zone = "Asia/Seoul")
     private void initWeeklyStatistics() {
-        statisticsRepository.initMonthlyTime();
+        statisticsRepository.initWeeklyTime();
     }
 }
