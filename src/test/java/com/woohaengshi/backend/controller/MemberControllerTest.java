@@ -51,7 +51,7 @@ class MemberControllerTest extends ControllerTest {
     }
 
     @Test
-    void 회원은_탈퇴할_수_있다(){
+    void 회원은_탈퇴할_수_있다() {
         baseRestAssuredWithAuth()
                 .when()
                 .delete("/api/v1/members")
@@ -59,6 +59,5 @@ class MemberControllerTest extends ControllerTest {
                 .log()
                 .all()
                 .statusCode(NO_CONTENT.value());
+    }
 }
-}
-

@@ -1,6 +1,7 @@
 package com.woohaengshi.backend.service.member;
 
 import static com.woohaengshi.backend.domain.member.State.QUIT;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -69,10 +70,11 @@ class MemberServiceTest {
     }
 
     @Test
-    void 회원은_탈퇴할_수_있다(){
+    void 회원은_탈퇴할_수_있다() {
         Member member = MemberFixture.builder().id(1L).build();
         RefreshToken refreshToken = new RefreshToken(100L, 1L, member);
-        given(refreshTokenRepository.findByToken(refreshToken.getToken())).willReturn(Optional.of(refreshToken));
+        given(refreshTokenRepository.findByToken(refreshToken.getToken()))
+                .willReturn(Optional.of(refreshToken));
         given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
         memberService.quit(member.getId(), refreshToken.getToken());
         assertThat(member.getState()).isEqualTo(QUIT);

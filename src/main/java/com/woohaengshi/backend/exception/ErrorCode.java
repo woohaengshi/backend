@@ -1,6 +1,11 @@
 package com.woohaengshi.backend.exception;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 import org.springframework.http.HttpStatus;
 
@@ -20,7 +25,6 @@ public enum ErrorCode {
     INCORRECT_CONSTRUCT_HEADER(UNAUTHORIZED, "잘못된 형식의 인증 헤더입니다."),
     SUBJECT_NOT_FOUND(NOT_FOUND, "과목을 찾을 수 없습니다."),
     FAIL_TO_SIGN_IN(BAD_REQUEST, "로그인에 실패했습니다."),
-    PASSWORD_INCORRECT(BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     NOT_EXIST_REFRESH_TOKEN(UNAUTHORIZED, "리프레시 토큰이 존재하지 않습니다."),
     REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "리프레시 토큰을 찾을 수 없습니다."),
     REFRESH_TOKEN_EXPIRED(UNAUTHORIZED, "리프레시 토큰의 유효기간이 만료되었습니다."),
@@ -29,7 +33,9 @@ public enum ErrorCode {
     TIME_HAVE_TO_GREATER_THAN_EXIST(BAD_REQUEST, "요청한 공부 기록은 이전 공부 기록 시간 보다 커야 합니다. "),
     EMAIL_ALREADY_EXIST(CONFLICT, "이미 존재하는 이메일입니다."),
     FAILED_SAVE_IMAGE(INTERNAL_SERVER_ERROR, "이미지 저장 실패"),
-    QUIT_MEMBER(FORBIDDEN, "탈퇴한 회원입니다.");
+    QUIT_MEMBER(FORBIDDEN, "탈퇴한 회원입니다."),
+    INACTIVE_SUBJECT(BAD_REQUEST, "이미 비활성화된 과목입니다."),
+    PASSWORD_INCORRECT(BAD_REQUEST, "맞지 않는 비밀번호입니다.");
 
     private final HttpStatus status;
     private final String message;

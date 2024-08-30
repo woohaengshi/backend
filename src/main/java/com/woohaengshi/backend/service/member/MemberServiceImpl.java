@@ -10,10 +10,11 @@ import com.woohaengshi.backend.domain.RefreshToken;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.request.member.ChangePasswordRequest;
 import com.woohaengshi.backend.dto.response.member.ShowMemberResponse;
+import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
-
 import com.woohaengshi.backend.repository.RefreshTokenRepository;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -45,7 +46,7 @@ public class MemberServiceImpl implements MemberService {
 
     private void validateCorrectPassword(ChangePasswordRequest request, Member member) {
         if (!passwordEncoder.matches(request.getOldPassword(), member.getPassword())) {
-            throw new WoohaengshiException(PASSWORD_INCORRECT);
+            throw new WoohaengshiException(ErrorCode.PASSWORD_INCORRECT);
         }
     }
 
@@ -68,12 +69,12 @@ public class MemberServiceImpl implements MemberService {
     private RefreshToken findRefreshToken(String refreshToken) {
         return refreshTokenRepository
                 .findByToken(refreshToken)
-                .orElseThrow(() -> new WoohaengshiException(REFRESH_TOKEN_NOT_FOUND));
+                .orElseThrow(() -> new WoohaengshiException(ErrorCode.REFRESH_TOKEN_NOT_FOUND));
     }
 
     private Member findMemberById(Long memberId) {
         return memberRepository
                 .findById(memberId)
-                .orElseThrow(() -> new WoohaengshiException(MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND));
     }
 }

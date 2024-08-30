@@ -1,5 +1,7 @@
 package com.woohaengshi.backend.service.subject;
 
+import static com.woohaengshi.backend.exception.ErrorCode.*;
+
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.subject.Subject;
 import com.woohaengshi.backend.dto.request.subject.SubjectRequest;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Transactional
 @Service
@@ -24,14 +27,14 @@ public class SubjectServiceImpl implements SubjectService {
     public void editSubjects(Long memberId, SubjectRequest requestDTO) {
         validateMemberExist(memberId);
 
-        List<String> addedSubjects = requestDTO.getAddedSubjects();
-        if (addedSubjects != null && !addedSubjects.isEmpty()) {
-            insertSubjects(memberId, addedSubjects);
+        List<String> addSubjects = requestDTO.getAddedSubjects();
+        if (addSubjects != null && !addSubjects.isEmpty()) {
+            insertSubjects(memberId, addSubjects);
         }
 
-        List<Long> deletedSubjects = requestDTO.getDeletedSubjects();
-        if (deletedSubjects != null && !deletedSubjects.isEmpty()) {
-            deleteSubjects(deletedSubjects);
+        List<Long> deleteSubjects = requestDTO.getDeletedSubjects();
+        if (deleteSubjects != null && !deleteSubjects.isEmpty()) {
+            deleteSubjects(deleteSubjects);
         }
     }
 
@@ -40,32 +43,45 @@ public class SubjectServiceImpl implements SubjectService {
             throw new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND);
     }
 
-    private void insertSubjects(Long memberId, List<String> addedSubjects) {
+    private void insertSubjects(Long memberId, List<String> addSubjects) {
         Member member = memberRepository.findById(memberId).get();
-        addedSubjects.forEach(
-                subject -> {
-                    validateAlreadyExistSubject(memberId, subject);
-                    subjectRepository.save(Subject.builder().name(subject).member(member).build());
+        addSubjects.forEach(
+                subjectName -> {
+                    Optional<Subject> subject =
+                            subjectRepository.findByMemberIdAndName(memberId, subjectName);
+                    validateAlreadyActiveSubject(subject);
+                    subject.ifPresent(Subject::active);
+                    subject.ifPresentOrElse(
+                            Subject::active,
+                            () -> subjectRepository.save(createNewSubject(subjectName, member)));
                 });
     }
 
-    private void deleteSubjects(List<Long> deletedSubjects) {
-        deletedSubjects.forEach(
+    private Subject createNewSubject(String subjectName, Member member) {
+        return Subject.builder().name(subjectName).member(member).isActive(true).build();
+    }
+
+    private void deleteSubjects(List<Long> deleteSubjects) {
+        deleteSubjects.forEach(
                 subjectId -> {
-                    validateNotExistSubject(subjectId);
-                    subjectRepository.deleteById(subjectId);
+                    Subject subject = findSubjectById(subjectId);
+                    validateInActiveSubject(subject);
+                    subject.inActive();
                 });
     }
 
-    private void validateAlreadyExistSubject(Long member_id, String subject) {
-        if (subjectRepository.existsByMemberIdAndName(member_id, subject)) {
-            throw new WoohaengshiException(ErrorCode.SUBJECT_ALREADY_EXISTS);
-        }
+    private void validateAlreadyActiveSubject(Optional<Subject> subject) {
+        if (subject.isPresent() && subject.get().isActive())
+            throw new WoohaengshiException(SUBJECT_ALREADY_EXISTS);
     }
 
-    private void validateNotExistSubject(Long subjectId) {
-        if (!subjectRepository.existsById(subjectId)) {
-            throw new WoohaengshiException(ErrorCode.SUBJECT_NOT_FOUND);
-        }
+    private void validateInActiveSubject(Subject subject) {
+        if (!subject.isActive()) throw new WoohaengshiException(INACTIVE_SUBJECT);
+    }
+
+    private Subject findSubjectById(Long subjectId) {
+        return subjectRepository
+                .findById(subjectId)
+                .orElseThrow(() -> new WoohaengshiException(SUBJECT_NOT_FOUND));
     }
 }
