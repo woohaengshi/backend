@@ -35,7 +35,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Transactional(readOnly = true)
     public ShowRankSnapshotResponse showRankData(
             Long memberId, StatisticsType statisticsType, Pageable pageable) {
-        Statistics statistics = findStatisticsByMemberId(memberId);
+        Statistics statistics = (pageable.getPageNumber() == 0) ? findStatisticsByMemberId(memberId) : null;
 
         return statisticsType == StatisticsType.DAILY
                 ? handleDailyStatistics(memberId, pageable, statistics)
@@ -69,7 +69,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     private ShowRankSnapshotResponse handlePeriodicStatistics(
             StatisticsType statisticsType, Pageable pageable, Statistics statistics) {
         Slice<Statistics> rankSlice = getPeriodicRankDataSlice(statisticsType, pageable);
-        int studyTime = getTimeByStatisticsType(statisticsType, statistics);
+        int studyTime = (statistics != null) ? getTimeByStatisticsType(statisticsType, statistics) : -1;
         int rank = studyTime > 0 ?  statisticsRepository.getMemberRank(statisticsType, statistics) : 0;
 
         return buildRankSnapshotResponse(
@@ -84,10 +84,10 @@ public class StatisticsServiceImpl implements StatisticsService {
             Slice<StudyRecord> rankSlice,
             Pageable pageable) {
         return ShowRankSnapshotResponse.of(
-                statistics.getMember(),
+                (statistics != null) ? statistics.getMember() : null,
                 rank,
                 time,
-                statistics.getTotalTime(),
+                (statistics != null) ? statistics.getTotalTime() : -1,
                 rankSlice.hasNext(),
                 calculateDailyRank(rankSlice, pageable));
     }
@@ -100,10 +100,10 @@ public class StatisticsServiceImpl implements StatisticsService {
             Pageable pageable,
             StatisticsType statisticsType) {
         return ShowRankSnapshotResponse.of(
-                statistics.getMember(),
+                (statistics != null) ? statistics.getMember() : null,
                 rank,
                 time,
-                statistics.getTotalTime(),
+                (statistics != null) ? statistics.getTotalTime() : -1,
                 rankSlice.hasNext(),
                 calculatePeriodicRank(rankSlice, pageable, statisticsType));
     }
