@@ -11,4 +11,5 @@ public interface StudyRecordCustomRepository {
 
     List<ShowCalendarResult> findStudyRecordInCalendar(int year, int month, Long memberId);
     public List<StudyRecord> findStudyRecordsByDateSortedByTimeDesc(LocalDate date, Pageable pageable);
+    public long getCountStudyRecordsByDate(LocalDate date) ;
 }

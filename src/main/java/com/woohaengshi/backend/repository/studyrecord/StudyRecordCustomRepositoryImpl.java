@@ -61,4 +61,11 @@ public class StudyRecordCustomRepositoryImpl implements StudyRecordCustomReposit
         return query.fetch();
     }
 
+    public long getCountStudyRecordsByDate(LocalDate date) {
+        return jpaQueryFactory
+                .select(studyRecord.count())
+                .from(studyRecord)
+                .where(studyRecord.date.eq(date))
+                .fetchOne();
+    }
 }
