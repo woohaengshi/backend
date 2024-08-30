@@ -109,15 +109,12 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     public Slice<Statistics> getPeriodicRankDataSlice(StatisticsType statisticsType, Pageable pageable) {
-        Pageable extendedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize() + 1, pageable.getSort());
-        List<Statistics> content = statisticsRepository.filterAndSortStatisticsByType(statisticsType, extendedPageable);
-
-        boolean hasNext = content.size() > pageable.getPageSize();
-
-        List<Statistics> pageContent = hasNext ? content.subList(0, pageable.getPageSize()) : content;
-
-        return new SliceImpl<>(pageContent, pageable, hasNext);
+        List<Statistics> content = statisticsRepository.filterAndSortStatisticsByType(statisticsType, pageable);
+        long total = statisticsRepository.getCountStatisticsByType(statisticsType);
+        boolean hasNext = pageable.getOffset() + pageable.getPageSize() < total;
+        return new SliceImpl<>(content, pageable, hasNext);
     }
+
 
 
     public Slice<StudyRecord> getDailyRankDataSlice(LocalDate targetDate, Pageable pageable) {
