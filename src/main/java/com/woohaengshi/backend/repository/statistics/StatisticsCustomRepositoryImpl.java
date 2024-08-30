@@ -42,4 +42,14 @@ public class StatisticsCustomRepositoryImpl implements StatisticsCustomRepositor
 
         return results;
     }
+
+    public long getCountStatisticsByType(StatisticsType statisticsType) {
+        NumberPath<Integer> timePath = Expressions.numberPath(Integer.class, statistics, statisticsType.getFieldName());
+        return jpaQueryFactory
+                .select(timePath.count())
+                .from(statistics)
+                .where(timePath.ne(0))
+                .fetchOne();
+    }
+
 }
