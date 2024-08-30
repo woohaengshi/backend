@@ -1,5 +1,9 @@
 package com.woohaengshi.backend.service.member;
 
+import static com.woohaengshi.backend.exception.ErrorCode.QUIT_MEMBER;
+
+import static java.util.Objects.isNull;
+
 import com.woohaengshi.backend.domain.RefreshToken;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.request.member.ChangePasswordRequest;
@@ -27,8 +31,15 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void changePassword(ChangePasswordRequest request, Long memberId) {
         Member member = findMemberById(memberId);
+        validateQuitMember(member);
         validateCorrectPassword(request, member);
         member.changePassword(passwordEncoder.encode(request.getNewPassword()));
+    }
+
+    private void validateQuitMember(Member member) {
+        if (!member.isActive()) {
+            throw new WoohaengshiException(QUIT_MEMBER);
+        }
     }
 
     private void validateCorrectPassword(ChangePasswordRequest request, Member member) {
@@ -46,7 +57,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void quit(Long memberId, String refreshToken) {
-        if (refreshToken != null) {
+        if (!isNull(refreshToken)) {
             refreshTokenRepository.delete(findRefreshToken(refreshToken));
         }
         Member member = findMemberById(memberId);
