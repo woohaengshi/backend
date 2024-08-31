@@ -2,7 +2,6 @@ package com.woohaengshi.backend.repository.statistics;
 
 import com.woohaengshi.backend.domain.statistics.Statistics;
 
-import com.woohaengshi.backend.repository.statistics.StatisticsCustomRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

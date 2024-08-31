@@ -6,15 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.StudySubject;
 import com.woohaengshi.backend.domain.member.Member;
-import com.woohaengshi.backend.domain.statistics.Statistics;
-import com.woohaengshi.backend.domain.statistics.StatisticsType;
 import com.woohaengshi.backend.domain.subject.Subject;
 import com.woohaengshi.backend.dto.result.MonthlyTotalRecordResult;
 import com.woohaengshi.backend.dto.result.ShowCalendarResult;
 import com.woohaengshi.backend.repository.studyrecord.StudyRecordRepository;
 import com.woohaengshi.backend.support.RepositoryTest;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
-import com.woohaengshi.backend.support.fixture.StatisticsFixture;
 import com.woohaengshi.backend.support.fixture.SubjectFixture;
 
 import org.junit.jupiter.api.DisplayName;
@@ -24,7 +21,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @RepositoryTest
@@ -103,7 +99,7 @@ public class StudyRecordRepositoryTest {
     }
 
     @Test
-    void 일간_시간의_멤버들을_정렬해서_찾을_수_있다(){
+    void 일간_시간의_멤버들을_정렬해서_찾을_수_있다() {
         Member member = 저장(MemberFixture.builder().build());
 
         StudyRecord studyRecord1 =
@@ -115,7 +111,9 @@ public class StudyRecordRepositoryTest {
 
         Pageable pageable = PageRequest.of(0, 10);
 
-        List<StudyRecord> studyRecordList = studyRecordRepository.findStudyRecordsByDateSortedByTimeDesc(LocalDate.now(), pageable);
+        List<StudyRecord> studyRecordList =
+                studyRecordRepository.findStudyRecordsByDateSortedByTimeDesc(
+                        LocalDate.now(), pageable);
 
         assertThat(studyRecordList.get(0).getId()).isEqualTo(studyRecord3.getId());
         assertThat(studyRecordList.get(1).getId()).isEqualTo(studyRecord1.getId());
@@ -123,7 +121,7 @@ public class StudyRecordRepositoryTest {
     }
 
     @Test
-    void 주간_월간대_별의_시간의_통계_개수를_구할_수_있다(){
+    void 주간_월간대_별의_시간의_통계_개수를_구할_수_있다() {
         Member member = 저장(MemberFixture.builder().build());
 
         저장(StudyRecord.builder().member(member).time(500).date(LocalDate.now()).build());
@@ -134,5 +132,4 @@ public class StudyRecordRepositoryTest {
 
         assertThat(count).isEqualTo(3);
     }
-
 }

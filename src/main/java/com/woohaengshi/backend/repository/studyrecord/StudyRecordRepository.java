@@ -4,7 +4,6 @@ import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.dto.result.MonthlyTotalRecordResult;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -13,8 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface StudyRecordRepository
-        extends JpaRepository<StudyRecord, Long>,
-                StudyRecordCustomRepository {
+        extends JpaRepository<StudyRecord, Long>, StudyRecordCustomRepository {
     Optional<StudyRecord> findByDateAndMemberId(LocalDate date, Long memberId);
 
     @Query("SELECT COUNT(s) + 1 FROM StudyRecord s WHERE s.date = :date AND s.time > :time")

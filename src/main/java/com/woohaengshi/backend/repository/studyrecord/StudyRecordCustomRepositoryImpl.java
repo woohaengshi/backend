@@ -14,6 +14,7 @@ import com.woohaengshi.backend.dto.result.ShowCalendarResult;
 import com.woohaengshi.backend.dto.result.SubjectResult;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
@@ -50,13 +51,15 @@ public class StudyRecordCustomRepositoryImpl implements StudyRecordCustomReposit
                                                                 .skipNulls()))));
     }
 
-    public List<StudyRecord> findStudyRecordsByDateSortedByTimeDesc(LocalDate date, Pageable pageable) {
-        JPAQuery<StudyRecord> query = jpaQueryFactory
-                .selectFrom(studyRecord)
-                .where(studyRecord.date.eq(date))
-                .orderBy(studyRecord.time.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize());
+    public List<StudyRecord> findStudyRecordsByDateSortedByTimeDesc(
+            LocalDate date, Pageable pageable) {
+        JPAQuery<StudyRecord> query =
+                jpaQueryFactory
+                        .selectFrom(studyRecord)
+                        .where(studyRecord.date.eq(date))
+                        .orderBy(studyRecord.time.desc())
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize());
 
         return query.fetch();
     }
