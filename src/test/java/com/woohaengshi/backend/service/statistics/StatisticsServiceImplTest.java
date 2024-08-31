@@ -1,12 +1,9 @@
 package com.woohaengshi.backend.service.statistics;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
-import com.woohaengshi.backend.constant.StandardTimeConstant;
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.statistics.Statistics;
@@ -18,8 +15,8 @@ import com.woohaengshi.backend.repository.statistics.StatisticsRepository;
 import com.woohaengshi.backend.repository.studyrecord.StudyRecordRepository;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
 import com.woohaengshi.backend.support.fixture.StatisticsFixture;
-
 import com.woohaengshi.backend.support.fixture.StudyRecordFixture;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,7 +25,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,20 +36,27 @@ public class StatisticsServiceImplTest {
 
     @InjectMocks private StatisticsServiceImpl statisticsService;
 
-
     @Test
     void 일간_랭킹을_조회한다() {
         Member member = MemberFixture.builder().id(1L).build();
         Statistics statistics = StatisticsFixture.builder().id(1L).member(member).build();
         SaveRecordRequest request = new SaveRecordRequest(LocalDate.now(), 10, List.of(1L, 2L));
-        StudyRecord studyRecord = StudyRecordFixture.builder().id(1L).member(member).time(request.getTime()).date(request.getDate()).build();
+        StudyRecord studyRecord =
+                StudyRecordFixture.builder()
+                        .id(1L)
+                        .member(member)
+                        .time(request.getTime())
+                        .date(request.getDate())
+                        .build();
         Pageable pageable = PageRequest.of(0, 10);
 
         given(statisticsRepository.findByMemberId(member.getId()))
                 .willReturn(Optional.of(statistics));
         given(studyRecordRepository.findByDateAndMemberId(LocalDate.now(), member.getId()))
                 .willReturn(Optional.of(studyRecord));
-        given(studyRecordRepository.findStudyRecordsByDateSortedByTimeDesc(LocalDate.now(), pageable))
+        given(
+                        studyRecordRepository.findStudyRecordsByDateSortedByTimeDesc(
+                                LocalDate.now(), pageable))
                 .willReturn(List.of(studyRecord));
 
         ShowRankSnapshotResponse response =
@@ -63,7 +66,11 @@ public class StatisticsServiceImplTest {
         assertAll(
                 "응답 전체 확인",
                 () -> assertNotNull(response, "응답은 null이 아니어야 함"),
-                () -> assertEquals(1, response.getRanking().getRanks().get(0).getRank(), "순위가 올바르게 계산되어야 함"),
+                () ->
+                        assertEquals(
+                                1,
+                                response.getRanking().getRanks().get(0).getRank(),
+                                "순위가 올바르게 계산되어야 함"),
                 () -> assertFalse(response.getRanking().getHasNext(), "다음 페이지 존재 여부 확인"));
     }
 
@@ -77,12 +84,10 @@ public class StatisticsServiceImplTest {
 
         given(statisticsRepository.findByMemberId(member.getId()))
                 .willReturn(Optional.of(statistics));
-        given(statisticsRepository.getMemberRank(statisticsType, statistics))
-                .willReturn(1);
+        given(statisticsRepository.getMemberRank(statisticsType, statistics)).willReturn(1);
         given(statisticsRepository.findStatisticsByTypeSortedByTimeDesc(statisticsType, pageable))
                 .willReturn(List.of(statistics));
-        given(statisticsRepository.getCountStatisticsByType(statisticsType))
-                .willReturn(1L);
+        given(statisticsRepository.getCountStatisticsByType(statisticsType)).willReturn(1L);
         ShowRankSnapshotResponse response =
                 statisticsService.showRankData(member.getId(), statisticsType, pageable);
 
@@ -90,14 +95,19 @@ public class StatisticsServiceImplTest {
         assertAll(
                 "응답 전체 확인",
                 () -> assertNotNull(response, "응답은 null이 아니어야 함"),
-                () -> assertEquals(1, response.getRanking().getRanks().get(0).getRank(), "순위가 올바르게 계산되어야 함"),
+                () ->
+                        assertEquals(
+                                1,
+                                response.getRanking().getRanks().get(0).getRank(),
+                                "순위가 올바르게 계산되어야 함"),
                 () -> assertFalse(response.getRanking().getHasNext(), "다음 페이지 존재 여부 확인"));
     }
 
     @Test
     void 시간이_0인_경우_랭킹은_0이_나온다() {
         Member member = MemberFixture.builder().id(1L).build();
-        Statistics statistics = StatisticsFixture.builder().id(1L).member(member).weeklyTime(0).build();
+        Statistics statistics =
+                StatisticsFixture.builder().id(1L).member(member).weeklyTime(0).build();
         Pageable pageable = PageRequest.of(0, 10);
 
         StatisticsType statisticsType = StatisticsType.WEEKLY;
@@ -107,15 +117,15 @@ public class StatisticsServiceImplTest {
         ShowRankSnapshotResponse response =
                 statisticsService.showRankData(member.getId(), statisticsType, pageable);
 
-        assertAll(
-                () -> assertEquals(0, response.getMember().getRank(), "시간이 0이면 0시간으로 나온다"));
+        assertAll(() -> assertEquals(0, response.getMember().getRank(), "시간이 0이면 0시간으로 나온다"));
     }
 
     @Test
     void 페이지_숫자가_1이상이면_member_항목이_없다() {
         Member member = MemberFixture.builder().id(1L).build();
         ShowRankSnapshotResponse response =
-                statisticsService.showRankData(member.getId(), StatisticsType.DAILY, PageRequest.of(1, 10));
+                statisticsService.showRankData(
+                        member.getId(), StatisticsType.DAILY, PageRequest.of(1, 10));
         assertNull(response.getMember());
     }
 

@@ -11,6 +11,7 @@ import java.util.List;
 public class ShowRankSnapshotResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private RankDataResponse member;
+
     private RanksResponse ranking;
 
     private ShowRankSnapshotResponse(RankDataResponse member, RanksResponse ranksResponse) {
@@ -25,7 +26,8 @@ public class ShowRankSnapshotResponse {
             Integer totalTime,
             Boolean hasNext,
             List<RankDataResponse> ranks) {
-        RankDataResponse memberDto = (member != null) ? RankDataResponse.of(member, rank, time, totalTime) : null;
+        RankDataResponse memberDto =
+                (member != null) ? RankDataResponse.of(member, rank, time, totalTime) : null;
         RanksResponse infiniteScrolling = RanksResponse.of(hasNext, ranks);
         return new ShowRankSnapshotResponse(memberDto, infiniteScrolling);
     }

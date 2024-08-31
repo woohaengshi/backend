@@ -56,12 +56,12 @@ class StatisticsRepositoryTest {
         allStatistics.forEach(statistics -> assertThat(statistics.getMonthlyTime()).isEqualTo(0));
     }
 
-
     @Test
-    void 주간_월간_시간의_멤버의_등수를_조회할_수_있다(){
+    void 주간_월간_시간의_멤버의_등수를_조회할_수_있다() {
         Member member = 저장(MemberFixture.builder().build());
 
-        Statistics statistics = 저장(StatisticsFixture.builder().member(member).monthlyTime(11).build());
+        Statistics statistics =
+                저장(StatisticsFixture.builder().member(member).monthlyTime(11).build());
         저장(StatisticsFixture.builder().member(member).monthlyTime(10).build());
         저장(StatisticsFixture.builder().member(member).monthlyTime(12).build());
 
@@ -71,7 +71,7 @@ class StatisticsRepositoryTest {
     }
 
     @Test
-    void 주간_월간_시간의_멤버들을_정렬해서_찾을_수_있다(){
+    void 주간_월간_시간의_멤버들을_정렬해서_찾을_수_있다() {
         Member member = 저장(MemberFixture.builder().build());
 
         List<Statistics> originList = new ArrayList<>();
@@ -81,7 +81,9 @@ class StatisticsRepositoryTest {
 
         Pageable pageable = PageRequest.of(0, 10);
 
-        List<Statistics> statisticsList = statisticsRepository.findStatisticsByTypeSortedByTimeDesc(StatisticsType.MONTHLY, pageable);
+        List<Statistics> statisticsList =
+                statisticsRepository.findStatisticsByTypeSortedByTimeDesc(
+                        StatisticsType.MONTHLY, pageable);
 
         assertThat(statisticsList.get(0).getId()).isEqualTo(originList.get(2).getId());
         assertThat(statisticsList.get(1).getId()).isEqualTo(originList.get(0).getId());
@@ -89,7 +91,7 @@ class StatisticsRepositoryTest {
     }
 
     @Test
-    void 주간_월간대_별의_시간의_통계_개수를_구할_수_있다(){
+    void 주간_월간대_별의_시간의_통계_개수를_구할_수_있다() {
         Member member = 저장(MemberFixture.builder().build());
 
         저장(StatisticsFixture.builder().member(member).monthlyTime(11).build());

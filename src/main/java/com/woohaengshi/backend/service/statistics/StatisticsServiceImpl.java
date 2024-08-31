@@ -35,7 +35,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Transactional(readOnly = true)
     public ShowRankSnapshotResponse showRankData(
             Long memberId, StatisticsType statisticsType, Pageable pageable) {
-        Statistics statistics = (pageable.getPageNumber() == 0) ? findStatisticsByMemberId(memberId) : null;
+        Statistics statistics =
+                (pageable.getPageNumber() == 0) ? findStatisticsByMemberId(memberId) : null;
 
         return statisticsType == StatisticsType.DAILY
                 ? handleDailyStatistics(memberId, pageable, statistics)
@@ -49,7 +50,13 @@ public class StatisticsServiceImpl implements StatisticsService {
         Optional<StudyRecord> studyRecord =
                 studyRecordRepository.findByDateAndMemberId(today, memberId);
         Slice<StudyRecord> rankSlice = getDailyRankDataSlice(today, pageable);
-        int rank = studyRecord.map(record -> studyRecordRepository.findRankByDate(today, record.getTime())).orElse(0);
+        int rank =
+                studyRecord
+                        .map(
+                                record ->
+                                        studyRecordRepository.findRankByDate(
+                                                today, record.getTime()))
+                        .orElse(0);
         int time = studyRecord.map(StudyRecord::getTime).orElse(0);
 
         return buildRankSnapshotResponse(statistics, rank, time, rankSlice, pageable);
@@ -69,13 +76,14 @@ public class StatisticsServiceImpl implements StatisticsService {
     private ShowRankSnapshotResponse handlePeriodicStatistics(
             StatisticsType statisticsType, Pageable pageable, Statistics statistics) {
         Slice<Statistics> rankSlice = getPeriodicRankDataSlice(statisticsType, pageable);
-        int studyTime = (statistics != null) ? getTimeByStatisticsType(statisticsType, statistics) : -1;
-        int rank = studyTime > 0 ?  statisticsRepository.getMemberRank(statisticsType, statistics) : 0;
+        int studyTime =
+                (statistics != null) ? getTimeByStatisticsType(statisticsType, statistics) : -1;
+        int rank =
+                studyTime > 0 ? statisticsRepository.getMemberRank(statisticsType, statistics) : 0;
 
         return buildRankSnapshotResponse(
                 statistics, rank, studyTime, rankSlice, pageable, statisticsType);
     }
-
 
     private ShowRankSnapshotResponse buildRankSnapshotResponse(
             Statistics statistics,
@@ -108,22 +116,22 @@ public class StatisticsServiceImpl implements StatisticsService {
                 calculatePeriodicRank(rankSlice, pageable, statisticsType));
     }
 
-    public Slice<Statistics> getPeriodicRankDataSlice(StatisticsType statisticsType, Pageable pageable) {
-        List<Statistics> content = statisticsRepository.findStatisticsByTypeSortedByTimeDesc(statisticsType, pageable);
+    public Slice<Statistics> getPeriodicRankDataSlice(
+            StatisticsType statisticsType, Pageable pageable) {
+        List<Statistics> content =
+                statisticsRepository.findStatisticsByTypeSortedByTimeDesc(statisticsType, pageable);
         long total = statisticsRepository.getCountStatisticsByType(statisticsType);
         boolean hasNext = pageable.getOffset() + pageable.getPageSize() < total;
         return new SliceImpl<>(content, pageable, hasNext);
     }
 
-
-
     public Slice<StudyRecord> getDailyRankDataSlice(LocalDate targetDate, Pageable pageable) {
-        List<StudyRecord> content = studyRecordRepository.findStudyRecordsByDateSortedByTimeDesc(targetDate, pageable);
+        List<StudyRecord> content =
+                studyRecordRepository.findStudyRecordsByDateSortedByTimeDesc(targetDate, pageable);
         long total = studyRecordRepository.getCountStudyRecordsByDate(targetDate);
         boolean hasNext = pageable.getOffset() + pageable.getPageSize() < total;
         return new SliceImpl<>(content, pageable, hasNext);
     }
-
 
     private List<RankDataResponse> calculateDailyRank(
             Slice<StudyRecord> rankSlice, Pageable pageable) {
