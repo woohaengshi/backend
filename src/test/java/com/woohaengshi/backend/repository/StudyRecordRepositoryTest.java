@@ -6,19 +6,25 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.StudySubject;
 import com.woohaengshi.backend.domain.member.Member;
+import com.woohaengshi.backend.domain.statistics.Statistics;
+import com.woohaengshi.backend.domain.statistics.StatisticsType;
 import com.woohaengshi.backend.domain.subject.Subject;
 import com.woohaengshi.backend.dto.result.MonthlyTotalRecordResult;
 import com.woohaengshi.backend.dto.result.ShowCalendarResult;
 import com.woohaengshi.backend.repository.studyrecord.StudyRecordRepository;
 import com.woohaengshi.backend.support.RepositoryTest;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
+import com.woohaengshi.backend.support.fixture.StatisticsFixture;
 import com.woohaengshi.backend.support.fixture.SubjectFixture;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @RepositoryTest
@@ -95,4 +101,27 @@ public class StudyRecordRepositoryTest {
                 () -> assertThat(result.get(0).getTime()).isEqualTo(studyRecord.getTime()),
                 () -> assertThat(result.get(1).getSubjects().size()).isEqualTo(0));
     }
+
+    @Test
+    void 일간_시간의_멤버들을_정렬해서_찾을_수_있다(){
+        Member member = 저장(MemberFixture.builder().build());
+
+        StudyRecord studyRecord1 =
+                저장(StudyRecord.builder().member(member).time(500).date(LocalDate.now()).build());
+        StudyRecord studyRecord2 =
+                저장(StudyRecord.builder().member(member).time(400).date(LocalDate.now()).build());
+        StudyRecord studyRecord3 =
+                저장(StudyRecord.builder().member(member).time(1000).date(LocalDate.now()).build());
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        List<StudyRecord> studyRecordList = studyRecordRepository.findStudyRecordsByDateSortedByTimeDesc(LocalDate.now(), pageable);
+
+        assertThat(studyRecordList.get(0).getId()).isEqualTo(studyRecord3.getId());
+        assertThat(studyRecordList.get(1).getId()).isEqualTo(studyRecord1.getId());
+        assertThat(studyRecordList.get(2).getId()).isEqualTo(studyRecord2.getId());
+    }
+
+
+
 }
