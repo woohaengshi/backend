@@ -74,18 +74,17 @@ class StatisticsRepositoryTest {
     void 주간_월간_시간의_멤버들을_정렬해서_찾을_수_있다(){
         Member member = 저장(MemberFixture.builder().build());
 
-        List<Statistics> originList = new ArrayList<>();
-        originList.add(저장(StatisticsFixture.builder().member(member).monthlyTime(11).build()));
-        originList.add(저장(StatisticsFixture.builder().member(member).monthlyTime(10).build()));
-        originList.add(저장(StatisticsFixture.builder().member(member).monthlyTime(12).build()));
+        Statistics statistics1 = 저장(StatisticsFixture.builder().member(member).monthlyTime(11).build());
+        Statistics statistics2 = 저장(StatisticsFixture.builder().member(member).monthlyTime(10).build());
+        Statistics statistics3 = 저장(StatisticsFixture.builder().member(member).monthlyTime(12).build());
 
         Pageable pageable = PageRequest.of(0, 10);
 
         List<Statistics> statisticsList = statisticsRepository.findStatisticsByTypeSortedByTimeDesc(StatisticsType.MONTHLY, pageable);
 
-        assertThat(statisticsList.get(0).getId()).isEqualTo(originList.get(2).getId());
-        assertThat(statisticsList.get(1).getId()).isEqualTo(originList.get(0).getId());
-        assertThat(statisticsList.get(2).getId()).isEqualTo(originList.get(1).getId());
+        assertThat(statisticsList.get(0).getId()).isEqualTo(statistics3.getId());
+        assertThat(statisticsList.get(1).getId()).isEqualTo(statistics1.getId());
+        assertThat(statisticsList.get(2).getId()).isEqualTo(statistics2.getId());
     }
 
     @Test
