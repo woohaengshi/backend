@@ -126,12 +126,9 @@ public class StudyRecordRepositoryTest {
     void 주간_월간대_별의_시간의_통계_개수를_구할_수_있다(){
         Member member = 저장(MemberFixture.builder().build());
 
-        StudyRecord studyRecord1 =
-                저장(StudyRecord.builder().member(member).time(500).date(LocalDate.now()).build());
-        StudyRecord studyRecord2 =
-                저장(StudyRecord.builder().member(member).time(400).date(LocalDate.now()).build());
-        StudyRecord studyRecord3 =
-                저장(StudyRecord.builder().member(member).time(1000).date(LocalDate.now()).build());
+        저장(StudyRecord.builder().member(member).time(500).date(LocalDate.now()).build());
+        저장(StudyRecord.builder().member(member).time(400).date(LocalDate.now()).build());
+        저장(StudyRecord.builder().member(member).time(1000).date(LocalDate.now()).build());
 
         long count = studyRecordRepository.getCountStudyRecordsByDate(LocalDate.now());
 
