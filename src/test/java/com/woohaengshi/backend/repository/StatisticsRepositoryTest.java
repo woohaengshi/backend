@@ -87,4 +87,17 @@ class StatisticsRepositoryTest {
         assertThat(statisticsList.get(1).getId()).isEqualTo(originList.get(0).getId());
         assertThat(statisticsList.get(2).getId()).isEqualTo(originList.get(1).getId());
     }
+
+    @Test
+    void 주간_월간대_별의_시간의_통계_개수를_구할_수_있다(){
+        Member member = 저장(MemberFixture.builder().build());
+
+        저장(StatisticsFixture.builder().member(member).monthlyTime(11).build());
+        저장(StatisticsFixture.builder().member(member).monthlyTime(10).build());
+        저장(StatisticsFixture.builder().member(member).monthlyTime(12).build());
+
+        long count = statisticsRepository.getCountStatisticsByType(StatisticsType.MONTHLY);
+
+        assertThat(count).isEqualTo(3);
+    }
 }
