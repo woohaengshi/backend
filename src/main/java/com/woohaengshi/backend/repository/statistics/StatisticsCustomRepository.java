@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface StatisticsCustomRepository {
     public int getMemberRank(StatisticsType statisticsType, Statistics statistics);
-    public List<Statistics> filterAndSortStatisticsByType(StatisticsType statisticsType, Pageable pageable);
+    public List<Statistics> findStatisticsByTypeSortedByTimeDesc(StatisticsType statisticsType, Pageable pageable);
     public long getCountStatisticsByType(StatisticsType statisticsType);
 }

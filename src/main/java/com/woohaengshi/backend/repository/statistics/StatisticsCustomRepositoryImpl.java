@@ -29,7 +29,7 @@ public class StatisticsCustomRepositoryImpl implements StatisticsCustomRepositor
         return (int) count + 1;
     }
 
-    public List<Statistics> filterAndSortStatisticsByType(StatisticsType statisticsType, Pageable pageable) {
+    public List<Statistics> findStatisticsByTypeSortedByTimeDesc(StatisticsType statisticsType, Pageable pageable) {
         NumberPath<Integer> timePath = Expressions.numberPath(Integer.class, statistics, statisticsType.getFieldName());
 
         List<Statistics> results = jpaQueryFactory

@@ -109,7 +109,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     public Slice<Statistics> getPeriodicRankDataSlice(StatisticsType statisticsType, Pageable pageable) {
-        List<Statistics> content = statisticsRepository.filterAndSortStatisticsByType(statisticsType, pageable);
+        List<Statistics> content = statisticsRepository.findStatisticsByTypeSortedByTimeDesc(statisticsType, pageable);
         long total = statisticsRepository.getCountStatisticsByType(statisticsType);
         boolean hasNext = pageable.getOffset() + pageable.getPageSize() < total;
         return new SliceImpl<>(content, pageable, hasNext);

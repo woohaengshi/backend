@@ -81,7 +81,7 @@ class StatisticsRepositoryTest {
 
         Pageable pageable = PageRequest.of(0, 10);
 
-        List<Statistics> statisticsList = statisticsRepository.filterAndSortStatisticsByType(StatisticsType.MONTHLY, pageable);
+        List<Statistics> statisticsList = statisticsRepository.findStatisticsByTypeSortedByTimeDesc(StatisticsType.MONTHLY, pageable);
 
         assertThat(statisticsList.get(0).getId()).isEqualTo(originList.get(2).getId());
         assertThat(statisticsList.get(1).getId()).isEqualTo(originList.get(0).getId());
