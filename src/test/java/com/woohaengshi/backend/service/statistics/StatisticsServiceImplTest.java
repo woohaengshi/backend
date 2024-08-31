@@ -94,7 +94,23 @@ public class StatisticsServiceImplTest {
                 () -> assertFalse(response.getRanking().getHasNext(), "다음 페이지 존재 여부 확인"));
     }
 
-  
+    @Test
+    void 시간이_0인_경우_랭킹은_0이_나온다() {
+        Member member = MemberFixture.builder().id(1L).build();
+        Statistics statistics = StatisticsFixture.builder().id(1L).member(member).weeklyTime(0).build();
+        Pageable pageable = PageRequest.of(0, 10);
+
+        StatisticsType statisticsType = StatisticsType.WEEKLY;
+
+        given(statisticsRepository.findByMemberId(member.getId()))
+                .willReturn(Optional.of(statistics));
+        ShowRankSnapshotResponse response =
+                statisticsService.showRankData(member.getId(), statisticsType, pageable);
+
+        assertAll(
+                () -> assertEquals(0, response.getMember().getRank(), "시간이 0이면 0시간으로 나온다"));
+    }
+
 
     @Test
     void 회원이_존재하지_않으면_예외를_던진다() {
