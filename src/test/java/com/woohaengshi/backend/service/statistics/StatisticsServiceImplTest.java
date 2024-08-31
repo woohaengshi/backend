@@ -111,6 +111,13 @@ public class StatisticsServiceImplTest {
                 () -> assertEquals(0, response.getMember().getRank(), "시간이 0이면 0시간으로 나온다"));
     }
 
+    @Test
+    void 페이지_숫자가_1이상이면_member_항목이_없다() {
+        Member member = MemberFixture.builder().id(1L).build();
+        ShowRankSnapshotResponse response =
+                statisticsService.showRankData(member.getId(), StatisticsType.DAILY, PageRequest.of(1, 10));
+        assertNull(response.getMember());
+    }
 
     @Test
     void 회원이_존재하지_않으면_예외를_던진다() {
