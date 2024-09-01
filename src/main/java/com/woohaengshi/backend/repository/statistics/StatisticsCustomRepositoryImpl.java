@@ -29,7 +29,8 @@ public class StatisticsCustomRepositoryImpl implements StatisticsCustomRepositor
         return jpaQueryFactory
                         .selectFrom(statistics)
                         .where(timePath.gt(time).and(timePath.ne(0)))
-                        .fetchCount() + 1;
+                        .fetchCount()
+                + 1;
     }
 
     public List<Statistics> findStatisticsByTypeSortedByTimeDesc(

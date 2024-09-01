@@ -64,7 +64,8 @@ class StatisticsRepositoryTest {
         저장(StatisticsFixture.builder().member(member).monthlyTime(10).build());
         저장(StatisticsFixture.builder().member(member).monthlyTime(12).build());
 
-        int memberRank = (int) statisticsRepository.getMemberRank(StatisticsType.MONTHLY, statistics);
+        int memberRank =
+                (int) statisticsRepository.getMemberRank(StatisticsType.MONTHLY, statistics);
 
         assertThat(memberRank).isEqualTo(2);
     }

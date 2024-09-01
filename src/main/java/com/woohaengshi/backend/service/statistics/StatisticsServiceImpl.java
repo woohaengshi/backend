@@ -79,7 +79,9 @@ public class StatisticsServiceImpl implements StatisticsService {
         int studyTime =
                 (statistics != null) ? getTimeByStatisticsType(statisticsType, statistics) : -1;
         int rank =
-                studyTime > 0 ? (int) statisticsRepository.getMemberRank(statisticsType, statistics) : 0;
+                studyTime > 0
+                        ? (int) statisticsRepository.getMemberRank(statisticsType, statistics)
+                        : 0;
 
         return buildRankSnapshotResponse(
                 statistics, rank, studyTime, rankSlice, pageable, statisticsType);
