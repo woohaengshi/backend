@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RepositoryTest
@@ -74,9 +73,12 @@ class StatisticsRepositoryTest {
     void 주간_월간_시간의_멤버들을_정렬해서_찾을_수_있다() {
         Member member = 저장(MemberFixture.builder().build());
 
-        Statistics statistics1 = 저장(StatisticsFixture.builder().member(member).monthlyTime(11).build());
-        Statistics statistics2 = 저장(StatisticsFixture.builder().member(member).monthlyTime(10).build());
-        Statistics statistics3 = 저장(StatisticsFixture.builder().member(member).monthlyTime(12).build());
+        Statistics statistics1 =
+                저장(StatisticsFixture.builder().member(member).monthlyTime(11).build());
+        Statistics statistics2 =
+                저장(StatisticsFixture.builder().member(member).monthlyTime(10).build());
+        Statistics statistics3 =
+                저장(StatisticsFixture.builder().member(member).monthlyTime(12).build());
 
         Pageable pageable = PageRequest.of(0, 10);
 
