@@ -84,7 +84,7 @@ public class StatisticsServiceImplTest {
 
         given(statisticsRepository.findByMemberId(member.getId()))
                 .willReturn(Optional.of(statistics));
-        given(statisticsRepository.getMemberRank(statisticsType, statistics)).willReturn(1);
+        given(statisticsRepository.getMemberRank(statisticsType, statistics)).willReturn(1L);
         given(statisticsRepository.findStatisticsByTypeSortedByTimeDesc(statisticsType, pageable))
                 .willReturn(List.of(statistics));
         given(statisticsRepository.getCountStatisticsByType(statisticsType)).willReturn(1L);

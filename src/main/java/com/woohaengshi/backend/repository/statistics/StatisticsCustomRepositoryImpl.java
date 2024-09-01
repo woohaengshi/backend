@@ -18,7 +18,7 @@ import java.util.List;
 public class StatisticsCustomRepositoryImpl implements StatisticsCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
-    public int getMemberRank(StatisticsType statisticsType, Statistics memberStatistics) {
+    public long getMemberRank(StatisticsType statisticsType, Statistics memberStatistics) {
         NumberPath<Integer> timePath =
                 Expressions.numberPath(Integer.class, statistics, statisticsType.getFieldName());
         int time =
@@ -26,13 +26,10 @@ public class StatisticsCustomRepositoryImpl implements StatisticsCustomRepositor
                         ? memberStatistics.getWeeklyTime()
                         : memberStatistics.getMonthlyTime();
 
-        long count =
-                jpaQueryFactory
+        return jpaQueryFactory
                         .selectFrom(statistics)
                         .where(timePath.gt(time).and(timePath.ne(0)))
-                        .fetchCount();
-
-        return (int) count + 1;
+                        .fetchCount() + 1;
     }
 
     public List<Statistics> findStatisticsByTypeSortedByTimeDesc(
