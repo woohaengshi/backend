@@ -7,7 +7,6 @@ import static com.woohaengshi.backend.exception.ErrorCode.NOT_EXIST_REFRESH_TOKE
 import static com.woohaengshi.backend.exception.ErrorCode.QUIT_MEMBER;
 import static com.woohaengshi.backend.exception.ErrorCode.REFRESH_TOKEN_EXPIRED;
 import static com.woohaengshi.backend.exception.ErrorCode.REFRESH_TOKEN_NOT_FOUND;
-import static java.util.Objects.isNull;
 
 import static java.util.Objects.isNull;
 

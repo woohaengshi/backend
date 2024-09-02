@@ -1,9 +1,7 @@
 package com.woohaengshi.backend.service.member;
 
-import static com.woohaengshi.backend.exception.ErrorCode.MEMBER_NOT_FOUND;
-import static com.woohaengshi.backend.exception.ErrorCode.PASSWORD_INCORRECT;
 import static com.woohaengshi.backend.exception.ErrorCode.QUIT_MEMBER;
-import static com.woohaengshi.backend.exception.ErrorCode.REFRESH_TOKEN_NOT_FOUND;
+
 import static java.util.Objects.isNull;
 
 import com.woohaengshi.backend.domain.RefreshToken;
