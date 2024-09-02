@@ -60,7 +60,7 @@ public class StudyRecordServiceImpl implements StudyRecordService {
     }
 
     private void validateQuitMember(Member member) {
-        if(!member.isActive()){
+        if (!member.isActive()) {
             throw new WoohaengshiException(QUIT_MEMBER);
         }
     }

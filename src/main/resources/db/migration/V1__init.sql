@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS `subject`
     `id`        BIGINT       NOT NULL auto_increment,
     `name`      VARCHAR(255) NOT NULL,
     `member_id` BIGINT       NOT NULL,
+    `is_active` BOOLEAN      NOT NULL,
     PRIMARY KEY (`id`)
 )
     engine = innodb
@@ -86,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `refresh_token`
     `id`              BIGINT       NOT NULL auto_increment,
     `member_id`       BIGINT       NOT NULL,
     `token`           VARCHAR(255) NOT NULL,
-    `expiration_time` TIMESTAMP       NOT NULL,
+    `expiration_time` TIMESTAMP    NOT NULL,
     PRIMARY KEY (`id`)
 )
     engine = innodb

@@ -9,6 +9,8 @@ import static com.woohaengshi.backend.exception.ErrorCode.REFRESH_TOKEN_EXPIRED;
 import static com.woohaengshi.backend.exception.ErrorCode.REFRESH_TOKEN_NOT_FOUND;
 import static java.util.Objects.isNull;
 
+import static java.util.Objects.isNull;
+
 import com.woohaengshi.backend.domain.RefreshToken;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.statistics.Statistics;
@@ -66,7 +68,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private void validateQuitMember(Member member) {
-        if(!member.isActive()){
+        if (!member.isActive()) {
             throw new WoohaengshiException(QUIT_MEMBER);
         }
     }

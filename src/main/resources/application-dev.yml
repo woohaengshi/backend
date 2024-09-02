@@ -28,7 +28,7 @@ security:
   jwt:
     key: ${JWT_KEY}
     expiration:
-      access: 3600000
+      access: 2628000000
 cloud:
   aws:
     credentials:

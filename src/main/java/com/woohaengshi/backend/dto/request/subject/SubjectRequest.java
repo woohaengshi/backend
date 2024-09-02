@@ -13,4 +13,6 @@ public class SubjectRequest {
         this.addedSubjects = addedSubjects;
         this.deletedSubjects = deletedSubjects;
     }
+
+    public SubjectRequest() {}
 }

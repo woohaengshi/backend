@@ -25,6 +25,9 @@ public class Subject {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "is_active", nullable = false)
+    private boolean isActive;
+
     @JoinColumn(name = "member_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
@@ -32,14 +35,28 @@ public class Subject {
     protected Subject() {}
 
     @Builder
-    public Subject(Long id, String name, Member member) {
+    public Subject(Long id, String name, boolean isActive, Member member) {
         this.id = id;
         this.name = name;
+        this.isActive = isActive;
         this.member = member;
     }
 
     public Subject(String name, Member member) {
+        this.isActive = true;
         this.name = name;
         this.member = member;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void inActive() {
+        this.isActive = false;
+    }
+
+    public void active() {
+        this.isActive = true;
     }
 }
