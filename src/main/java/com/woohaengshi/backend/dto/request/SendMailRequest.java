@@ -1,5 +1,6 @@
 package com.woohaengshi.backend.dto.request;
 
+import com.woohaengshi.backend.domain.member.Course;
 import jakarta.validation.constraints.Email;
 import lombok.Getter;
 
@@ -11,11 +12,11 @@ public class SendMailRequest {
 
     private final Course course;
 
-    private final name;
+    private final String name;
 
-    private SendMailRequest(){}
-
-    public SendMailRequest(String email) {
+    public SendMailRequest(String email, Course course, String name) {
         this.email = email;
+        this.course = course;
+        this.name = name;
     }
 }
