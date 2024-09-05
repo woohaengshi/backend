@@ -1,6 +1,7 @@
 package com.woohaengshi.backend.service;
 
 import com.woohaengshi.backend.domain.member.Member;
+import com.woohaengshi.backend.dto.request.SendMailRequest;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import jakarta.mail.Message;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 import static com.woohaengshi.backend.exception.ErrorCode.CREATE_MAIL_EXCEPTION;
+import static com.woohaengshi.backend.exception.ErrorCode.INCORRECT_MEMBER_INFO;
 import static com.woohaengshi.backend.exception.ErrorCode.MEMBER_NOT_FOUND;
 import static com.woohaengshi.backend.exception.ErrorCode.QUIT_MEMBER;
 
@@ -45,14 +47,21 @@ public class PasswordService {
             "감사합니다.\n" +
             "우행시 팀 드림\n";
 
-    public void sendMail(String email) {
-        Member member = findMemberByEmail(email);
+    public void sendMail(SendMailRequest request) {
+        Member member = findMemberByEmail(request.getEmail());
+        validateMemberInformation(request, member);
         validQuitMember(member);
-        MimeMessage mimeMessage = createMail(email, member);
+        MimeMessage mimeMessage = createMail(member);
         mailSender.send(mimeMessage);
     }
 
-    private MimeMessage createMail(String email, Member member) {
+    private void validateMemberInformation(SendMailRequest request, Member member) {
+        if (!member.getName().equals(request.getName()) || !member.getCourse().equals(request.getCourse())) {
+            throw new WoohaengshiException(INCORRECT_MEMBER_INFO);
+        }
+    }
+
+    private MimeMessage createMail(Member member) {
         String authenticationNumber = UUID.randomUUID().toString();
         String reissueLink = "https://woohangshi.vercel.app/password/" + authenticationNumber;
         MimeMessage mimeMessage = mailSender.createMimeMessage();
@@ -60,7 +69,7 @@ public class PasswordService {
             mimeMessage.setFrom(WOOHAENGSHI_MAIL);
             mimeMessage.setSubject("[우행시] 비밀번호 재설정을 위한 임시 번호 발급 안내");
             mimeMessage.setText(String.format(CONTENT_FORMAT, member.getName(), authenticationNumber, reissueLink));
-            mimeMessage.setRecipients(Message.RecipientType.TO, email);
+            mimeMessage.setRecipients(Message.RecipientType.TO, member.getEmail());
         } catch (MessagingException e) {
             log.error(e.getMessage(), e);
             throw new WoohaengshiException(CREATE_MAIL_EXCEPTION);

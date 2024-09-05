@@ -16,6 +16,6 @@ public class PasswordController {
 
     @PostMapping("/api/v1/mail")
     public void send(@RequestBody @Valid SendMailRequest request) {
-        mailService.sendMail(request.getEmail());
+        mailService.sendMail(request);
     }
 }
