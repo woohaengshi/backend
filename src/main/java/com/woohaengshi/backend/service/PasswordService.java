@@ -22,7 +22,7 @@ import static com.woohaengshi.backend.exception.ErrorCode.QUIT_MEMBER;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Slf4j
-public class MailService {
+public class PasswordService {
 
     private final JavaMailSender mailSender;
     private final MemberRepository memberRepository;
