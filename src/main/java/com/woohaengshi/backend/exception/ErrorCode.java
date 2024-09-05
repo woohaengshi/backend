@@ -36,7 +36,8 @@ public enum ErrorCode {
     QUIT_MEMBER(FORBIDDEN, "탈퇴한 회원입니다."),
     INACTIVE_SUBJECT(BAD_REQUEST, "이미 비활성화된 과목입니다."),
     PASSWORD_INCORRECT(BAD_REQUEST, "맞지 않는 비밀번호입니다."),
-    CREATE_MAIL_EXCEPTION(INTERNAL_SERVER_ERROR, "메일 생성 중 오류가 발생했습니다. ");
+    CREATE_MAIL_EXCEPTION(INTERNAL_SERVER_ERROR, "메일 생성 중 오류가 발생했습니다. "),
+    INCORRECT_MEMBER_INFO(BAD_REQUEST, "사용자의 정보가 잘못되었습니다.");
 
     private final HttpStatus status;
     private final String message;
