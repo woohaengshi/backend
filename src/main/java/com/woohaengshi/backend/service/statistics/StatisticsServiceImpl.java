@@ -40,13 +40,13 @@ public class StatisticsServiceImpl implements StatisticsService {
                 : handlePeriodicStatistics(memberId, statisticsType, pageable);
     }
 
-    private ShowRankSnapshotResponse handleDailyStatistics(
-            Long memberId, Pageable pageable) {
+    private ShowRankSnapshotResponse handleDailyStatistics(Long memberId, Pageable pageable) {
         LocalDate today = getShowDate();
         Slice<StudyRecord> rankSlice = getDailyRankDataSlice(today, pageable);
 
-        if(pageable.getPageNumber() > 0){
-            return ShowRankSnapshotResponse.of(rankSlice.hasNext(), calculateDailyRank(rankSlice, pageable));
+        if (pageable.getPageNumber() > 0) {
+            return ShowRankSnapshotResponse.of(
+                    rankSlice.hasNext(), calculateDailyRank(rankSlice, pageable));
         }
 
         Optional<StudyRecord> studyRecord =
@@ -60,7 +60,8 @@ public class StatisticsServiceImpl implements StatisticsService {
                         .orElse(0);
         int time = studyRecord.map(StudyRecord::getTime).orElse(0);
 
-        return buildRankSnapshotResponse(findStatisticsByMemberId(memberId), rank, time, rankSlice, pageable);
+        return buildRankSnapshotResponse(
+                findStatisticsByMemberId(memberId), rank, time, rankSlice, pageable);
     }
 
     private LocalDate getShowDate() {
@@ -78,8 +79,10 @@ public class StatisticsServiceImpl implements StatisticsService {
             Long memberId, StatisticsType statisticsType, Pageable pageable) {
         Slice<Statistics> rankSlice = getPeriodicRankDataSlice(statisticsType, pageable);
 
-        if(pageable.getPageNumber() > 0){
-            return ShowRankSnapshotResponse.of(rankSlice.hasNext(), calculatePeriodicRank(rankSlice, pageable, statisticsType));
+        if (pageable.getPageNumber() > 0) {
+            return ShowRankSnapshotResponse.of(
+                    rankSlice.hasNext(),
+                    calculatePeriodicRank(rankSlice, pageable, statisticsType));
         }
 
         Statistics statistics = findStatisticsByMemberId(memberId);
