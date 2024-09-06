@@ -133,11 +133,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     public Slice<StudyRecord> getDailyRankDataSlice(LocalDate targetDate, Pageable pageable) {
-        List<StudyRecord> content =
-                studyRecordRepository.findStudyRecordsByDateSortedByTimeDesc(targetDate, pageable);
-        long total = studyRecordRepository.getCountStudyRecordsByDate(targetDate);
-        boolean hasNext = pageable.getOffset() + pageable.getPageSize() < total;
-        return new SliceImpl<>(content, pageable, hasNext);
+        return studyRecordRepository.findStudyRecordsByDateSortedByTimeDesc(targetDate, pageable);
     }
 
     private List<RankDataResponse> calculateDailyRank(

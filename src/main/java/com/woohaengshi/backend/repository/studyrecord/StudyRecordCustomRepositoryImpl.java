@@ -16,6 +16,8 @@ import com.woohaengshi.backend.dto.result.SubjectResult;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -51,17 +53,24 @@ public class StudyRecordCustomRepositoryImpl implements StudyRecordCustomReposit
                                                                 .skipNulls()))));
     }
 
-    public List<StudyRecord> findStudyRecordsByDateSortedByTimeDesc(
+    public Slice<StudyRecord> findStudyRecordsByDateSortedByTimeDesc(
             LocalDate date, Pageable pageable) {
-        JPAQuery<StudyRecord> query =
-                jpaQueryFactory
-                        .selectFrom(studyRecord)
-                        .where(studyRecord.date.eq(date))
-                        .orderBy(studyRecord.time.desc())
-                        .offset(pageable.getOffset())
-                        .limit(pageable.getPageSize());
+        List<StudyRecord> content = jpaQueryFactory
+                .selectFrom(studyRecord)
+                .where(studyRecord.date.eq(date))
+                .orderBy(studyRecord.time.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
 
-        return query.fetch();
+        long total = jpaQueryFactory
+                .select(studyRecord.count())
+                .from(studyRecord)
+                .where(studyRecord.date.eq(date))
+                .fetchOne();
+
+        boolean hasNext = pageable.getOffset() + pageable.getPageSize() < total;
+        return new SliceImpl<>(content, pageable, hasNext);
     }
 
     public long getCountStudyRecordsByDate(LocalDate date) {
