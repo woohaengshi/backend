@@ -7,7 +7,6 @@ import static com.woohaengshi.backend.domain.QStudySubject.studySubject;
 import static com.woohaengshi.backend.domain.subject.QSubject.subject;
 
 import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.dto.result.ShowCalendarResult;
@@ -55,19 +54,21 @@ public class StudyRecordCustomRepositoryImpl implements StudyRecordCustomReposit
 
     public Slice<StudyRecord> findStudyRecordsByDateSortedByTimeDesc(
             LocalDate date, Pageable pageable) {
-        List<StudyRecord> content = jpaQueryFactory
-                .selectFrom(studyRecord)
-                .where(studyRecord.date.eq(date))
-                .orderBy(studyRecord.time.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
+        List<StudyRecord> content =
+                jpaQueryFactory
+                        .selectFrom(studyRecord)
+                        .where(studyRecord.date.eq(date))
+                        .orderBy(studyRecord.time.desc())
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .fetch();
 
-        long total = jpaQueryFactory
-                .select(studyRecord.count())
-                .from(studyRecord)
-                .where(studyRecord.date.eq(date))
-                .fetchOne();
+        long total =
+                jpaQueryFactory
+                        .select(studyRecord.count())
+                        .from(studyRecord)
+                        .where(studyRecord.date.eq(date))
+                        .fetchOne();
 
         boolean hasNext = pageable.getOffset() + pageable.getPageSize() < total;
         return new SliceImpl<>(content, pageable, hasNext);
