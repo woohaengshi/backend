@@ -1,4 +1,4 @@
-package com.woohaengshi.backend.dto.request;
+package com.woohaengshi.backend.dto.request.password;
 
 import com.woohaengshi.backend.domain.member.Course;
 import jakarta.validation.constraints.Email;
