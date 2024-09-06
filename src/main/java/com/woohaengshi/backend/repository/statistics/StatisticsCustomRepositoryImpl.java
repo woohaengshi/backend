@@ -29,11 +29,11 @@ public class StatisticsCustomRepositoryImpl implements StatisticsCustomRepositor
                         : memberStatistics.getMonthlyTime();
 
         return jpaQueryFactory
-                        .selectFrom(statistics)
-                        .where(timePath.gt(time).and(timePath.ne(0)))
-                        .fetchCount()
-                + 1;
+                .selectFrom(statistics)
+                .where(timePath.gt(time).and(timePath.ne(0)))
+                .fetch().size() + 1;
     }
+
 
     public Slice<Statistics> findStatisticsByTypeSortedByTimeDesc(
             StatisticsType statisticsType, Pageable pageable) {
