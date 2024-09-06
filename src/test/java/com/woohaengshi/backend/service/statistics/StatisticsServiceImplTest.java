@@ -138,8 +138,8 @@ public class StatisticsServiceImplTest {
         given(statisticsRepository.findByMemberId(member.getId()))
                 .willReturn(Optional.of(statistics));
         given(
-                studyRecordRepository.findStudyRecordsByDateSortedByTimeDesc(
-                        LocalDate.now(), pageable))
+                        studyRecordRepository.findStudyRecordsByDateSortedByTimeDesc(
+                                LocalDate.now(), pageable))
                 .willReturn(new SliceImpl<>(List.of(studyRecord), pageable, false));
 
         ShowRankSnapshotResponse response =

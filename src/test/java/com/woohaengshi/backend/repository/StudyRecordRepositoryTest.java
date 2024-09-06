@@ -112,8 +112,9 @@ public class StudyRecordRepositoryTest {
 
         Pageable pageable = PageRequest.of(0, 10);
 
-        Slice<StudyRecord> studyRecordList = studyRecordRepository.findStudyRecordsByDateSortedByTimeDesc(
-                LocalDate.now(), pageable);
+        Slice<StudyRecord> studyRecordList =
+                studyRecordRepository.findStudyRecordsByDateSortedByTimeDesc(
+                        LocalDate.now(), pageable);
 
         assertThat(studyRecordList.getContent().get(0).getId()).isEqualTo(studyRecord3.getId());
         assertThat(studyRecordList.getContent().get(1).getId()).isEqualTo(studyRecord1.getId());
