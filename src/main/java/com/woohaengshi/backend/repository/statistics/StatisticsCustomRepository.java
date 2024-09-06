@@ -4,14 +4,13 @@ import com.woohaengshi.backend.domain.statistics.Statistics;
 import com.woohaengshi.backend.domain.statistics.StatisticsType;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 
 import java.util.List;
 
 public interface StatisticsCustomRepository {
     public long getMemberRank(StatisticsType statisticsType, Statistics statistics);
 
-    public List<Statistics> findStatisticsByTypeSortedByTimeDesc(
+    public Slice<Statistics> findStatisticsByTypeSortedByTimeDesc(
             StatisticsType statisticsType, Pageable pageable);
-
-    public long getCountStatisticsByType(StatisticsType statisticsType);
 }

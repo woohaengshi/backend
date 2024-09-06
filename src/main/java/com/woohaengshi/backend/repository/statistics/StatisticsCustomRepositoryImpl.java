@@ -11,6 +11,8 @@ import com.woohaengshi.backend.domain.statistics.StatisticsType;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 
 import java.util.List;
 
@@ -33,12 +35,12 @@ public class StatisticsCustomRepositoryImpl implements StatisticsCustomRepositor
                 + 1;
     }
 
-    public List<Statistics> findStatisticsByTypeSortedByTimeDesc(
+    public Slice<Statistics> findStatisticsByTypeSortedByTimeDesc(
             StatisticsType statisticsType, Pageable pageable) {
         NumberPath<Integer> timePath =
                 Expressions.numberPath(Integer.class, statistics, statisticsType.getFieldName());
 
-        List<Statistics> results =
+        List<Statistics> content =
                 jpaQueryFactory
                         .selectFrom(statistics)
                         .where(timePath.ne(0))
@@ -47,16 +49,12 @@ public class StatisticsCustomRepositoryImpl implements StatisticsCustomRepositor
                         .limit(pageable.getPageSize())
                         .fetch();
 
-        return results;
-    }
-
-    public long getCountStatisticsByType(StatisticsType statisticsType) {
-        NumberPath<Integer> timePath =
-                Expressions.numberPath(Integer.class, statistics, statisticsType.getFieldName());
-        return jpaQueryFactory
+        long total = jpaQueryFactory
                 .select(timePath.count())
                 .from(statistics)
                 .where(timePath.ne(0))
                 .fetchOne();
+        boolean hasNext = pageable.getOffset() + pageable.getPageSize() < total;
+        return new SliceImpl<>(content, pageable, hasNext);
     }
 }
