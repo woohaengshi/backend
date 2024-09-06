@@ -49,11 +49,12 @@ public class StatisticsCustomRepositoryImpl implements StatisticsCustomRepositor
                         .limit(pageable.getPageSize())
                         .fetch();
 
-        long total = jpaQueryFactory
-                .select(timePath.count())
-                .from(statistics)
-                .where(timePath.ne(0))
-                .fetchOne();
+        long total =
+                jpaQueryFactory
+                        .select(timePath.count())
+                        .from(statistics)
+                        .where(timePath.ne(0))
+                        .fetchOne();
         boolean hasNext = pageable.getOffset() + pageable.getPageSize() < total;
         return new SliceImpl<>(content, pageable, hasNext);
     }

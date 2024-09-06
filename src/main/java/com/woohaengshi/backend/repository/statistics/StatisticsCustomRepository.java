@@ -6,8 +6,6 @@ import com.woohaengshi.backend.domain.statistics.StatisticsType;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
-import java.util.List;
-
 public interface StatisticsCustomRepository {
     public long getMemberRank(StatisticsType statisticsType, Statistics statistics);
 

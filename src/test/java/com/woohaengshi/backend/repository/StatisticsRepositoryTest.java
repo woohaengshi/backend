@@ -84,9 +84,9 @@ class StatisticsRepositoryTest {
 
         Pageable pageable = PageRequest.of(0, 10);
 
-        Slice<Statistics> statisticsList = statisticsRepository.findStatisticsByTypeSortedByTimeDesc(
-                StatisticsType.MONTHLY, pageable);
-
+        Slice<Statistics> statisticsList =
+                statisticsRepository.findStatisticsByTypeSortedByTimeDesc(
+                        StatisticsType.MONTHLY, pageable);
 
         assertThat(statisticsList.getContent().get(0).getId()).isEqualTo(statistics3.getId());
         assertThat(statisticsList.getContent().get(1).getId()).isEqualTo(statistics1.getId());
