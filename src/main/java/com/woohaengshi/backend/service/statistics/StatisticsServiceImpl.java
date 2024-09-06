@@ -35,21 +35,22 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Transactional(readOnly = true)
     public ShowRankSnapshotResponse showRankData(
             Long memberId, StatisticsType statisticsType, Pageable pageable) {
-        Statistics statistics =
-                (pageable.getPageNumber() == 0) ? findStatisticsByMemberId(memberId) : null;
-
         return statisticsType == StatisticsType.DAILY
-                ? handleDailyStatistics(memberId, pageable, statistics)
-                : handlePeriodicStatistics(statisticsType, pageable, statistics);
+                ? handleDailyStatistics(memberId, pageable)
+                : handlePeriodicStatistics(memberId, statisticsType, pageable);
     }
 
     private ShowRankSnapshotResponse handleDailyStatistics(
-            Long memberId, Pageable pageable, Statistics statistics) {
+            Long memberId, Pageable pageable) {
         LocalDate today = getShowDate();
+        Slice<StudyRecord> rankSlice = getDailyRankDataSlice(today, pageable);
+
+        if(pageable.getPageNumber() > 0){
+            return ShowRankSnapshotResponse.of(rankSlice.hasNext(), calculateDailyRank(rankSlice, pageable));
+        }
 
         Optional<StudyRecord> studyRecord =
                 studyRecordRepository.findByDateAndMemberId(today, memberId);
-        Slice<StudyRecord> rankSlice = getDailyRankDataSlice(today, pageable);
         int rank =
                 studyRecord
                         .map(
@@ -59,7 +60,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                         .orElse(0);
         int time = studyRecord.map(StudyRecord::getTime).orElse(0);
 
-        return buildRankSnapshotResponse(statistics, rank, time, rankSlice, pageable);
+        return buildRankSnapshotResponse(findStatisticsByMemberId(memberId), rank, time, rankSlice, pageable);
     }
 
     private LocalDate getShowDate() {
@@ -74,10 +75,15 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     private ShowRankSnapshotResponse handlePeriodicStatistics(
-            StatisticsType statisticsType, Pageable pageable, Statistics statistics) {
+            Long memberId, StatisticsType statisticsType, Pageable pageable) {
         Slice<Statistics> rankSlice = getPeriodicRankDataSlice(statisticsType, pageable);
-        int studyTime =
-                (statistics != null) ? getTimeByStatisticsType(statisticsType, statistics) : -1;
+
+        if(pageable.getPageNumber() > 0){
+            return ShowRankSnapshotResponse.of(rankSlice.hasNext(), calculatePeriodicRank(rankSlice, pageable, statisticsType));
+        }
+
+        Statistics statistics = findStatisticsByMemberId(memberId);
+        int studyTime = getTimeByStatisticsType(statisticsType, statistics);
         int rank =
                 studyTime > 0
                         ? (int) statisticsRepository.getMemberRank(statisticsType, statistics)
@@ -94,10 +100,10 @@ public class StatisticsServiceImpl implements StatisticsService {
             Slice<StudyRecord> rankSlice,
             Pageable pageable) {
         return ShowRankSnapshotResponse.of(
-                (statistics != null) ? statistics.getMember() : null,
+                statistics.getMember(),
                 rank,
                 time,
-                (statistics != null) ? statistics.getTotalTime() : -1,
+                statistics.getTotalTime(),
                 rankSlice.hasNext(),
                 calculateDailyRank(rankSlice, pageable));
     }
@@ -110,10 +116,10 @@ public class StatisticsServiceImpl implements StatisticsService {
             Pageable pageable,
             StatisticsType statisticsType) {
         return ShowRankSnapshotResponse.of(
-                (statistics != null) ? statistics.getMember() : null,
+                statistics.getMember(),
                 rank,
                 time,
-                (statistics != null) ? statistics.getTotalTime() : -1,
+                statistics.getTotalTime(),
                 rankSlice.hasNext(),
                 calculatePeriodicRank(rankSlice, pageable, statisticsType));
     }
