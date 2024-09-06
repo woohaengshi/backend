@@ -30,7 +30,8 @@ public class ShowRankSnapshotResponse {
         RanksResponse infiniteScrolling = RanksResponse.of(hasNext, ranks);
         return new ShowRankSnapshotResponse(memberDto, infiniteScrolling);
     }
-    public static ShowRankSnapshotResponse of (Boolean hasNext, List<RankDataResponse> ranks) {
+
+    public static ShowRankSnapshotResponse of(Boolean hasNext, List<RankDataResponse> ranks) {
         return new ShowRankSnapshotResponse(null, RanksResponse.of(hasNext, ranks));
     }
 }
