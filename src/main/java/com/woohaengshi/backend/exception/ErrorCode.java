@@ -7,8 +7,10 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+@Getter
 public enum ErrorCode {
     MEMBER_NOT_FOUND(NOT_FOUND, "회원을 찾을 수 없습니다."),
     STATISTICS_TYPE_NOT_FOUND(BAD_REQUEST, "랭킹 조회에서 찾을 수 없는 유형 타입입니다."),
@@ -37,7 +39,8 @@ public enum ErrorCode {
     INACTIVE_SUBJECT(BAD_REQUEST, "이미 비활성화된 과목입니다."),
     PASSWORD_INCORRECT(BAD_REQUEST, "맞지 않는 비밀번호입니다."),
     CREATE_MAIL_EXCEPTION(INTERNAL_SERVER_ERROR, "메일 생성 중 오류가 발생했습니다. "),
-    INCORRECT_MEMBER_INFO(BAD_REQUEST, "사용자의 정보가 잘못되었습니다.");
+    INCORRECT_MEMBER_INFO(BAD_REQUEST, "사용자의 정보가 잘못되었습니다."),
+    AUTHENTICATE_CODE_NOT_FOUND(NOT_FOUND, "인증 코드를 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String message;
@@ -47,11 +50,4 @@ public enum ErrorCode {
         this.message = message;
     }
 
-    public HttpStatus getStatus() {
-        return status;
-    }
-
-    public String getMessage() {
-        return message;
-    }
 }
