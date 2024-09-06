@@ -87,7 +87,6 @@ public class StatisticsServiceImplTest {
         given(statisticsRepository.getMemberRank(statisticsType, statistics)).willReturn(1L);
         given(statisticsRepository.findStatisticsByTypeSortedByTimeDesc(statisticsType, pageable))
                 .willReturn(new SliceImpl<>(List.of(statistics), pageable, false));
-//        given(statisticsRepository.getCountStatisticsByType(statisticsType)).willReturn(1L);
         ShowRankSnapshotResponse response =
                 statisticsService.showRankData(member.getId(), statisticsType, pageable);
 
