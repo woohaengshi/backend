@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -111,25 +112,11 @@ public class StudyRecordRepositoryTest {
 
         Pageable pageable = PageRequest.of(0, 10);
 
-        List<StudyRecord> studyRecordList =
-                studyRecordRepository.findStudyRecordsByDateSortedByTimeDesc(
-                        LocalDate.now(), pageable);
+        Slice<StudyRecord> studyRecordList = studyRecordRepository.findStudyRecordsByDateSortedByTimeDesc(
+                LocalDate.now(), pageable);
 
-        assertThat(studyRecordList.get(0).getId()).isEqualTo(studyRecord3.getId());
-        assertThat(studyRecordList.get(1).getId()).isEqualTo(studyRecord1.getId());
-        assertThat(studyRecordList.get(2).getId()).isEqualTo(studyRecord2.getId());
-    }
-
-    @Test
-    void 주간_월간대_별의_시간의_통계_개수를_구할_수_있다() {
-        Member member = 저장(MemberFixture.builder().build());
-
-        저장(StudyRecord.builder().member(member).time(500).date(LocalDate.now()).build());
-        저장(StudyRecord.builder().member(member).time(400).date(LocalDate.now()).build());
-        저장(StudyRecord.builder().member(member).time(1000).date(LocalDate.now()).build());
-
-        long count = studyRecordRepository.getCountStudyRecordsByDate(LocalDate.now());
-
-        assertThat(count).isEqualTo(3);
+        assertThat(studyRecordList.getContent().get(0).getId()).isEqualTo(studyRecord3.getId());
+        assertThat(studyRecordList.getContent().get(1).getId()).isEqualTo(studyRecord1.getId());
+        assertThat(studyRecordList.getContent().get(2).getId()).isEqualTo(studyRecord2.getId());
     }
 }

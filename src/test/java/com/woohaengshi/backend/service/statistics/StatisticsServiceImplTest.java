@@ -57,7 +57,7 @@ public class StatisticsServiceImplTest {
         given(
                         studyRecordRepository.findStudyRecordsByDateSortedByTimeDesc(
                                 LocalDate.now(), pageable))
-                .willReturn(List.of(studyRecord));
+                .willReturn(new SliceImpl<>(List.of(studyRecord), pageable, false));
 
         ShowRankSnapshotResponse response =
                 statisticsService.showRankData(member.getId(), StatisticsType.DAILY, pageable);
@@ -124,9 +124,27 @@ public class StatisticsServiceImplTest {
     @Test
     void 페이지_숫자가_1이상이면_member_항목이_없다() {
         Member member = MemberFixture.builder().id(1L).build();
+        Statistics statistics = StatisticsFixture.builder().id(1L).member(member).build();
+        SaveRecordRequest request = new SaveRecordRequest(LocalDate.now(), 10, List.of(1L, 2L));
+        StudyRecord studyRecord =
+                StudyRecordFixture.builder()
+                        .id(1L)
+                        .member(member)
+                        .time(request.getTime())
+                        .date(request.getDate())
+                        .build();
+        Pageable pageable = PageRequest.of(1, 10);
+
+        given(statisticsRepository.findByMemberId(member.getId()))
+                .willReturn(Optional.of(statistics));
+        given(
+                studyRecordRepository.findStudyRecordsByDateSortedByTimeDesc(
+                        LocalDate.now(), pageable))
+                .willReturn(new SliceImpl<>(List.of(studyRecord), pageable, false));
+
         ShowRankSnapshotResponse response =
-                statisticsService.showRankData(
-                        member.getId(), StatisticsType.DAILY, PageRequest.of(1, 10));
+                statisticsService.showRankData(member.getId(), StatisticsType.DAILY, pageable);
+
         assertNull(response.getMember());
     }
 
