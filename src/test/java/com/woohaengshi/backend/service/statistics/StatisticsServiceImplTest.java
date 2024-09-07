@@ -116,8 +116,8 @@ public class StatisticsServiceImplTest {
         given(studyRecordRepository.findByDateAndMemberId(LocalDate.now(), member.getId()))
                 .willReturn(Optional.empty());
         given(
-                studyRecordRepository.findStudyRecordsByDateSortedByTimeDesc(
-                        LocalDate.now(), pageable))
+                        studyRecordRepository.findStudyRecordsByDateSortedByTimeDesc(
+                                LocalDate.now(), pageable))
                 .willReturn(new SliceImpl<>(List.of(), pageable, false));
 
         ShowRankSnapshotResponse response =
@@ -125,8 +125,9 @@ public class StatisticsServiceImplTest {
 
         assertAll(
                 () -> assertEquals(0, response.getMember().getRank(), "학습 기록이 없으면 0등으로 나온다"),
-                () -> assertEquals(0, response.getMember().getStudyTime(), "학습 기록이 없으면 0 시간으로 나온다")
-        );
+                () ->
+                        assertEquals(
+                                0, response.getMember().getStudyTime(), "학습 기록이 없으면 0 시간으로 나온다"));
     }
 
     @Test
@@ -147,6 +148,7 @@ public class StatisticsServiceImplTest {
 
         assertAll(() -> assertEquals(0, response.getMember().getRank(), "0시간이면 0등으로 나온다"));
     }
+
     @Test
     void 페이지_숫자가_1이상이면_member_항목이_없다() {
         Member member = MemberFixture.builder().id(1L).build();
