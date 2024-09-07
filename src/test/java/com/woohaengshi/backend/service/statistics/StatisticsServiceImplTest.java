@@ -109,19 +109,26 @@ public class StatisticsServiceImplTest {
 
     @Test
     void 주간_월간_랭킹을_조회한다() {
-        Member member = MemberFixture.builder().id(1L).build();
-        Statistics statistics = StatisticsFixture.builder().id(1L).member(member).build();
         Pageable pageable = PageRequest.of(0, 10);
+        StatisticsType statisticsType = StatisticsType.MONTHLY;
+        List<Member> members =
+                List.of(
+                        MemberFixture.builder().id(1L).build(),
+                        MemberFixture.builder().id(2L).build(),
+                        MemberFixture.builder().id(3L).build());
+        List<Statistics> statistics =
+                List.of(
+                        StatisticsFixture.builder().id(1L).member(members.get(0)).weeklyTime(30).monthlyTime(30).build(),
+                        StatisticsFixture.builder().id(1L).member(members.get(1)).weeklyTime(20).monthlyTime(20).build(),
+                        StatisticsFixture.builder().id(1L).member(members.get(2)).weeklyTime(10).monthlyTime(10).build());
 
-        StatisticsType statisticsType = StatisticsType.WEEKLY;
+        given(statisticsRepository.findByMemberId(members.get(0).getId())).willReturn(Optional.of(statistics.get(0)));
+        given(statisticsRepository.getMemberRank(statisticsType, statistics.get(0))).willReturn(1L);
 
-        given(statisticsRepository.findByMemberId(member.getId()))
-                .willReturn(Optional.of(statistics));
-        given(statisticsRepository.getMemberRank(statisticsType, statistics)).willReturn(1L);
         given(statisticsRepository.findStatisticsByTypeSortedByTimeDesc(statisticsType, pageable))
-                .willReturn(new SliceImpl<>(List.of(statistics), pageable, false));
+                .willReturn(new SliceImpl<>(statistics, pageable, false));
         ShowRankSnapshotResponse response =
-                statisticsService.showRankData(member.getId(), statisticsType, pageable);
+                statisticsService.showRankData(members.get(0).getId(), statisticsType, pageable);
 
         // 응답 검증
         assertAll(
@@ -131,6 +138,16 @@ public class StatisticsServiceImplTest {
                         assertEquals(
                                 1,
                                 response.getRanking().getRanks().get(0).getRank(),
+                                "순위가 올바르게 계산되어야 함"),
+                () ->
+                        assertEquals(
+                                2,
+                                response.getRanking().getRanks().get(1).getRank(),
+                                "순위가 올바르게 계산되어야 함"),
+                () ->
+                        assertEquals(
+                                3,
+                                response.getRanking().getRanks().get(2).getRank(),
                                 "순위가 올바르게 계산되어야 함"),
                 () -> assertFalse(response.getRanking().getHasNext(), "다음 페이지 존재 여부 확인"));
     }
