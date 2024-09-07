@@ -54,13 +54,13 @@ public class StatisticsServiceImplTest {
                         StudyRecordFixture.builder()
                                 .id(1L)
                                 .member(members.get(0))
-                                .time(10)
+                                .time(30)
                                 .date(LocalDate.now())
                                 .build(),
                         StudyRecordFixture.builder()
                                 .id(1L)
                                 .member(members.get(1))
-                                .time(10)
+                                .time(20)
                                 .date(LocalDate.now())
                                 .build(),
                         StudyRecordFixture.builder()
