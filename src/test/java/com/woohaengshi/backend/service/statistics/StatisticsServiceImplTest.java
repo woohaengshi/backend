@@ -38,29 +38,52 @@ public class StatisticsServiceImplTest {
 
     @Test
     void 일간_랭킹을_조회한다() {
-        Member member = MemberFixture.builder().id(1L).build();
-        Statistics statistics = StatisticsFixture.builder().id(1L).member(member).build();
-        SaveRecordRequest request = new SaveRecordRequest(LocalDate.now(), 10, List.of(1L, 2L));
-        StudyRecord studyRecord =
-                StudyRecordFixture.builder()
-                        .id(1L)
-                        .member(member)
-                        .time(request.getTime())
-                        .date(request.getDate())
-                        .build();
         Pageable pageable = PageRequest.of(0, 10);
+        List<Member> members =
+                List.of(
+                        MemberFixture.builder().id(1L).build(),
+                        MemberFixture.builder().id(2L).build(),
+                        MemberFixture.builder().id(3L).build());
+        List<Statistics> statistics =
+                List.of(
+                        StatisticsFixture.builder().id(1L).member(members.get(0)).build(),
+                        StatisticsFixture.builder().id(1L).member(members.get(1)).build(),
+                        StatisticsFixture.builder().id(1L).member(members.get(2)).build());
+        List<StudyRecord> studyRecords =
+                List.of(
+                        StudyRecordFixture.builder()
+                                .id(1L)
+                                .member(members.get(0))
+                                .time(10)
+                                .date(LocalDate.now())
+                                .build(),
+                        StudyRecordFixture.builder()
+                                .id(1L)
+                                .member(members.get(1))
+                                .time(10)
+                                .date(LocalDate.now())
+                                .build(),
+                        StudyRecordFixture.builder()
+                                .id(1L)
+                                .member(members.get(2))
+                                .time(10)
+                                .date(LocalDate.now())
+                                .build());
 
-        given(statisticsRepository.findByMemberId(member.getId()))
-                .willReturn(Optional.of(statistics));
-        given(studyRecordRepository.findByDateAndMemberId(LocalDate.now(), member.getId()))
-                .willReturn(Optional.of(studyRecord));
+        given(studyRecordRepository.findByDateAndMemberId(LocalDate.now(), members.get(0).getId()))
+                .willReturn(Optional.of(studyRecords.get(0)));
+
+        for (int i = 0; i < 3; i++)
+            given(statisticsRepository.findByMemberId(members.get(i).getId()))
+                    .willReturn(Optional.of(statistics.get(i)));
         given(
                         studyRecordRepository.findStudyRecordsByDateSortedByTimeDesc(
                                 LocalDate.now(), pageable))
-                .willReturn(new SliceImpl<>(List.of(studyRecord), pageable, false));
+                .willReturn(new SliceImpl<>(studyRecords, pageable, false));
 
         ShowRankSnapshotResponse response =
-                statisticsService.showRankData(member.getId(), StatisticsType.DAILY, pageable);
+                statisticsService.showRankData(
+                        members.get(0).getId(), StatisticsType.DAILY, pageable);
 
         // 응답 검증
         assertAll(
@@ -70,6 +93,16 @@ public class StatisticsServiceImplTest {
                         assertEquals(
                                 1,
                                 response.getRanking().getRanks().get(0).getRank(),
+                                "순위가 올바르게 계산되어야 함"),
+                () ->
+                        assertEquals(
+                                2,
+                                response.getRanking().getRanks().get(1).getRank(),
+                                "순위가 올바르게 계산되어야 함"),
+                () ->
+                        assertEquals(
+                                3,
+                                response.getRanking().getRanks().get(2).getRank(),
                                 "순위가 올바르게 계산되어야 함"),
                 () -> assertFalse(response.getRanking().getHasNext(), "다음 페이지 존재 여부 확인"));
     }
