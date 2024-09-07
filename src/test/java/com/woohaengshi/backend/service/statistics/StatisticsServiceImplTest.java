@@ -118,11 +118,27 @@ public class StatisticsServiceImplTest {
                         MemberFixture.builder().id(3L).build());
         List<Statistics> statistics =
                 List.of(
-                        StatisticsFixture.builder().id(1L).member(members.get(0)).weeklyTime(30).monthlyTime(30).build(),
-                        StatisticsFixture.builder().id(1L).member(members.get(1)).weeklyTime(20).monthlyTime(20).build(),
-                        StatisticsFixture.builder().id(1L).member(members.get(2)).weeklyTime(10).monthlyTime(10).build());
+                        StatisticsFixture.builder()
+                                .id(1L)
+                                .member(members.get(0))
+                                .weeklyTime(30)
+                                .monthlyTime(30)
+                                .build(),
+                        StatisticsFixture.builder()
+                                .id(1L)
+                                .member(members.get(1))
+                                .weeklyTime(20)
+                                .monthlyTime(20)
+                                .build(),
+                        StatisticsFixture.builder()
+                                .id(1L)
+                                .member(members.get(2))
+                                .weeklyTime(10)
+                                .monthlyTime(10)
+                                .build());
 
-        given(statisticsRepository.findByMemberId(members.get(0).getId())).willReturn(Optional.of(statistics.get(0)));
+        given(statisticsRepository.findByMemberId(members.get(0).getId()))
+                .willReturn(Optional.of(statistics.get(0)));
         given(statisticsRepository.getMemberRank(statisticsType, statistics.get(0))).willReturn(1L);
 
         given(statisticsRepository.findStatisticsByTypeSortedByTimeDesc(statisticsType, pageable))
