@@ -103,7 +103,34 @@ public class StatisticsServiceImplTest {
     }
 
     @Test
-    void 시간이_0인_경우_랭킹은_0이_나온다() {
+    void 일간_시간이_없는_경우_0등_0시간으로_나온다() {
+        Member member = MemberFixture.builder().id(1L).build();
+        Statistics statistics =
+                StatisticsFixture.builder().id(1L).member(member).weeklyTime(0).build();
+        Pageable pageable = PageRequest.of(0, 10);
+
+        StatisticsType statisticsType = StatisticsType.DAILY;
+
+        given(statisticsRepository.findByMemberId(member.getId()))
+                .willReturn(Optional.of(statistics));
+        given(studyRecordRepository.findByDateAndMemberId(LocalDate.now(), member.getId()))
+                .willReturn(Optional.empty());
+        given(
+                studyRecordRepository.findStudyRecordsByDateSortedByTimeDesc(
+                        LocalDate.now(), pageable))
+                .willReturn(new SliceImpl<>(List.of(), pageable, false));
+
+        ShowRankSnapshotResponse response =
+                statisticsService.showRankData(member.getId(), statisticsType, pageable);
+
+        assertAll(
+                () -> assertEquals(0, response.getMember().getRank(), "학습 기록이 없으면 0등으로 나온다"),
+                () -> assertEquals(0, response.getMember().getStudyTime(), "학습 기록이 없으면 0 시간으로 나온다")
+        );
+    }
+
+    @Test
+    void 주간_월간_시간이_0인_경우_랭킹은_0이_나온다() {
         Member member = MemberFixture.builder().id(1L).build();
         Statistics statistics =
                 StatisticsFixture.builder().id(1L).member(member).weeklyTime(0).build();
@@ -118,9 +145,8 @@ public class StatisticsServiceImplTest {
         ShowRankSnapshotResponse response =
                 statisticsService.showRankData(member.getId(), statisticsType, pageable);
 
-        assertAll(() -> assertEquals(0, response.getMember().getRank(), "시간이 0이면 0시간으로 나온다"));
+        assertAll(() -> assertEquals(0, response.getMember().getRank(), "0시간이면 0등으로 나온다"));
     }
-
     @Test
     void 페이지_숫자가_1이상이면_member_항목이_없다() {
         Member member = MemberFixture.builder().id(1L).build();
