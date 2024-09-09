@@ -14,6 +14,10 @@ public class ShowRankSnapshotResponse {
 
     private RanksResponse ranking;
 
+    public ShowRankSnapshotResponse(RanksResponse ranking) {
+        this.ranking = ranking;
+    }
+
     private ShowRankSnapshotResponse(RankDataResponse member, RanksResponse ranksResponse) {
         this.member = member;
         this.ranking = ranksResponse;
@@ -32,6 +36,6 @@ public class ShowRankSnapshotResponse {
     }
 
     public static ShowRankSnapshotResponse of(Boolean hasNext, List<RankDataResponse> ranks) {
-        return new ShowRankSnapshotResponse(null, RanksResponse.of(hasNext, ranks));
+        return new ShowRankSnapshotResponse(RanksResponse.of(hasNext, ranks));
     }
 }
