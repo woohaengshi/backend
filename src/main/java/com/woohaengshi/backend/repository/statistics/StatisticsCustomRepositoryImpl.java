@@ -7,9 +7,9 @@ import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.woohaengshi.backend.domain.statistics.Statistics;
 import com.woohaengshi.backend.domain.statistics.StatisticsType;
-
 import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Pageable;
@@ -36,8 +36,8 @@ public class StatisticsCustomRepositoryImpl implements StatisticsCustomRepositor
     }
 
     private int getStatisticsTime(StatisticsType statisticsType, Statistics statistics) {
-        if(statisticsType == StatisticsType.WEEKLY) return statistics.getWeeklyTime();
-        if(statisticsType == StatisticsType.MONTHLY) return statistics.getMonthlyTime();
+        if (statisticsType == StatisticsType.WEEKLY) return statistics.getWeeklyTime();
+        if (statisticsType == StatisticsType.MONTHLY) return statistics.getMonthlyTime();
 
         throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
     }
