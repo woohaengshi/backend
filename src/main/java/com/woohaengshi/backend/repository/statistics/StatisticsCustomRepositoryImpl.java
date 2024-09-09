@@ -8,6 +8,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.woohaengshi.backend.domain.statistics.Statistics;
 import com.woohaengshi.backend.domain.statistics.StatisticsType;
 
+import com.woohaengshi.backend.exception.ErrorCode;
+import com.woohaengshi.backend.exception.WoohaengshiException;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Pageable;
@@ -23,10 +25,7 @@ public class StatisticsCustomRepositoryImpl implements StatisticsCustomRepositor
     public long getMemberRank(StatisticsType statisticsType, Statistics memberStatistics) {
         NumberPath<Integer> timePath =
                 Expressions.numberPath(Integer.class, statistics, statisticsType.getFieldName());
-        int time =
-                (statisticsType == StatisticsType.WEEKLY)
-                        ? memberStatistics.getWeeklyTime()
-                        : memberStatistics.getMonthlyTime();
+        int time = getStatisticsTime(statisticsType, memberStatistics);
 
         return jpaQueryFactory
                         .selectFrom(statistics)
@@ -34,6 +33,13 @@ public class StatisticsCustomRepositoryImpl implements StatisticsCustomRepositor
                         .fetch()
                         .size()
                 + 1;
+    }
+
+    private int getStatisticsTime(StatisticsType statisticsType, Statistics statistics) {
+        if(statisticsType == StatisticsType.WEEKLY) return statistics.getWeeklyTime();
+        if(statisticsType == StatisticsType.MONTHLY) return statistics.getMonthlyTime();
+
+        throw new WoohaengshiException(ErrorCode.STATISTICS_TYPE_NOT_FOUND);
     }
 
     public Slice<Statistics> findStatisticsByTypeSortedByTimeDesc(
