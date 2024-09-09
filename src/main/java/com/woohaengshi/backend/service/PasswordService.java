@@ -89,6 +89,7 @@ public class PasswordService {
         return authenticationCodeRepository.findByCode(authenticationNumber).orElseThrow(() -> new WoohaengshiException(AUTHENTICATE_CODE_NOT_FOUND));
     }
 
+    @Transactional(readOnly = true)
     public void validateCode(String authenticationCode) {
         if (!authenticationCodeRepository.existsByCode(authenticationCode)) {
             throw new WoohaengshiException(AUTHENTICATE_CODE_NOT_FOUND);
