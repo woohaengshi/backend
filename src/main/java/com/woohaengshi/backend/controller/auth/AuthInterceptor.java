@@ -1,5 +1,6 @@
 package com.woohaengshi.backend.controller.auth;
 
+import static java.util.Objects.isNull;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 import com.woohaengshi.backend.exception.ErrorCode;
@@ -25,7 +26,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         String authorization = request.getHeader(AUTHORIZATION);
-        if (authorization == null) {
+        if (isNull(authorization)) {
             throw new WoohaengshiException(ErrorCode.NOT_EXIST_ACCESS_TOKEN);
         }
         String accessToken = jwtTokenProvider.extractAccessToken(authorization);
