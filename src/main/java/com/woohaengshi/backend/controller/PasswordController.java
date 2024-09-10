@@ -2,7 +2,7 @@ package com.woohaengshi.backend.controller;
 
 import com.woohaengshi.backend.dto.request.password.ChangePasswordRequest;
 import com.woohaengshi.backend.dto.request.password.SendMailRequest;
-import com.woohaengshi.backend.service.PasswordService;
+import com.woohaengshi.backend.service.password.PasswordService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
