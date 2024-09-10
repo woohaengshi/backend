@@ -34,7 +34,6 @@ class AmazonS3ManagerTest {
 
     @Test
     void 파일_업로드_성공() throws Exception {
-        // Given: 테스트용 파일과 S3 설정값
         MultipartFile mockFile =
                 new MockMultipartFile(
                         "file", "test-image.jpg", "image/jpeg", "test-image-content".getBytes());
