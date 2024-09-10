@@ -49,7 +49,7 @@ public class PasswordServiceImpl implements PasswordService {
     }
 
     private void validateMemberInformation(SendMailRequest request, Member member) {
-        if (!member.getName().equals(request.getName()) || !member.getCourse().equals(request.getCourse())) {
+        if (!member.getName().equals(request.getName()) || !member.getCourse().equals(Course.from(request.getCourse()))) {
             throw new WoohaengshiException(INCORRECT_MEMBER_INFO);
         }
     }
