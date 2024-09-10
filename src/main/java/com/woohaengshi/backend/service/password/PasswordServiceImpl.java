@@ -1,5 +1,6 @@
 package com.woohaengshi.backend.service.password;
 
+import com.woohaengshi.backend.domain.member.Course;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.request.password.ChangePasswordRequest;
 import com.woohaengshi.backend.dto.request.password.SendMailRequest;
@@ -37,12 +38,13 @@ public class PasswordServiceImpl implements PasswordService {
     private static final String REISSUE_FORMAT = "https://woohangshi.vercel.app/password/%s";
 
     @Override
-    @Transactional(readOnly = true)
     public void sendMail(SendMailRequest request) {
         Member member = findMemberByEmail(request.getEmail());
         validateMemberInformation(request, member);
         validQuitMember(member);
-        MimeMessage mimeMessage = createMail(member);
+        AuthenticationCode authenticationCode = new AuthenticationCode(member.getId());
+        authenticationCodeRepository.save(authenticationCode);
+        MimeMessage mimeMessage = createMail(member, authenticationCode);
         mailSender.send(mimeMessage);
     }
 
@@ -52,8 +54,7 @@ public class PasswordServiceImpl implements PasswordService {
         }
     }
 
-    private MimeMessage createMail(Member member) {
-        AuthenticationCode authenticationCode = new AuthenticationCode(member.getId());
+    private MimeMessage createMail(Member member, AuthenticationCode authenticationCode) {
         String reissueLink = String.format(REISSUE_FORMAT, authenticationCode.getCode());
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         try {
