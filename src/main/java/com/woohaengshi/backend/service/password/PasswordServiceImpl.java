@@ -91,13 +91,13 @@ public class PasswordServiceImpl implements PasswordService {
     }
 
     private AuthenticationCode findAuthenticationCode(String authenticationNumber) {
-        return authenticationCodeRepository.findByCode(authenticationNumber).orElseThrow(() -> new WoohaengshiException(AUTHENTICATE_CODE_NOT_FOUND));
+        return authenticationCodeRepository.findById(authenticationNumber).orElseThrow(() -> new WoohaengshiException(AUTHENTICATE_CODE_NOT_FOUND));
     }
 
     @Override
     @Transactional(readOnly = true)
     public void validateCode(String authenticationCode) {
-        if (!authenticationCodeRepository.existsByCode(authenticationCode)) {
+        if (!authenticationCodeRepository.existsById(authenticationCode)) {
             throw new WoohaengshiException(AUTHENTICATE_CODE_NOT_FOUND);
         }
     }
