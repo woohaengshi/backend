@@ -28,6 +28,9 @@ public class StudyRecord {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
+    @Column(name = "comment")
+    private String comment;
+
     @OneToMany(mappedBy = "studyRecord")
     private List<StudySubject> studySubjects;
 
