@@ -21,7 +21,25 @@ spring:
     enabled: true
   aop:
     proxy-target-class: false
-
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${STMP_USERNAME}
+    password: ${STMP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connection timeout: 5000
+          timeout: 5000
+          write timeout: 5000
+  data:
+    redis:
+      host: localhost
+      port: 6379
 security:
   refresh:
     expiration: 3600000
