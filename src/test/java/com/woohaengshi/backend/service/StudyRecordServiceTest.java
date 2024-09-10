@@ -183,11 +183,11 @@ class StudyRecordServiceTest {
         SubjectResult subjectResult3 = new SubjectResult(3L, "JAVA");
 
         ShowCalendarResult showCalendarResult1 =
-                new ShowCalendarResult(12, 10, List.of(subjectResult1, subjectResult2));
+                new ShowCalendarResult(12, 10, "1", List.of(subjectResult1, subjectResult2));
         ShowCalendarResult showCalendarResult2 =
-                new ShowCalendarResult(13, 100, List.of(subjectResult3));
+                new ShowCalendarResult(13, 100, "2", List.of(subjectResult3));
         ShowCalendarResult showCalendarResult3 =
-                new ShowCalendarResult(14, 200, List.of(subjectResult1, subjectResult3));
+                new ShowCalendarResult(14, 200, "3", List.of(subjectResult1, subjectResult3));
 
         List<ShowCalendarResult> result =
                 List.of(showCalendarResult1, showCalendarResult2, showCalendarResult3);
@@ -217,6 +217,9 @@ class StudyRecordServiceTest {
                 () ->
                         assertThat(response.getRecords().get(13).getTime())
                                 .isEqualTo(showCalendarResult3.getTime()),
+                () ->
+                        assertThat(response.getRecords().get(12).getComment())
+                                .isEqualTo(showCalendarResult1.getComment()),
                 () ->
                         assertThat(response.getTotalSubjects().get(0).getId())
                                 .isEqualTo(SubjectFixture.builder().build().getId()));
