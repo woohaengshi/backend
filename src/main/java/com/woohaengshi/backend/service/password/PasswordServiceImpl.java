@@ -1,4 +1,4 @@
-package com.woohaengshi.backend.service;
+package com.woohaengshi.backend.service.password;
 
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.request.password.ChangePasswordRequest;
@@ -26,7 +26,7 @@ import static com.woohaengshi.backend.exception.ErrorCode.QUIT_MEMBER;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class PasswordService {
+public class PasswordServiceImpl implements PasswordService {
 
     private final JavaMailSender mailSender;
     private final MemberRepository memberRepository;
@@ -36,6 +36,7 @@ public class PasswordService {
     private static final String TITLE = "[우행시] 비밀번호 재설정을 위한 임시 번호 발급 안내";
     private static final String REISSUE_FORMAT = "https://woohangshi.vercel.app/password/%s";
 
+    @Override
     @Transactional(readOnly = true)
     public void sendMail(SendMailRequest request) {
         Member member = findMemberByEmail(request.getEmail());
@@ -77,6 +78,7 @@ public class PasswordService {
         return memberRepository.findByEmail(email).orElseThrow(() -> new WoohaengshiException(MEMBER_NOT_FOUND));
     }
 
+    @Override
     public void changePassword(String code, ChangePasswordRequest request) {
         AuthenticationCode authenticationCode = findAuthenticationCode(code);
         Member member = findMemberById(authenticationCode.getMemberId());
@@ -91,6 +93,7 @@ public class PasswordService {
         return authenticationCodeRepository.findByCode(authenticationNumber).orElseThrow(() -> new WoohaengshiException(AUTHENTICATE_CODE_NOT_FOUND));
     }
 
+    @Override
     @Transactional(readOnly = true)
     public void validateCode(String authenticationCode) {
         if (!authenticationCodeRepository.existsByCode(authenticationCode)) {
