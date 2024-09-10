@@ -13,11 +13,14 @@ import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.RefreshTokenRepository;
 
+import com.woohaengshi.backend.s3.AmazonS3Manager;
+import com.woohaengshi.backend.s3.Filepath;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional
@@ -27,6 +30,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final AmazonS3Manager amazonS3Manager;
 
     @Override
     public void changePassword(ChangePasswordRequest request, Long memberId) {
@@ -63,6 +67,14 @@ public class MemberServiceImpl implements MemberService {
         Member member = findMemberById(memberId);
         member.quit();
     }
+    @Override
+    public void changeProfile(Long memberId, MultipartFile multipartFile) {
+        Member member = findMemberById(memberId);
+        String keyName = amazonS3Manager.makeKeyName(Filepath.PROFILE);
+        String filename = amazonS3Manager.uploadFile(keyName, multipartFile);
+        member.changeProfile(filename);
+    }
+
 
     private RefreshToken findRefreshToken(String refreshToken) {
         return refreshTokenRepository
@@ -75,4 +87,5 @@ public class MemberServiceImpl implements MemberService {
                 .findById(memberId)
                 .orElseThrow(() -> new WoohaengshiException(ErrorCode.MEMBER_NOT_FOUND));
     }
+
 }
