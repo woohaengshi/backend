@@ -31,6 +31,7 @@ import com.woohaengshi.backend.support.fixture.MemberFixture;
 import com.woohaengshi.backend.support.fixture.StatisticsFixture;
 import com.woohaengshi.backend.support.fixture.StudyRecordFixture;
 
+import com.woohaengshi.backend.support.fixture.SubjectFixture;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -176,22 +177,29 @@ class StudyRecordServiceTest {
     @Test
     void 월_단위_공부_기록을_조회_할_수_있다() {
         YearMonth date = YearMonth.now();
+
         SubjectResult subjectResult1 = new SubjectResult(1L, "HTML");
         SubjectResult subjectResult2 = new SubjectResult(2L, "CSS");
         SubjectResult subjectResult3 = new SubjectResult(3L, "JAVA");
+
         ShowCalendarResult showCalendarResult1 =
                 new ShowCalendarResult(12, 10, List.of(subjectResult1, subjectResult2));
         ShowCalendarResult showCalendarResult2 =
                 new ShowCalendarResult(13, 100, List.of(subjectResult3));
         ShowCalendarResult showCalendarResult3 =
                 new ShowCalendarResult(14, 200, List.of(subjectResult1, subjectResult3));
+
         List<ShowCalendarResult> result =
                 List.of(showCalendarResult1, showCalendarResult2, showCalendarResult3);
+
         given(memberRepository.existsById(1L)).willReturn(true);
         given(
                         studyRecordRepository.findStudyRecordInCalendar(
                                 date.getYear(), date.getMonthValue(), 1L))
                 .willReturn(result);
+        given(subjectRepository.findAllByMemberIdAndIsActiveTrue(1L))
+                .willReturn(List.of(SubjectFixture.builder().build()));
+
         ShowMonthlyRecordResponse response = studyRecordService.getMonthlyRecord(date, 1L);
         assertAll(
                 () -> assertThat(response.getYear()).isEqualTo(date.getYear()),
@@ -208,7 +216,10 @@ class StudyRecordServiceTest {
                                 .isEqualTo(showCalendarResult2.getTime()),
                 () ->
                         assertThat(response.getRecords().get(13).getTime())
-                                .isEqualTo(showCalendarResult3.getTime()));
+                                .isEqualTo(showCalendarResult3.getTime()),
+                () ->
+                        assertThat(response.getTotalSubjects().get(0).getId())
+                                .isEqualTo(SubjectFixture.builder().build().getId()));
     }
 
     @Test
