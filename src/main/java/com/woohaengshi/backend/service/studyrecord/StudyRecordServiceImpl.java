@@ -80,7 +80,10 @@ public class StudyRecordServiceImpl implements StudyRecordService {
                 studyRecordRepository.findStudyRecordInCalendar(
                         date.getYear(), date.getMonthValue(), memberId);
 
-        return ShowMonthlyRecordResponse.of(date, createCalendar(date, studyRecordInCalendar));
+        return ShowMonthlyRecordResponse.of(
+                date,
+                createCalendar(date, studyRecordInCalendar),
+                findSubjectsByMemberId(memberId));
     }
 
     private Map<Integer, ShowCalendarResult> createCalendar(
@@ -167,5 +170,9 @@ public class StudyRecordServiceImpl implements StudyRecordService {
         return memberRepository
                 .findById(memberId)
                 .orElseThrow(() -> new WoohaengshiException(MEMBER_NOT_FOUND));
+    }
+
+    private List<Subject> findSubjectsByMemberId(Long memberId) {
+        return subjectRepository.findAllByMemberIdAndIsActiveTrue(memberId);
     }
 }
