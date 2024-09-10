@@ -1,1 +1,0 @@
-ALTER TABLE study_record ADD COLUMN comment VARCHAR(2000);
