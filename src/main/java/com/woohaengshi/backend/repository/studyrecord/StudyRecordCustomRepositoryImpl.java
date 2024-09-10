@@ -38,6 +38,7 @@ public class StudyRecordCustomRepositoryImpl implements StudyRecordCustomReposit
                                                 ShowCalendarResult.class,
                                                 studyRecord.date.dayOfMonth(),
                                                 studyRecord.time,
+                                                studyRecord.comment,
                                                 list(
                                                         Projections.constructor(
                                                                         SubjectResult.class,
