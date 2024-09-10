@@ -14,7 +14,8 @@ public class ShowDailyRecordResponse {
     private String comment;
     private List<ShowSubjectsResponse> subjects;
 
-    private ShowDailyRecordResponse(int day, int time, String comment, List<ShowSubjectsResponse> subjects) {
+    private ShowDailyRecordResponse(
+            int day, int time, String comment, List<ShowSubjectsResponse> subjects) {
         this.day = day;
         this.time = time;
         this.comment = comment;
