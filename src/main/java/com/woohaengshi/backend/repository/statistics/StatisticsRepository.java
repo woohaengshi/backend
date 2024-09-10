@@ -1,16 +1,15 @@
-package com.woohaengshi.backend.repository;
+package com.woohaengshi.backend.repository.statistics;
 
 import com.woohaengshi.backend.domain.statistics.Statistics;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
 public interface StatisticsRepository
-        extends JpaRepository<Statistics, Long>, JpaSpecificationExecutor<Statistics> {
+        extends JpaRepository<Statistics, Long>, StatisticsCustomRepository {
 
     @Query("SELECT s FROM Statistics s JOIN FETCH s.member WHERE s.member.id = :memberId")
     Optional<Statistics> findByMemberId(Long memberId);

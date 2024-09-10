@@ -9,16 +9,12 @@ import com.woohaengshi.backend.dto.response.statistics.RankDataResponse;
 import com.woohaengshi.backend.dto.response.statistics.ShowRankSnapshotResponse;
 import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
-import com.woohaengshi.backend.repository.StatisticsRepository;
-import com.woohaengshi.backend.repository.StatisticsSpecification;
-import com.woohaengshi.backend.repository.StudyRecordSpecification;
+import com.woohaengshi.backend.repository.statistics.StatisticsRepository;
 import com.woohaengshi.backend.repository.studyrecord.StudyRecordRepository;
 
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,25 +35,33 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Transactional(readOnly = true)
     public ShowRankSnapshotResponse showRankData(
             Long memberId, StatisticsType statisticsType, Pageable pageable) {
-        Statistics statistics = findStatisticsByMemberId(memberId);
-
         return statisticsType == StatisticsType.DAILY
-                ? handleDailyStatistics(memberId, pageable, statistics)
-                : handlePeriodicStatistics(statisticsType, pageable, statistics);
+                ? handleDailyStatistics(memberId, pageable)
+                : handlePeriodicStatistics(memberId, statisticsType, pageable);
     }
 
-    private ShowRankSnapshotResponse handleDailyStatistics(
-            Long memberId, Pageable pageable, Statistics statistics) {
+    private ShowRankSnapshotResponse handleDailyStatistics(Long memberId, Pageable pageable) {
         LocalDate today = getShowDate();
+        Slice<StudyRecord> rankSlice = getDailyRankDataSlice(today, pageable);
+
+        if (pageable.getPageNumber() > 0) {
+            return ShowRankSnapshotResponse.of(
+                    rankSlice.hasNext(), calculateDailyRank(rankSlice, pageable));
+        }
 
         Optional<StudyRecord> studyRecord =
                 studyRecordRepository.findByDateAndMemberId(today, memberId);
-        Slice<StudyRecord> rankSlice = getDailyRankDataSlice(today, pageable);
-
-        int rank = studyRecord.map(record -> findDailyRank(today, record.getTime())).orElse(0);
+        int rank =
+                studyRecord
+                        .map(
+                                record ->
+                                        studyRecordRepository.findRankByDate(
+                                                today, record.getTime()))
+                        .orElse(0);
         int time = studyRecord.map(StudyRecord::getTime).orElse(0);
 
-        return buildRankSnapshotResponse(statistics, rank, time, rankSlice, pageable);
+        return buildRankSnapshotResponse(
+                findStatisticsByMemberId(memberId), rank, time, rankSlice, pageable);
     }
 
     private LocalDate getShowDate() {
@@ -72,17 +76,24 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     private ShowRankSnapshotResponse handlePeriodicStatistics(
-            StatisticsType statisticsType, Pageable pageable, Statistics statistics) {
+            Long memberId, StatisticsType statisticsType, Pageable pageable) {
         Slice<Statistics> rankSlice = getPeriodicRankDataSlice(statisticsType, pageable);
+
+        if (pageable.getPageNumber() > 0) {
+            return ShowRankSnapshotResponse.of(
+                    rankSlice.hasNext(),
+                    calculatePeriodicRank(rankSlice, pageable, statisticsType));
+        }
+
+        Statistics statistics = findStatisticsByMemberId(memberId);
         int studyTime = getTimeByStatisticsType(statisticsType, statistics);
-        int rank = studyTime > 0 ? getMemberRank(statisticsType, statistics) : 0;
+        int rank =
+                studyTime > 0
+                        ? (int) statisticsRepository.getMemberRank(statisticsType, statistics)
+                        : 0;
 
         return buildRankSnapshotResponse(
                 statistics, rank, studyTime, rankSlice, pageable, statisticsType);
-    }
-
-    private int findDailyRank(LocalDate date, int time) {
-        return studyRecordRepository.findRankByDate(date, time);
     }
 
     private ShowRankSnapshotResponse buildRankSnapshotResponse(
@@ -116,26 +127,13 @@ public class StatisticsServiceImpl implements StatisticsService {
                 calculatePeriodicRank(rankSlice, pageable, statisticsType));
     }
 
-    private int getMemberRank(StatisticsType statisticsType, Statistics statistics) {
-        int time = getTimeByStatisticsType(statisticsType, statistics);
-        long count =
-                statisticsRepository.count(
-                        StatisticsSpecification.filterStatisticsWithTimeGreaterThan(
-                                statisticsType, time));
-        return (int) count + 1;
-    }
-
-    private Slice<Statistics> getPeriodicRankDataSlice(
+    public Slice<Statistics> getPeriodicRankDataSlice(
             StatisticsType statisticsType, Pageable pageable) {
-        Specification<Statistics> spec =
-                StatisticsSpecification.filterAndSortStatisticsByType(statisticsType);
-        return statisticsRepository.findAll(spec, pageable);
+        return statisticsRepository.findStatisticsByTypeSortedByTimeDesc(statisticsType, pageable);
     }
 
-    private Slice<StudyRecord> getDailyRankDataSlice(LocalDate targetDate, Pageable pageable) {
-        Specification<StudyRecord> spec =
-                StudyRecordSpecification.findStudyRecordsByDateSortedByTimeDesc(targetDate);
-        return studyRecordRepository.findAll(spec, pageable);
+    public Slice<StudyRecord> getDailyRankDataSlice(LocalDate targetDate, Pageable pageable) {
+        return studyRecordRepository.findStudyRecordsByDateSortedByTimeDesc(targetDate, pageable);
     }
 
     private List<RankDataResponse> calculateDailyRank(
