@@ -109,7 +109,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void signUp(SignUpRequest request, MultipartFile imageFile) {
         validateAlreadyExistEmail(request);
-        String filename = !isNull(imageFile) ? creatImage(imageFile) : null;
+        String filename = !isNull(imageFile) ? saveS3Image(imageFile) : null;
         Member member = request.toMember(passwordEncoder.encode(request.getPassword()), filename);
         memberRepository.save(member);
         getDefaultSubjects(member.getCourse())
@@ -117,7 +117,7 @@ public class AuthServiceImpl implements AuthService {
         statisticsRepository.save(new Statistics(member));
     }
 
-    private String creatImage(MultipartFile multipartFile) {
+    private String saveS3Image(MultipartFile multipartFile) {
         String keyName = amazonS3Manager.makeKeyName(Filepath.PROFILE);
         String filename = amazonS3Manager.uploadFile(keyName, multipartFile);
         return filename;
