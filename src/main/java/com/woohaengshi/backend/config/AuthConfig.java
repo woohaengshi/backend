@@ -34,7 +34,7 @@ public class AuthConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/api/v1/sign-in")
                 .excludePathPatterns("/api/v1/sign-up")
                 .excludePathPatterns("/api/v1/reissue")
-                .excludePathPatterns("/api/v1/password/*")
+                .excludePathPatterns("/api/v1/password/**")
                 .excludePathPatterns("/health")
                 .excludePathPatterns("/swagger-ui/index.html");
     }
