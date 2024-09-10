@@ -49,9 +49,9 @@ public class MemberController {
     }
 
     @PostMapping("/profile")
-    public ResponseEntity<Void> changePassword(@MemberId Long memberId, @RequestPart("profile") MultipartFile profile) {
-        memberService.changeProfile(memberId, profile);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> changePassword(@MemberId Long memberId, @RequestPart("profile") MultipartFile profile) {
+        String filename = memberService.changeProfile(memberId, profile);
+        return ResponseEntity.ok(filename);
     }
 
 }

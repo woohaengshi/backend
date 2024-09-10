@@ -11,5 +11,5 @@ public interface MemberService {
     ShowMemberResponse getMemberInfo(Long memberId);
 
     void quit(Long memberId, String refreshToken);
-    void changeProfile(Long memberId, MultipartFile multipartFile);
+    String changeProfile(Long memberId, MultipartFile multipartFile);
 }

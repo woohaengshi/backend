@@ -68,11 +68,12 @@ public class MemberServiceImpl implements MemberService {
         member.quit();
     }
     @Override
-    public void changeProfile(Long memberId, MultipartFile multipartFile) {
+    public String changeProfile(Long memberId, MultipartFile multipartFile) {
         Member member = findMemberById(memberId);
         String keyName = amazonS3Manager.makeKeyName(Filepath.PROFILE);
         String filename = amazonS3Manager.uploadFile(keyName, multipartFile);
         member.changeProfile(filename);
+        return filename;
     }
 
 
