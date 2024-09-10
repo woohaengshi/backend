@@ -4,12 +4,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.statistics.Statistics;
+import com.woohaengshi.backend.domain.statistics.StatisticsType;
+import com.woohaengshi.backend.repository.statistics.StatisticsRepository;
 import com.woohaengshi.backend.support.RepositoryTest;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
 import com.woohaengshi.backend.support.fixture.StatisticsFixture;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 
 import java.util.List;
 
@@ -49,5 +54,42 @@ class StatisticsRepositoryTest {
 
         List<Statistics> allStatistics = statisticsRepository.findAll();
         allStatistics.forEach(statistics -> assertThat(statistics.getMonthlyTime()).isEqualTo(0));
+    }
+
+    @Test
+    void 주간_월간_시간의_멤버의_등수를_조회할_수_있다() {
+        Member member = 저장(MemberFixture.builder().build());
+
+        Statistics statistics =
+                저장(StatisticsFixture.builder().member(member).monthlyTime(11).build());
+        저장(StatisticsFixture.builder().member(member).monthlyTime(10).build());
+        저장(StatisticsFixture.builder().member(member).monthlyTime(12).build());
+
+        int memberRank =
+                (int) statisticsRepository.getMemberRank(StatisticsType.MONTHLY, statistics);
+
+        assertThat(memberRank).isEqualTo(2);
+    }
+
+    @Test
+    void 주간_월간_시간의_멤버들을_정렬해서_찾을_수_있다() {
+        Member member = 저장(MemberFixture.builder().build());
+
+        Statistics statistics1 =
+                저장(StatisticsFixture.builder().member(member).monthlyTime(11).build());
+        Statistics statistics2 =
+                저장(StatisticsFixture.builder().member(member).monthlyTime(10).build());
+        Statistics statistics3 =
+                저장(StatisticsFixture.builder().member(member).monthlyTime(12).build());
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Slice<Statistics> statisticsList =
+                statisticsRepository.findStatisticsByTypeSortedByTimeDesc(
+                        StatisticsType.MONTHLY, pageable);
+
+        assertThat(statisticsList.getContent().get(0).getId()).isEqualTo(statistics3.getId());
+        assertThat(statisticsList.getContent().get(1).getId()).isEqualTo(statistics1.getId());
+        assertThat(statisticsList.getContent().get(2).getId()).isEqualTo(statistics2.getId());
     }
 }

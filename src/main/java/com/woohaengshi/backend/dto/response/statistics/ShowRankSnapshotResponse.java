@@ -1,5 +1,6 @@
 package com.woohaengshi.backend.dto.response.statistics;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.woohaengshi.backend.domain.member.Member;
 
 import lombok.Getter;
@@ -8,9 +9,14 @@ import java.util.List;
 
 @Getter
 public class ShowRankSnapshotResponse {
-
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private RankDataResponse member;
+
     private RanksResponse ranking;
+
+    public ShowRankSnapshotResponse(RanksResponse ranking) {
+        this.ranking = ranking;
+    }
 
     private ShowRankSnapshotResponse(RankDataResponse member, RanksResponse ranksResponse) {
         this.member = member;
@@ -27,5 +33,9 @@ public class ShowRankSnapshotResponse {
         RankDataResponse memberDto = RankDataResponse.of(member, rank, time, totalTime);
         RanksResponse infiniteScrolling = RanksResponse.of(hasNext, ranks);
         return new ShowRankSnapshotResponse(memberDto, infiniteScrolling);
+    }
+
+    public static ShowRankSnapshotResponse of(Boolean hasNext, List<RankDataResponse> ranks) {
+        return new ShowRankSnapshotResponse(RanksResponse.of(hasNext, ranks));
     }
 }

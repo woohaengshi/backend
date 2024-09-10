@@ -17,9 +17,9 @@ import com.woohaengshi.backend.dto.response.studyrecord.ShowYearlyRecordResponse
 import com.woohaengshi.backend.dto.result.ShowCalendarResult;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
-import com.woohaengshi.backend.repository.StatisticsRepository;
 import com.woohaengshi.backend.repository.StudySubjectRepository;
 import com.woohaengshi.backend.repository.SubjectRepository;
+import com.woohaengshi.backend.repository.statistics.StatisticsRepository;
 import com.woohaengshi.backend.repository.studyrecord.StudyRecordRepository;
 
 import lombok.RequiredArgsConstructor;
