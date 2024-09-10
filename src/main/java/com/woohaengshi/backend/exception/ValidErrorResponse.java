@@ -1,11 +1,13 @@
 package com.woohaengshi.backend.exception;
 
+import lombok.Getter;
 import org.springframework.validation.FieldError;
 
+@Getter
 public class ValidErrorResponse {
 
-    private String field;
-    private String message;
+    private final String field;
+    private final String message;
 
     public static ValidErrorResponse from(FieldError error) {
         return new ValidErrorResponse(error.getField(), error.getDefaultMessage());
@@ -16,11 +18,4 @@ public class ValidErrorResponse {
         this.message = message;
     }
 
-    public String getField() {
-        return field;
-    }
-
-    public String getMessage() {
-        return message;
-    }
 }
