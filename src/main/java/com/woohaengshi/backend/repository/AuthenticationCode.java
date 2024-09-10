@@ -1,17 +1,18 @@
 package com.woohaengshi.backend.repository;
 
-import jakarta.persistence.Id;
 import lombok.Getter;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
 
 import java.util.UUID;
 
 @Getter
-@RedisHash("AuthenticationCode")
+@RedisHash("authentication_code")
 public class AuthenticationCode {
 
-    @Id private String code;
+    @Id
+    private String code;
     private Long memberId;
 
     @TimeToLive
