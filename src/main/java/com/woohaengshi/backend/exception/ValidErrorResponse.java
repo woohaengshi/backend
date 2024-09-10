@@ -1,6 +1,7 @@
 package com.woohaengshi.backend.exception;
 
 import lombok.Getter;
+
 import org.springframework.validation.FieldError;
 
 @Getter
@@ -17,5 +18,4 @@ public class ValidErrorResponse {
         this.field = field;
         this.message = message;
     }
-
 }

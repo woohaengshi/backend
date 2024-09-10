@@ -3,8 +3,11 @@ package com.woohaengshi.backend.controller;
 import com.woohaengshi.backend.dto.request.password.ChangePasswordRequest;
 import com.woohaengshi.backend.dto.request.password.SendMailRequest;
 import com.woohaengshi.backend.service.password.PasswordService;
+
 import jakarta.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +30,9 @@ public class PasswordController {
     }
 
     @PostMapping("/{authenticationCode}")
-    public ResponseEntity<Void> changePassword(@PathVariable String authenticationCode, @RequestBody @Valid ChangePasswordRequest request) {
+    public ResponseEntity<Void> changePassword(
+            @PathVariable String authenticationCode,
+            @RequestBody @Valid ChangePasswordRequest request) {
         passwordService.changePassword(authenticationCode, request);
         return ResponseEntity.ok().build();
     }

@@ -8,6 +8,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 import lombok.Getter;
+
 import org.springframework.http.HttpStatus;
 
 @Getter
@@ -49,5 +50,4 @@ public enum ErrorCode {
         this.status = status;
         this.message = message;
     }
-
 }

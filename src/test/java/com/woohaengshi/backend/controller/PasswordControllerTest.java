@@ -1,11 +1,12 @@
 package com.woohaengshi.backend.controller;
 
+import static org.springframework.http.HttpStatus.OK;
+
 import com.woohaengshi.backend.dto.request.password.ChangePasswordRequest;
 import com.woohaengshi.backend.dto.request.password.SendMailRequest;
 import com.woohaengshi.backend.support.ControllerTest;
-import org.junit.jupiter.api.Test;
 
-import static org.springframework.http.HttpStatus.OK;
+import org.junit.jupiter.api.Test;
 
 class PasswordControllerTest extends ControllerTest {
 
@@ -47,5 +48,4 @@ class PasswordControllerTest extends ControllerTest {
                 .all()
                 .statusCode(OK.value());
     }
-
 }

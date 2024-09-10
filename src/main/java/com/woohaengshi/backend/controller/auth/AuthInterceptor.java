@@ -1,7 +1,8 @@
 package com.woohaengshi.backend.controller.auth;
 
-import static java.util.Objects.isNull;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
+import static java.util.Objects.isNull;
 
 import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
