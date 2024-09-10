@@ -88,6 +88,7 @@ public class Member {
     public void changePassword(String password) {
         this.password = password;
     }
+    public void changeProfile(String filename) {this.image = filename;}
 
     public void quit() {
         this.state = State.QUIT;
