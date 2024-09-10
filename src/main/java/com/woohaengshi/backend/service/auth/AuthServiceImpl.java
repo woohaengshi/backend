@@ -109,7 +109,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void signUp(SignUpRequest request, MultipartFile imageFile) {
         validateAlreadyExistEmail(request);
-        String filename = (imageFile != null) ? creatImage(imageFile) : null;
+        String filename = !isNull(imageFile) ? creatImage(imageFile) : null;
         Member member = request.toMember(passwordEncoder.encode(request.getPassword()), filename);
         memberRepository.save(member);
         getDefaultSubjects(member.getCourse())
