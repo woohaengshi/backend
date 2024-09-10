@@ -11,11 +11,13 @@ import java.util.List;
 public class ShowDailyRecordResponse {
     private int day;
     private int time;
+    private String comment;
     private List<ShowSubjectsResponse> subjects;
 
-    private ShowDailyRecordResponse(int day, int time, List<ShowSubjectsResponse> subjects) {
+    private ShowDailyRecordResponse(int day, int time, String comment, List<ShowSubjectsResponse> subjects) {
         this.day = day;
         this.time = time;
+        this.comment = comment;
         this.subjects = subjects;
     }
 
@@ -23,6 +25,7 @@ public class ShowDailyRecordResponse {
         return new ShowDailyRecordResponse(
                 result.getDay(),
                 result.getTime(),
+                result.getComment(),
                 result.getSubjects().stream().map(ShowSubjectsResponse::from).toList());
     }
 }
