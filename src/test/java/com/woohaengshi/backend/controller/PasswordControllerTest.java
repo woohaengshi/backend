@@ -34,6 +34,18 @@ class PasswordControllerTest extends ControllerTest {
                 .all()
                 .statusCode(OK.value());
     }
-    
+
+    @Test
+    void 비밀번호를_재설정_할_수_있다() {
+        ChangePasswordRequest request = new ChangePasswordRequest("newPassword11!!");
+        baseRestAssured()
+                .body(request)
+                .when()
+                .post("/api/v1/password/" + authenticateCode)
+                .then()
+                .log()
+                .all()
+                .statusCode(OK.value());
+    }
 
 }
