@@ -22,9 +22,9 @@ import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.RefreshTokenRepository;
 import com.woohaengshi.backend.repository.StatisticsRepository;
 import com.woohaengshi.backend.repository.SubjectRepository;
-
 import com.woohaengshi.backend.s3.AmazonS3Manager;
 import com.woohaengshi.backend.s3.Filepath;
+
 import jakarta.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;

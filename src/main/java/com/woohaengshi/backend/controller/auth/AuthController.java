@@ -30,13 +30,11 @@ public class AuthController {
 
     @PostMapping("/sign-up")
     public ResponseEntity<Void> signUp(
-            @RequestPart(value="signUpRequest") SignUpRequest signUpRequest,
-            @RequestPart(value="image", required = false) MultipartFile image
-    ) {
+            @RequestPart(value = "signUpRequest") SignUpRequest signUpRequest,
+            @RequestPart(value = "image", required = false) MultipartFile image) {
         authService.signUp(signUpRequest, image);
         return ResponseEntity.created(URI.create("/api/v1/sign-in")).build();
     }
-
 
     @PostMapping("/sign-in")
     public ResponseEntity<SignInResponse> signIn(@RequestBody @Valid SignInRequest signInRequest) {
