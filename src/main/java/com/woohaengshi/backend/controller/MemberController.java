@@ -53,5 +53,4 @@ public class MemberController {
         String filename = memberService.changeProfile(memberId, profile);
         return ResponseEntity.ok(filename);
     }
-
 }
