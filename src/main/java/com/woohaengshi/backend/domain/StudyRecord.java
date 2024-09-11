@@ -10,6 +10,8 @@ import lombok.Getter;
 import java.time.LocalDate;
 import java.util.List;
 
+import static java.util.Objects.isNull;
+
 @Entity
 @Getter
 public class StudyRecord {
@@ -31,20 +33,22 @@ public class StudyRecord {
     @Column(name = "comment")
     private String comment;
 
-    @OneToMany(mappedBy = "studyRecord")
-    private List<StudySubject> studySubjects;
-
     protected StudyRecord() {}
 
     @Builder
-    public StudyRecord(Long id, int time, LocalDate date, Member member) {
+    public StudyRecord(Long id, int time, LocalDate date, Member member, String comment) {
         this.id = id;
         this.time = time;
         this.date = date;
         this.member = member;
+        this.comment = comment;
     }
 
     public void updateTime(int time) {
         this.time = time;
+    }
+
+    public void updateComment(String comment) {
+        if (!isNull(comment)) this.comment = comment;
     }
 }
