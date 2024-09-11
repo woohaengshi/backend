@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 @Getter
 public class SaveCommentRequest {
-    @PastOrPresent private LocalDate date;
+    private LocalDate date;
     private String comment;
 
     private SaveCommentRequest() {}
