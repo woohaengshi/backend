@@ -43,7 +43,13 @@ public class StudyRecordFixture {
     }
 
     public StudyRecord build() {
-        return StudyRecord.builder().id(id).date(date).member(member).time(time).comment(comment).build();
+        return StudyRecord.builder()
+                .id(id)
+                .date(date)
+                .member(member)
+                .time(time)
+                .comment(comment)
+                .build();
     }
 
     public static StudyRecord from(SaveRecordRequest request) {

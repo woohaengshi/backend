@@ -1,5 +1,7 @@
 package com.woohaengshi.backend.domain;
 
+import static java.util.Objects.isNull;
+
 import com.woohaengshi.backend.domain.member.Member;
 
 import jakarta.persistence.*;
@@ -8,9 +10,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.util.List;
-
-import static java.util.Objects.isNull;
 
 @Entity
 @Getter

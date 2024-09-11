@@ -279,12 +279,15 @@ class StudyRecordServiceTest {
         StudyRecord defaultStudyRecord = mock(StudyRecord.class);
 
         given(memberRepository.existsById(member.getId())).willReturn(true);
-        given(studyRecordRepository.findByDateAndMemberId(any(LocalDate.class), any(Long.class))).willReturn(Optional.of(defaultStudyRecord));
+        given(studyRecordRepository.findByDateAndMemberId(any(LocalDate.class), any(Long.class)))
+                .willReturn(Optional.of(defaultStudyRecord));
 
         assertAll(
                 () -> studyRecordService.saveComment(request, 1L),
                 () -> verify(memberRepository, times(1)).existsById(member.getId()),
-                () -> verify(studyRecordRepository, times(1)).findByDateAndMemberId(any(LocalDate.class), any(Long.class)),
+                () ->
+                        verify(studyRecordRepository, times(1))
+                                .findByDateAndMemberId(any(LocalDate.class), any(Long.class)),
                 () -> verify(defaultStudyRecord, times(1)).updateComment(any(String.class)));
     }
 
@@ -294,13 +297,16 @@ class StudyRecordServiceTest {
         SaveCommentRequest request = new SaveCommentRequest(LocalDate.now(), "회고1");
 
         given(memberRepository.existsById(member.getId())).willReturn(true);
-        given(studyRecordRepository.findByDateAndMemberId(any(LocalDate.class), any(Long.class))).willReturn(Optional.empty());
+        given(studyRecordRepository.findByDateAndMemberId(any(LocalDate.class), any(Long.class)))
+                .willReturn(Optional.empty());
         given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
 
         assertAll(
                 () -> studyRecordService.saveComment(request, 1L),
                 () -> verify(memberRepository, times(1)).existsById(member.getId()),
-                () -> verify(studyRecordRepository, times(1)).findByDateAndMemberId(any(LocalDate.class), any(Long.class)),
+                () ->
+                        verify(studyRecordRepository, times(1))
+                                .findByDateAndMemberId(any(LocalDate.class), any(Long.class)),
                 () -> verify(memberRepository, times(1)).findById(member.getId()),
                 () -> verify(studyRecordRepository, times(1)).save(any(StudyRecord.class)));
     }

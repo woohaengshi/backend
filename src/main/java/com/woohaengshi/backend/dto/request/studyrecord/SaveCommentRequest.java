@@ -1,7 +1,7 @@
 package com.woohaengshi.backend.dto.request.studyrecord;
 
-import com.woohaengshi.backend.domain.StudyRecord;
 import jakarta.validation.constraints.PastOrPresent;
+
 import lombok.Getter;
 
 import java.time.LocalDate;
