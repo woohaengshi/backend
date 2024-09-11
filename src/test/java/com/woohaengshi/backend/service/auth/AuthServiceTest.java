@@ -98,7 +98,7 @@ class AuthServiceTest {
         SignUpRequest request =
                 new SignUpRequest("강현우", "클라우드 서비스", "rkdgusdn@naver.com", "password12!@");
         given(memberRepository.existsAllByEmail(request.getEmail())).willReturn(false);
-        authService.signUp(request);
+        authService.signUp(request, null);
         verify(subjectRepository, times(3)).save(any(Subject.class));
         verify(statisticsRepository, times(1)).save(any(Statistics.class));
         verify(memberRepository, times(1)).save(any(Member.class));
@@ -109,7 +109,7 @@ class AuthServiceTest {
         SignUpRequest request =
                 new SignUpRequest("강현우", "클라우드 서비스", "rkdgusdn@naver.com", "password12!@");
         given(memberRepository.existsAllByEmail(request.getEmail())).willReturn(true);
-        assertThatThrownBy(() -> authService.signUp(request))
+        assertThatThrownBy(() -> authService.signUp(request, null))
                 .isExactlyInstanceOf(WoohaengshiException.class);
         verify(subjectRepository, never()).save(any(Subject.class));
         verify(statisticsRepository, never()).save(any(Statistics.class));

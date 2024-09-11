@@ -36,10 +36,11 @@ public class SignUpRequest {
 
     private SignUpRequest() {}
 
-    public Member toMember(String password) {
+    public Member toMember(String password, String image) {
         return Member.builder()
                 .state(State.ACTIVE)
                 .name(name)
+                .image(image)
                 .email(email)
                 .password(password)
                 .course(Course.from(course))
