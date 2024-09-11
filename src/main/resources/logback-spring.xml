@@ -29,6 +29,7 @@
     </root>
 
     <!-- 특정 로거 레벨 설정 -->
-    <logger name="jex" level="debug"/> <!-- 'jex' 패키지에 대한 디버그 레벨 로그 설정 -->
-    <logger name="com" level="debug"/> <!-- 'com' 패키지에 대한 디버그 레벨 로그 설정 -->
+    <!-- <logger name="jex" level="debug"/>  'jex' 패키지에 대한 디버그 레벨 로그 설정 -->
+    <!-- <logger name="com" level="debug"/> 'com' 패키지에 대한 디버그 레벨 로그 설정 -->
+
 </configuration>
