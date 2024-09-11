@@ -11,7 +11,7 @@ public class StudyRecordFixture {
     private int time = 10;
     private LocalDate date = LocalDate.now();
     private Member member;
-    private String comment;
+    private String comment = "회고";
 
     public static StudyRecordFixture builder() {
         return new StudyRecordFixture();
