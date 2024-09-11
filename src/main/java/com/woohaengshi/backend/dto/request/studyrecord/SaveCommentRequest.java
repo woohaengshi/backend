@@ -1,6 +1,5 @@
 package com.woohaengshi.backend.dto.request.studyrecord;
 
-import jakarta.validation.constraints.PastOrPresent;
 
 import lombok.Getter;
 
