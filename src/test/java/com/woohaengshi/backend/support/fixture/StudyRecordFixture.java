@@ -11,6 +11,7 @@ public class StudyRecordFixture {
     private int time = 10;
     private LocalDate date = LocalDate.now();
     private Member member;
+    private String comment;
 
     public static StudyRecordFixture builder() {
         return new StudyRecordFixture();
@@ -36,8 +37,13 @@ public class StudyRecordFixture {
         return this;
     }
 
+    public StudyRecordFixture comment(String comment) {
+        this.comment = comment;
+        return this;
+    }
+
     public StudyRecord build() {
-        return StudyRecord.builder().id(id).date(date).member(member).time(time).build();
+        return StudyRecord.builder().id(id).date(date).member(member).time(time).comment(comment).build();
     }
 
     public static StudyRecord from(SaveRecordRequest request) {
