@@ -198,16 +198,8 @@ public class StudyRecordServiceImpl implements StudyRecordService {
         validateExistMember(memberId);
 
         StudyRecord studyRecord = findStudyRecordByDateAndId(request, memberId);
-        List<Long> addedSubjects = request.getAddedSubject();
-        if (addedSubjects != null && !addedSubjects.isEmpty()) {
-            saveSubjects(addedSubjects, studyRecord);
-        }
-
-        List<Long> deletedSubjects = request.getDeletedSubject();
-        if (deletedSubjects != null && !deletedSubjects.isEmpty()) {
-            deleteSubjects(deletedSubjects, studyRecord);
-        }
-
+        addSubjects(request.getAddedSubject(), studyRecord);
+        deleteSubjects(request.getDeletedSubject(), studyRecord);
         studyRecord.updateComment(request.getComment());
     }
 
@@ -216,11 +208,27 @@ public class StudyRecordServiceImpl implements StudyRecordService {
                 .orElseThrow(() -> new WoohaengshiException(STUDYRECORD_NOT_FOUND));
     }
 
+    private void addSubjects(List<Long> addedSubjects, StudyRecord studyRecord) {
+        if (addedSubjects != null && !addedSubjects.isEmpty()) {
+            for (Long subjectId : addedSubjects) {
+                if (studySubjectRepository.existsBySubjectIdAndStudyRecordId(subjectId, studyRecord.getId())) {
+                    throw new WoohaengshiException(STUDYSUBJECT_ALREADY_EXISTS);
+                }
+                Subject subject = findSubjectById(subjectId);
+                studySubjectRepository.save(createStudySubject(studyRecord, subject));
+            }
+        }
+    }
+
     private void deleteSubjects(List<Long> deletedSubjects, StudyRecord studyRecord) {
-        for (Long subjectId : deletedSubjects) {
-            if (studySubjectRepository.existsBySubjectIdAndStudyRecordId(subjectId, studyRecord.getId())) {
+        if (deletedSubjects != null && !deletedSubjects.isEmpty()) {
+            for (Long subjectId : deletedSubjects) {
+                if (!studySubjectRepository.existsBySubjectIdAndStudyRecordId(subjectId, studyRecord.getId())) {
+                    throw new WoohaengshiException(STUDYSUBJECT_NOT_FOUND);
+                }
                 studySubjectRepository.deleteBySubjectIdAndStudyRecordId(subjectId, studyRecord.getId());
             }
         }
     }
+
 }
