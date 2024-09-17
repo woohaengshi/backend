@@ -1,16 +1,11 @@
 package com.woohaengshi.backend.service.studyrecord;
 
-import static com.woohaengshi.backend.exception.ErrorCode.MEMBER_NOT_FOUND;
-import static com.woohaengshi.backend.exception.ErrorCode.QUIT_MEMBER;
-import static com.woohaengshi.backend.exception.ErrorCode.STATISTICS_NOT_FOUND;
-import static com.woohaengshi.backend.exception.ErrorCode.SUBJECT_NOT_FOUND;
-import static com.woohaengshi.backend.exception.ErrorCode.TIME_HAVE_TO_GREATER_THAN_EXIST;
-
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.StudySubject;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.statistics.Statistics;
 import com.woohaengshi.backend.domain.subject.Subject;
+import com.woohaengshi.backend.dto.request.studyrecord.EditSubjectAndCommentRequest;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveCommentRequest;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowMonthlyRecordResponse;
@@ -35,6 +30,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static com.woohaengshi.backend.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -194,5 +191,36 @@ public class StudyRecordServiceImpl implements StudyRecordService {
                 .member(findMemberById(memberId))
                 .comment(request.getComment())
                 .build();
+    }
+
+    @Override
+    public void editSubjectsAndComment(EditSubjectAndCommentRequest request, Long memberId) {
+        validateExistMember(memberId);
+
+        StudyRecord studyRecord = findStudyRecordByDateAndId(request, memberId);
+        List<Long> addedSubjects = request.getAddedSubject();
+        if (addedSubjects != null && !addedSubjects.isEmpty()) {
+            saveSubjects(addedSubjects, studyRecord);
+        }
+
+        List<Long> deletedSubjects = request.getDeletedSubject();
+        if (deletedSubjects != null && !deletedSubjects.isEmpty()) {
+            deleteSubjects(deletedSubjects, studyRecord);
+        }
+
+        studyRecord.updateComment(request.getComment());
+    }
+
+    private StudyRecord findStudyRecordByDateAndId(EditSubjectAndCommentRequest request, Long memberId) {
+        return studyRecordRepository.findByDateAndMemberId(request.getDate(), memberId)
+                .orElseThrow(() -> new WoohaengshiException(STUDYRECORD_NOT_FOUND));
+    }
+
+    private void deleteSubjects(List<Long> deletedSubjects, StudyRecord studyRecord) {
+        for (Long subjectId : deletedSubjects) {
+            if (studySubjectRepository.existsBySubjectIdAndStudyRecordId(subjectId, studyRecord.getId())) {
+                studySubjectRepository.deleteBySubjectIdAndStudyRecordId(subjectId, studyRecord.getId());
+            }
+        }
     }
 }

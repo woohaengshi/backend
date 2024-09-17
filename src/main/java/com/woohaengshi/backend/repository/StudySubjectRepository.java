@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface StudySubjectRepository extends JpaRepository<StudySubject, Long> {
     boolean existsBySubjectIdAndStudyRecordId(Long subjectId, Long studyRecordId);
+    void deleteBySubjectIdAndStudyRecordId(Long subjectId, Long studyRecordId);
 }
