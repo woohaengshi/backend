@@ -13,6 +13,7 @@ import com.woohaengshi.backend.domain.StudySubject;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.statistics.Statistics;
 import com.woohaengshi.backend.domain.subject.Subject;
+import com.woohaengshi.backend.dto.request.studyrecord.EditSubjectAndCommentRequest;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveCommentRequest;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowMonthlyRecordResponse;
@@ -309,5 +310,33 @@ class StudyRecordServiceTest {
                                 .findByDateAndMemberId(any(LocalDate.class), any(Long.class)),
                 () -> verify(memberRepository, times(1)).findById(member.getId()),
                 () -> verify(studyRecordRepository, times(1)).save(any(StudyRecord.class)));
+    }
+
+    @Test
+    void 회고와_공부한_과목을_수정한다() {
+        Member member = MemberFixture.builder().id(1L).build();
+        StudyRecord defaultStudyRecord = mock(StudyRecord.class);
+
+        EditSubjectAndCommentRequest editRequest =
+                new EditSubjectAndCommentRequest(LocalDate.now(), List.of(2L), List.of(3L), "회고수정");
+
+        given(memberRepository.existsById(member.getId())).willReturn(true);
+        given(studyRecordRepository.findByDateAndMemberId(any(LocalDate.class), any(Long.class)))
+                .willReturn(Optional.of(defaultStudyRecord));
+        given(defaultStudyRecord.getId()).willReturn(1L);
+        given(subjectRepository.findById(2L)).willReturn(Optional.of(Subject.builder().id(2L).build()));
+        given(studySubjectRepository.existsBySubjectIdAndStudyRecordId(2L, defaultStudyRecord.getId())).willReturn(false);
+        given(studySubjectRepository.existsBySubjectIdAndStudyRecordId(3L, defaultStudyRecord.getId())).willReturn(true);
+
+        assertAll(
+                () -> studyRecordService.editSubjectsAndComment(editRequest, member.getId()),
+                () -> verify(memberRepository, times(1)).existsById(member.getId()),
+                () -> verify(studyRecordRepository, times(1)).findByDateAndMemberId(any(LocalDate.class), any(Long.class)),
+                () -> verify(studySubjectRepository, times(1)).existsBySubjectIdAndStudyRecordId(2L, defaultStudyRecord.getId()),
+                () -> verify(studySubjectRepository, times(1)).save(any(StudySubject.class)),
+                () -> verify(studySubjectRepository, times(1)).existsBySubjectIdAndStudyRecordId(3L, defaultStudyRecord.getId()),
+                () -> verify(studySubjectRepository, times(1)).deleteBySubjectIdAndStudyRecordId(3L, defaultStudyRecord.getId()),
+                () -> verify(defaultStudyRecord, times(1)).updateComment(any(String.class))
+        );
     }
 }
