@@ -128,7 +128,8 @@ class StudyRecordControllerTest extends ControllerTest {
 
     @Test
     void 날짜를_선택하여_회고와_공부한_과목을_수정할_수_있다() {
-        EditSubjectAndCommentRequest request = new EditSubjectAndCommentRequest(LocalDate.now(), List.of(3L), List.of(1L), "회고수정");
+        EditSubjectAndCommentRequest request =
+                new EditSubjectAndCommentRequest(LocalDate.now(), List.of(3L), List.of(1L), "회고수정");
         baseRestAssuredWithAuth()
                 .body(request)
                 .when()

@@ -46,7 +46,6 @@ public enum ErrorCode {
     STUDYSUBJECT_ALREADY_EXISTS(CONFLICT, "이미 공부 기록에 존재하는 과목입니다."),
     STUDYSUBJECT_NOT_FOUND(NOT_FOUND, "공부 기록에 존재하지 않는 과목입니다.");
 
-
     private final HttpStatus status;
     private final String message;
 

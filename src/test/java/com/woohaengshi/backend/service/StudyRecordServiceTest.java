@@ -324,19 +324,33 @@ class StudyRecordServiceTest {
         given(studyRecordRepository.findByDateAndMemberId(any(LocalDate.class), any(Long.class)))
                 .willReturn(Optional.of(defaultStudyRecord));
         given(defaultStudyRecord.getId()).willReturn(1L);
-        given(subjectRepository.findById(2L)).willReturn(Optional.of(Subject.builder().id(2L).build()));
-        given(studySubjectRepository.existsBySubjectIdAndStudyRecordId(2L, defaultStudyRecord.getId())).willReturn(false);
-        given(studySubjectRepository.existsBySubjectIdAndStudyRecordId(3L, defaultStudyRecord.getId())).willReturn(true);
+        given(subjectRepository.findById(2L))
+                .willReturn(Optional.of(Subject.builder().id(2L).build()));
+        given(
+                        studySubjectRepository.existsBySubjectIdAndStudyRecordId(
+                                2L, defaultStudyRecord.getId()))
+                .willReturn(false);
+        given(
+                        studySubjectRepository.existsBySubjectIdAndStudyRecordId(
+                                3L, defaultStudyRecord.getId()))
+                .willReturn(true);
 
         assertAll(
                 () -> studyRecordService.editSubjectsAndComment(editRequest, member.getId()),
                 () -> verify(memberRepository, times(1)).existsById(member.getId()),
-                () -> verify(studyRecordRepository, times(1)).findByDateAndMemberId(any(LocalDate.class), any(Long.class)),
-                () -> verify(studySubjectRepository, times(1)).existsBySubjectIdAndStudyRecordId(2L, defaultStudyRecord.getId()),
+                () ->
+                        verify(studyRecordRepository, times(1))
+                                .findByDateAndMemberId(any(LocalDate.class), any(Long.class)),
+                () ->
+                        verify(studySubjectRepository, times(1))
+                                .existsBySubjectIdAndStudyRecordId(2L, defaultStudyRecord.getId()),
                 () -> verify(studySubjectRepository, times(1)).save(any(StudySubject.class)),
-                () -> verify(studySubjectRepository, times(1)).existsBySubjectIdAndStudyRecordId(3L, defaultStudyRecord.getId()),
-                () -> verify(studySubjectRepository, times(1)).deleteBySubjectIdAndStudyRecordId(3L, defaultStudyRecord.getId()),
-                () -> verify(defaultStudyRecord, times(1)).updateComment(any(String.class))
-        );
+                () ->
+                        verify(studySubjectRepository, times(1))
+                                .existsBySubjectIdAndStudyRecordId(3L, defaultStudyRecord.getId()),
+                () ->
+                        verify(studySubjectRepository, times(1))
+                                .deleteBySubjectIdAndStudyRecordId(3L, defaultStudyRecord.getId()),
+                () -> verify(defaultStudyRecord, times(1)).updateComment(any(String.class)));
     }
 }

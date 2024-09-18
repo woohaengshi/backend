@@ -12,15 +12,15 @@ public class EditSubjectAndCommentRequest {
     private List<Long> deletedSubject;
     private String comment;
 
-    public EditSubjectAndCommentRequest() {
-    }
+    public EditSubjectAndCommentRequest() {}
 
     public EditSubjectAndCommentRequest(LocalDate date, String comment) {
         this.date = date;
         this.comment = comment;
     }
 
-    public EditSubjectAndCommentRequest(LocalDate date, List<Long> addedSubject, List<Long> deletedSubject, String comment) {
+    public EditSubjectAndCommentRequest(
+            LocalDate date, List<Long> addedSubject, List<Long> deletedSubject, String comment) {
         this.date = date;
         this.addedSubject = addedSubject;
         this.deletedSubject = deletedSubject;
