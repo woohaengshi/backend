@@ -211,12 +211,8 @@ public class StudyRecordServiceImpl implements StudyRecordService {
     }
 
     private void addSubjects(List<Long> addedSubjects, StudyRecord studyRecord) {
-        if (addedSubjects != null && !addedSubjects.isEmpty()) {
-            for (Long subjectId : addedSubjects) {
-                if (studySubjectRepository.existsBySubjectIdAndStudyRecordId(
-                        subjectId, studyRecord.getId())) {
-                    throw new WoohaengshiException(STUDYSUBJECT_ALREADY_EXISTS);
-                }
+        for (Long subjectId : addedSubjects) {
+            if (!studySubjectRepository.existsBySubjectIdAndStudyRecordId(subjectId, studyRecord.getId())) {
                 Subject subject = findSubjectById(subjectId);
                 studySubjectRepository.save(createStudySubject(studyRecord, subject));
             }
@@ -224,14 +220,9 @@ public class StudyRecordServiceImpl implements StudyRecordService {
     }
 
     private void deleteSubjects(List<Long> deletedSubjects, StudyRecord studyRecord) {
-        if (deletedSubjects != null && !deletedSubjects.isEmpty()) {
-            for (Long subjectId : deletedSubjects) {
-                if (!studySubjectRepository.existsBySubjectIdAndStudyRecordId(
-                        subjectId, studyRecord.getId())) {
-                    throw new WoohaengshiException(STUDYSUBJECT_NOT_FOUND);
-                }
-                studySubjectRepository.deleteBySubjectIdAndStudyRecordId(
-                        subjectId, studyRecord.getId());
+        for (Long subjectId : deletedSubjects) {
+            if (studySubjectRepository.existsBySubjectIdAndStudyRecordId(subjectId, studyRecord.getId())) {
+                studySubjectRepository.deleteBySubjectIdAndStudyRecordId(subjectId, studyRecord.getId());
             }
         }
     }
