@@ -8,7 +8,6 @@ import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.statistics.Statistics;
 import com.woohaengshi.backend.domain.subject.Subject;
 import com.woohaengshi.backend.dto.request.studyrecord.EditSubjectAndCommentRequest;
-import com.woohaengshi.backend.dto.request.studyrecord.SaveCommentRequest;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowMonthlyRecordResponse;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowYearlyRecordResponse;
@@ -25,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
@@ -174,22 +174,21 @@ public class StudyRecordServiceImpl implements StudyRecordService {
         return subjectRepository.findAllByMemberIdAndIsActiveTrue(memberId);
     }
 
-    @Override
-    public void saveComment(SaveCommentRequest request, Long memberId) {
+    private void saveComment(LocalDate date, String comment, Long memberId) {
         validateExistMember(memberId);
 
         studyRecordRepository
-                .findByDateAndMemberId(request.getDate(), memberId)
+                .findByDateAndMemberId(date, memberId)
                 .ifPresentOrElse(
-                        studyRecord -> studyRecord.updateComment(request.getComment()),
-                        () -> studyRecordRepository.save(createInitStudyRecord(request, memberId)));
+                        studyRecord -> studyRecord.updateComment(comment),
+                        () -> studyRecordRepository.save(createInitStudyRecord(date, comment, memberId)));
     }
 
-    private StudyRecord createInitStudyRecord(SaveCommentRequest request, Long memberId) {
+    private StudyRecord createInitStudyRecord(LocalDate date, String comment, Long memberId) {
         return StudyRecord.builder()
-                .date(request.getDate())
+                .date(date)
                 .member(findMemberById(memberId))
-                .comment(request.getComment())
+                .comment(comment)
                 .build();
     }
 
@@ -200,7 +199,7 @@ public class StudyRecordServiceImpl implements StudyRecordService {
         StudyRecord studyRecord = findStudyRecordByDateAndId(request, memberId);
         addSubjects(request.getAddedSubject(), studyRecord);
         deleteSubjects(request.getDeletedSubject(), studyRecord);
-        studyRecord.updateComment(request.getComment());
+        saveComment(request.getDate(), request.getComment(), memberId);
     }
 
     private StudyRecord findStudyRecordByDateAndId(
