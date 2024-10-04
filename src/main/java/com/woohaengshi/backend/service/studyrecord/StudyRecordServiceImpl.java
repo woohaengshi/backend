@@ -174,14 +174,15 @@ public class StudyRecordServiceImpl implements StudyRecordService {
         return subjectRepository.findAllByMemberIdAndIsActiveTrue(memberId);
     }
 
-    private void saveComment(LocalDate date, String comment, Long memberId) {
+    private StudyRecord saveComment(LocalDate date, String comment, Long memberId) {
         validateExistMember(memberId);
 
-        studyRecordRepository
+        return studyRecordRepository
                 .findByDateAndMemberId(date, memberId)
-                .ifPresentOrElse(
-                        studyRecord -> studyRecord.updateComment(comment),
-                        () -> studyRecordRepository.save(createInitStudyRecord(date, comment, memberId)));
+                .map(studyRecord -> {
+                    studyRecord.updateComment(comment);
+                    return studyRecord;
+                }).orElseGet(() -> studyRecordRepository.save(createInitStudyRecord(date, comment, memberId)));
     }
 
     private StudyRecord createInitStudyRecord(LocalDate date, String comment, Long memberId) {
@@ -196,17 +197,13 @@ public class StudyRecordServiceImpl implements StudyRecordService {
     public void editSubjectsAndComment(EditSubjectAndCommentRequest request, Long memberId) {
         validateExistMember(memberId);
 
-        StudyRecord studyRecord = findStudyRecordByDateAndId(request, memberId);
-        addSubjects(request.getAddedSubject(), studyRecord);
-        deleteSubjects(request.getDeletedSubject(), studyRecord);
-        saveComment(request.getDate(), request.getComment(), memberId);
-    }
-
-    private StudyRecord findStudyRecordByDateAndId(
-            EditSubjectAndCommentRequest request, Long memberId) {
-        return studyRecordRepository
-                .findByDateAndMemberId(request.getDate(), memberId)
-                .orElseThrow(() -> new WoohaengshiException(STUDYRECORD_NOT_FOUND));
+        StudyRecord studyRecord = saveComment(request.getDate(), request.getComment(), memberId);
+        if (!request.getAddedSubject().isEmpty()) {
+            addSubjects(request.getAddedSubject(), studyRecord);
+        }
+        if (!request.getDeletedSubject().isEmpty()) {
+            deleteSubjects(request.getDeletedSubject(), studyRecord);
+        }
     }
 
     private void addSubjects(List<Long> addedSubjects, StudyRecord studyRecord) {
