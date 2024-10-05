@@ -208,7 +208,8 @@ public class StudyRecordServiceImpl implements StudyRecordService {
 
     private void addSubjects(List<Long> addedSubjects, StudyRecord studyRecord) {
         for (Long subjectId : addedSubjects) {
-            if (!studySubjectRepository.existsBySubjectIdAndStudyRecordId(subjectId, studyRecord.getId())) {
+            if (!studySubjectRepository.existsBySubjectIdAndStudyRecordId(
+                    subjectId, studyRecord.getId())) {
                 Subject subject = findSubjectById(subjectId);
                 studySubjectRepository.save(createStudySubject(studyRecord, subject));
             }
@@ -217,8 +218,10 @@ public class StudyRecordServiceImpl implements StudyRecordService {
 
     private void deleteSubjects(List<Long> deletedSubjects, StudyRecord studyRecord) {
         for (Long subjectId : deletedSubjects) {
-            if (studySubjectRepository.existsBySubjectIdAndStudyRecordId(subjectId, studyRecord.getId())) {
-                studySubjectRepository.deleteBySubjectIdAndStudyRecordId(subjectId, studyRecord.getId());
+            if (studySubjectRepository.existsBySubjectIdAndStudyRecordId(
+                    subjectId, studyRecord.getId())) {
+                studySubjectRepository.deleteBySubjectIdAndStudyRecordId(
+                        subjectId, studyRecord.getId());
             }
         }
     }
