@@ -179,10 +179,15 @@ public class StudyRecordServiceImpl implements StudyRecordService {
 
         return studyRecordRepository
                 .findByDateAndMemberId(date, memberId)
-                .map(studyRecord -> {
-                    studyRecord.updateComment(comment);
-                    return studyRecord;
-                }).orElseGet(() -> studyRecordRepository.save(createInitStudyRecord(date, comment, memberId)));
+                .map(
+                        studyRecord -> {
+                            studyRecord.updateComment(comment);
+                            return studyRecord;
+                        })
+                .orElseGet(
+                        () ->
+                                studyRecordRepository.save(
+                                        createInitStudyRecord(date, comment, memberId)));
     }
 
     private StudyRecord createInitStudyRecord(LocalDate date, String comment, Long memberId) {
