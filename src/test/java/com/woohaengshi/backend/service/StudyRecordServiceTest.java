@@ -312,4 +312,23 @@ class StudyRecordServiceTest {
                                 .deleteBySubjectIdAndStudyRecordId(3L, defaultStudyRecord.getId()),
                 () -> verify(defaultStudyRecord, times(1)).updateComment(any(String.class)));
     }
+
+    @Test
+    void 공부기록이_없는_경우_회고를_추가한다() {
+        Member member = MemberFixture.builder().id(1L).build();
+        EditSubjectAndCommentRequest request = new EditSubjectAndCommentRequest(LocalDate.now(), List.of(), List.of(), "새로운 회고");
+
+        given(memberRepository.existsById(member.getId())).willReturn(true);
+        given(studyRecordRepository.findByDateAndMemberId(any(LocalDate.class), any(Long.class)))
+                .willReturn(Optional.empty());
+        given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+
+        assertAll(
+                () -> studyRecordService.editSubjectsAndComment(request, member.getId()),
+                () -> verify(memberRepository, times(1)).existsById(member.getId()),
+                () ->
+                        verify(studyRecordRepository, times(1))
+                                .findByDateAndMemberId(any(LocalDate.class), any(Long.class)),
+                () -> verify(studyRecordRepository, times(1)).save(any(StudyRecord.class)));
+    }
 }
