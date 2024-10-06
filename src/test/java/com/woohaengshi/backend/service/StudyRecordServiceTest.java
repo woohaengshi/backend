@@ -316,7 +316,8 @@ class StudyRecordServiceTest {
     @Test
     void 공부기록이_없는_경우_회고를_추가한다() {
         Member member = MemberFixture.builder().id(1L).build();
-        EditSubjectAndCommentRequest request = new EditSubjectAndCommentRequest(LocalDate.now(), List.of(), List.of(), "새로운 회고");
+        EditSubjectAndCommentRequest request =
+                new EditSubjectAndCommentRequest(LocalDate.now(), List.of(), List.of(), "새로운 회고");
 
         given(memberRepository.existsById(member.getId())).willReturn(true);
         given(studyRecordRepository.findByDateAndMemberId(any(LocalDate.class), any(Long.class)))
