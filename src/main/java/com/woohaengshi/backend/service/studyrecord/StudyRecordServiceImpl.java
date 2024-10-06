@@ -195,8 +195,6 @@ public class StudyRecordServiceImpl implements StudyRecordService {
 
     @Override
     public void editSubjectsAndComment(EditSubjectAndCommentRequest request, Long memberId) {
-        validateExistMember(memberId);
-
         StudyRecord studyRecord = saveComment(request.getDate(), request.getComment(), memberId);
         if (!request.getAddedSubject().isEmpty()) {
             addSubjects(request.getAddedSubject(), studyRecord);
