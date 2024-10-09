@@ -7,7 +7,7 @@ import static org.springframework.http.HttpHeaders.SET_COOKIE;
 import com.woohaengshi.backend.controller.auth.CookieProvider;
 import com.woohaengshi.backend.controller.auth.MemberId;
 import com.woohaengshi.backend.dto.request.member.ChangePasswordRequest;
-import com.woohaengshi.backend.dto.request.member.MemberRequest;
+import com.woohaengshi.backend.dto.request.member.EditMemberInfoRequest;
 import com.woohaengshi.backend.dto.response.member.ShowMemberResponse;
 import com.woohaengshi.backend.service.member.MemberService;
 
@@ -50,7 +50,7 @@ public class MemberController {
 
     @PatchMapping
     public ResponseEntity<Void> editMemberInfo(
-            @RequestBody @Valid MemberRequest request, @MemberId Long memberId) {
+            @RequestBody @Valid EditMemberInfoRequest request, @MemberId Long memberId) {
         memberService.editMemberInfo(request, memberId);
         return ResponseEntity.ok().build();
     }

@@ -13,7 +13,7 @@ import static org.mockito.Mockito.verify;
 import com.woohaengshi.backend.domain.RefreshToken;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.request.member.ChangePasswordRequest;
-import com.woohaengshi.backend.dto.request.member.MemberRequest;
+import com.woohaengshi.backend.dto.request.member.EditMemberInfoRequest;
 import com.woohaengshi.backend.dto.response.member.ShowMemberResponse;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
@@ -113,7 +113,7 @@ class MemberServiceTest {
     @Test
     void 회원_정보를_수정한다() {
         Member member = MemberFixture.builder().id(1L).build();
-        MemberRequest request = new MemberRequest("new 길가은", "클라우드 엔지니어링");
+        EditMemberInfoRequest request = new EditMemberInfoRequest("new 길가은", "클라우드 엔지니어링");
         given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
 
         assertAll(
