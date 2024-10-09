@@ -4,6 +4,7 @@ import static com.woohaengshi.backend.domain.member.State.QUIT;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -12,6 +13,7 @@ import static org.mockito.Mockito.verify;
 import com.woohaengshi.backend.domain.RefreshToken;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.request.member.ChangePasswordRequest;
+import com.woohaengshi.backend.dto.response.member.ShowMemberResponse;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.RefreshTokenRepository;
@@ -79,5 +81,31 @@ class MemberServiceTest {
         memberService.quit(member.getId(), refreshToken.getToken());
         assertThat(member.getState()).isEqualTo(QUIT);
         verify(refreshTokenRepository, times(1)).delete(any(RefreshToken.class));
+    }
+
+    @Test
+    void 회원_정보를_조회한다() {
+        Member member = MemberFixture.builder().id(1L).build();
+
+        given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+
+        ShowMemberResponse response = memberService.getMemberInfo(member.getId());
+
+        assertAll(
+                () -> verify(memberRepository, times(1)).findById(member.getId()),
+                () -> assertThat(response.getName()).isEqualTo(member.getName()),
+                () -> assertThat(response.getEmail()).isEqualTo(member.getEmail()),
+                () -> assertThat(response.getImage()).isEqualTo(member.getImage()),
+                () -> assertThat(response.getCourse()).isEqualTo(member.getCourse().getName()));
+    }
+
+    @Test
+    void 회원이_존재하지_않을_경우_예외를_던진다() {
+        Member member = MemberFixture.builder().id(1L).build();
+
+        given(memberRepository.findById(member.getId())).willReturn(Optional.empty());
+
+        assertThatThrownBy(() -> memberService.getMemberInfo(member.getId()))
+                .isExactlyInstanceOf(WoohaengshiException.class);
     }
 }
