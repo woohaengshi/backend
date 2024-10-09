@@ -1,6 +1,5 @@
 package com.woohaengshi.backend.dto.request.studyrecord;
 
-
 import lombok.Getter;
 
 import java.time.LocalDate;

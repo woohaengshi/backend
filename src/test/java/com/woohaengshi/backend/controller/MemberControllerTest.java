@@ -6,6 +6,7 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
 
 import com.woohaengshi.backend.dto.request.member.ChangePasswordRequest;
+import com.woohaengshi.backend.dto.request.member.EditMemberInfoRequest;
 import com.woohaengshi.backend.support.ControllerTest;
 
 import org.junit.jupiter.api.Test;
@@ -59,5 +60,18 @@ class MemberControllerTest extends ControllerTest {
                 .log()
                 .all()
                 .statusCode(NO_CONTENT.value());
+    }
+
+    @Test
+    void 회원_정보를_수정할_수_있다() {
+        EditMemberInfoRequest request = new EditMemberInfoRequest("김수정", "클라우드 엔지니어링");
+        baseRestAssuredWithAuth()
+                .body(request)
+                .when()
+                .patch("/api/v1/members")
+                .then()
+                .log()
+                .all()
+                .statusCode(OK.value());
     }
 }

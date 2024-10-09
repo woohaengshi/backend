@@ -96,4 +96,9 @@ public class Member {
     public boolean isActive() {
         return state == State.ACTIVE;
     }
+
+    public void update(String name, String course) {
+        this.name = name;
+        this.course = Course.from(course);
+    }
 }
