@@ -49,7 +49,8 @@ public class MemberController {
     }
 
     @PatchMapping
-    public ResponseEntity<Void> editMemberInfo(@RequestBody @Valid MemberRequest request, @MemberId Long memberId) {
+    public ResponseEntity<Void> editMemberInfo(
+            @RequestBody @Valid MemberRequest request, @MemberId Long memberId) {
         memberService.editMemberInfo(request, memberId);
         return ResponseEntity.ok().build();
     }

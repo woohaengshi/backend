@@ -1,6 +1,7 @@
 package com.woohaengshi.backend.dto.request.member;
 
 import jakarta.validation.constraints.NotBlank;
+
 import lombok.Getter;
 
 @Getter
@@ -17,6 +18,5 @@ public class MemberRequest {
         this.course = course;
     }
 
-    private MemberRequest() {
-    }
+    private MemberRequest() {}
 }
