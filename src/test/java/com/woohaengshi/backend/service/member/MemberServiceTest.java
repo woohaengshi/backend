@@ -39,7 +39,6 @@ class MemberServiceTest {
     @InjectMocks private MemberServiceImpl memberService;
     @Mock private AmazonS3Manager amazonS3Manager;
 
-
     @Test
     void 비밀번호를_변경할_수_있다() {
         Member member = MemberFixture.builder().id(1L).build();
@@ -90,17 +89,15 @@ class MemberServiceTest {
     @Test
     void 회원_이미지를_변경할_수_있다() throws IOException {
         Member member = MemberFixture.builder().id(1L).build();
-        MockMultipartFile image = new MockMultipartFile(
-                "image",
-                "image.png",
-                "image/png",
-                "test image content".getBytes());
+        MockMultipartFile image =
+                new MockMultipartFile(
+                        "image", "image.png", "image/png", "test image content".getBytes());
         given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
-        given(amazonS3Manager.uploadFile(any(), any())).willReturn("https://image.com/newImage.png");
+        given(amazonS3Manager.uploadFile(any(), any()))
+                .willReturn("https://image.com/newImage.png");
         assertAll(
                 () -> memberService.changeImage(member.getId(), image),
                 () -> assertThat(member.getImage()).isEqualTo("https://image.com/newImage.png"),
-                () -> verify(amazonS3Manager, times(1)).uploadFile(any(), any())
-        );
+                () -> verify(amazonS3Manager, times(1)).uploadFile(any(), any()));
     }
 }

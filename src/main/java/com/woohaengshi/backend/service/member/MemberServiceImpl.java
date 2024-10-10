@@ -12,9 +12,9 @@ import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.RefreshTokenRepository;
-
 import com.woohaengshi.backend.s3.AmazonS3Manager;
 import com.woohaengshi.backend.s3.Filepath;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
