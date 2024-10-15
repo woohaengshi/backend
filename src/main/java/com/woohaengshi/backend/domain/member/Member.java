@@ -97,8 +97,8 @@ public class Member {
         return state == State.ACTIVE;
     }
 
-    public void update(String name, String course) {
+    public void changeNameAndCourse(String name, Course course) {
         this.name = name;
-        this.course = Course.from(course);
+        this.course = course;
     }
 }

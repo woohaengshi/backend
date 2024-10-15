@@ -5,6 +5,7 @@ import static com.woohaengshi.backend.exception.ErrorCode.QUIT_MEMBER;
 import static java.util.Objects.isNull;
 
 import com.woohaengshi.backend.domain.RefreshToken;
+import com.woohaengshi.backend.domain.member.Course;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.request.member.ChangePasswordRequest;
 import com.woohaengshi.backend.dto.request.member.EditMemberInfoRequest;
@@ -68,7 +69,8 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void editMemberInfo(EditMemberInfoRequest editMemberInfoRequest, Long memberId) {
         Member member = findMemberById(memberId);
-        member.update(editMemberInfoRequest.getName(), editMemberInfoRequest.getCourse());
+        Course course = Course.from(editMemberInfoRequest.getCourse());
+        member.changeNameAndCourse(editMemberInfoRequest.getName(), course);
     }
 
     private RefreshToken findRefreshToken(String refreshToken) {
