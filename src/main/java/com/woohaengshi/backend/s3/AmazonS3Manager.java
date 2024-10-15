@@ -1,6 +1,7 @@
 package com.woohaengshi.backend.s3;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.woohaengshi.backend.config.S3Config;
@@ -39,5 +40,13 @@ public class AmazonS3Manager {
     public String makeKeyName(Filepath filepath) {
         String uuid = UUID.randomUUID().toString();
         return filepath.toString() + '/' + uuid;
+    }
+
+    public void deleteFile(String keyName) {
+        try {
+            amazonS3.deleteObject(new DeleteObjectRequest(s3Config.getBucket(), keyName));
+        } catch (Exception e) {
+            throw new WoohaengshiException(ErrorCode.FAILED_DELETE_IMAGE);
+        }
     }
 }

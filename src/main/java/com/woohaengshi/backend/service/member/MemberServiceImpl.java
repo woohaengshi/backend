@@ -71,14 +71,26 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void changeImage(Long memberId, MultipartFile imageFile) {
         Member member = findMemberById(memberId);
-        String filename = !isNull(imageFile) ? saveS3Image(imageFile) : null;
-        member.changeImage(filename);
+        if (isNull(imageFile)) throw new WoohaengshiException(ErrorCode.FAILED_NULL_IMAGE);
+
+        String fileName = editS3Image(member, imageFile);
+        member.changeImage(fileName);
+    }
+
+    private String editS3Image(Member member, MultipartFile multipartFile) {
+        String image = member.getImage();
+        if(image != null) deleteS3Image(image);
+        return saveS3Image(multipartFile);
+    }
+
+    private void deleteS3Image(String image) {
+        String KeyName = image.replace("https://woohaengshi-s3.s3.ap-northeast-2.amazonaws.com/", "");
+        amazonS3Manager.deleteFile(KeyName);
     }
 
     private String saveS3Image(MultipartFile multipartFile) {
         String keyName = amazonS3Manager.makeKeyName(Filepath.PROFILE);
-        String filename = amazonS3Manager.uploadFile(keyName, multipartFile);
-        return filename;
+        return amazonS3Manager.uploadFile(keyName, multipartFile);
     }
 
     private RefreshToken findRefreshToken(String refreshToken) {
