@@ -1,7 +1,7 @@
 package com.woohaengshi.backend.controller;
 
 import com.woohaengshi.backend.controller.auth.MemberId;
-import com.woohaengshi.backend.dto.request.studyrecord.SaveCommentRequest;
+import com.woohaengshi.backend.dto.request.studyrecord.EditSubjectAndCommentRequest;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowMonthlyRecordResponse;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowYearlyRecordResponse;
@@ -47,9 +47,9 @@ public class StudyRecordController {
     }
 
     @PatchMapping
-    public ResponseEntity<Void> saveComment(
-            @Valid @RequestBody SaveCommentRequest request, @MemberId Long memberId) {
-        studyRecordService.saveComment(request, memberId);
+    public ResponseEntity<Void> editSubjectsAndComment(
+            @Valid @RequestBody EditSubjectAndCommentRequest request, @MemberId Long memberId) {
+        studyRecordService.editSubjectsAndComment(request, memberId);
         return ResponseEntity.ok().build();
     }
 }

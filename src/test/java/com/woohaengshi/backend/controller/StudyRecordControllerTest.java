@@ -5,7 +5,7 @@ import static com.woohaengshi.backend.exception.ErrorCode.INVALID_INPUT;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.OK;
 
-import com.woohaengshi.backend.dto.request.studyrecord.SaveCommentRequest;
+import com.woohaengshi.backend.dto.request.studyrecord.EditSubjectAndCommentRequest;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 import com.woohaengshi.backend.support.ControllerTest;
 
@@ -114,7 +114,22 @@ class StudyRecordControllerTest extends ControllerTest {
 
     @Test
     void 날짜를_선택하여_회고를_추가할_수_있다() {
-        SaveCommentRequest request = new SaveCommentRequest(LocalDate.now(), "회고");
+        EditSubjectAndCommentRequest request =
+                new EditSubjectAndCommentRequest(LocalDate.now(), List.of(), List.of(), "회고추가");
+        baseRestAssuredWithAuth()
+                .body(request)
+                .when()
+                .patch("/api/v1/study-record")
+                .then()
+                .log()
+                .all()
+                .statusCode(OK.value());
+    }
+
+    @Test
+    void 날짜를_선택하여_회고와_공부한_과목을_수정할_수_있다() {
+        EditSubjectAndCommentRequest request =
+                new EditSubjectAndCommentRequest(LocalDate.now(), List.of(3L), List.of(1L), "회고수정");
         baseRestAssuredWithAuth()
                 .body(request)
                 .when()
