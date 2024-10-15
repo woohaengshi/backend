@@ -69,8 +69,11 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void editMemberInfo(EditMemberInfoRequest editMemberInfoRequest, Long memberId) {
         Member member = findMemberById(memberId);
-        Course course = Course.from(editMemberInfoRequest.getCourse());
-        member.changeNameAndCourse(editMemberInfoRequest.getName(), course);
+        Member updatedMember = Member.builder()
+                .name(editMemberInfoRequest.getName())
+                .course(Course.from(editMemberInfoRequest.getCourse()))
+                .build();
+        member.update(updatedMember);
     }
 
     private RefreshToken findRefreshToken(String refreshToken) {

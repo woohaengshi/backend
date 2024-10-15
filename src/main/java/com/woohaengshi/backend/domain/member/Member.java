@@ -19,6 +19,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import static java.util.Objects.isNull;
+
 @Entity
 @Getter
 @EntityListeners(AuditingEntityListener.class)
@@ -97,8 +99,18 @@ public class Member {
         return state == State.ACTIVE;
     }
 
-    public void changeNameAndCourse(String name, Course course) {
-        this.name = name;
+    public void updateName(String name) {
+        if (!isNull(name)) {
+            this.name = name;
+        }
+    }
+
+    public void updateCourse(Course course) {
         this.course = course;
+    }
+
+    public void update(Member member) {
+        updateName(member.getName());
+        updateCourse(member.getCourse());
     }
 }
