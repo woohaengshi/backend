@@ -36,6 +36,8 @@ public enum ErrorCode {
     TIME_HAVE_TO_GREATER_THAN_EXIST(BAD_REQUEST, "요청한 공부 기록은 이전 공부 기록 시간 보다 커야 합니다."),
     EMAIL_ALREADY_EXIST(CONFLICT, "이미 존재하는 이메일입니다."),
     FAILED_SAVE_IMAGE(INTERNAL_SERVER_ERROR, "이미지 저장 실패"),
+    FAILED_DELETE_IMAGE(INTERNAL_SERVER_ERROR, "이미지 삭제 실패"),
+    FAILED_NULL_IMAGE(INTERNAL_SERVER_ERROR, "이미지 없음"),
     QUIT_MEMBER(FORBIDDEN, "탈퇴한 회원입니다."),
     INACTIVE_SUBJECT(BAD_REQUEST, "이미 비활성화된 과목입니다."),
     PASSWORD_INCORRECT(BAD_REQUEST, "맞지 않는 비밀번호입니다."),
