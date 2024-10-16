@@ -43,7 +43,8 @@ public enum ErrorCode {
     PASSWORD_INCORRECT(BAD_REQUEST, "맞지 않는 비밀번호입니다."),
     CREATE_MAIL_EXCEPTION(INTERNAL_SERVER_ERROR, "메일 생성 중 오류가 발생했습니다."),
     INCORRECT_MEMBER_INFO(BAD_REQUEST, "사용자의 정보가 잘못되었습니다."),
-    AUTHENTICATE_CODE_NOT_FOUND(NOT_FOUND, "인증 코드를 찾을 수 없습니다.");
+    AUTHENTICATE_CODE_NOT_FOUND(NOT_FOUND, "인증 코드를 찾을 수 없습니다."),
+    STUDYRECORD_NOT_FOUND(NOT_FOUND, "공부 기록을 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String message;
