@@ -79,12 +79,13 @@ public class MemberServiceImpl implements MemberService {
 
     private String editS3Image(Member member, MultipartFile multipartFile) {
         String image = member.getImage();
-        if(image != null) deleteS3Image(image);
+        if (image != null) deleteS3Image(image);
         return saveS3Image(multipartFile);
     }
 
     private void deleteS3Image(String image) {
-        String KeyName = image.replace("https://woohaengshi-s3.s3.ap-northeast-2.amazonaws.com/", "");
+        String KeyName =
+                image.replace("https://woohaengshi-s3.s3.ap-northeast-2.amazonaws.com/", "");
         amazonS3Manager.deleteFile(KeyName);
     }
 
