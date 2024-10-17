@@ -7,6 +7,7 @@ import static java.util.Objects.isNull;
 import com.woohaengshi.backend.domain.RefreshToken;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.dto.request.member.ChangePasswordRequest;
+import com.woohaengshi.backend.dto.request.member.EditMemberInfoRequest;
 import com.woohaengshi.backend.dto.response.member.ShowMemberResponse;
 import com.woohaengshi.backend.exception.ErrorCode;
 import com.woohaengshi.backend.exception.WoohaengshiException;
@@ -66,6 +67,12 @@ public class MemberServiceImpl implements MemberService {
         }
         Member member = findMemberById(memberId);
         member.quit();
+    }
+
+    @Override
+    public void editMemberInfo(EditMemberInfoRequest editMemberInfoRequest, Long memberId) {
+        Member member = findMemberById(memberId);
+        member.update(editMemberInfoRequest.toMember());
     }
 
     @Override

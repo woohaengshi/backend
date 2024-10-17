@@ -7,6 +7,7 @@ import static org.springframework.http.HttpHeaders.SET_COOKIE;
 import com.woohaengshi.backend.controller.auth.CookieProvider;
 import com.woohaengshi.backend.controller.auth.MemberId;
 import com.woohaengshi.backend.dto.request.member.ChangePasswordRequest;
+import com.woohaengshi.backend.dto.request.member.EditMemberInfoRequest;
 import com.woohaengshi.backend.dto.response.member.ShowMemberResponse;
 import com.woohaengshi.backend.service.member.MemberService;
 
@@ -53,6 +54,13 @@ public class MemberController {
             @RequestPart(value = "image", required = false) MultipartFile image,
             @MemberId Long memberId) {
         memberService.changeImage(memberId, image);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping
+    public ResponseEntity<Void> editMemberInfo(
+            @RequestBody @Valid EditMemberInfoRequest request, @MemberId Long memberId) {
+        memberService.editMemberInfo(request, memberId);
         return ResponseEntity.ok().build();
     }
 }
