@@ -18,6 +18,7 @@ import com.woohaengshi.backend.dto.response.member.ShowMemberResponse;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.RefreshTokenRepository;
+import com.woohaengshi.backend.s3.AmazonS3Manager;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
 
 import org.junit.jupiter.api.Test;
@@ -25,8 +26,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,6 +39,7 @@ class MemberServiceTest {
     @Mock private PasswordEncoder passwordEncoder;
     @Mock private RefreshTokenRepository refreshTokenRepository;
     @InjectMocks private MemberServiceImpl memberService;
+    @Mock private AmazonS3Manager amazonS3Manager;
 
     @Test
     void 비밀번호를_변경할_수_있다() {
@@ -120,5 +124,20 @@ class MemberServiceTest {
                 () -> memberService.editMemberInfo(request, member.getId()),
                 () -> assertThat(member.getName()).isEqualTo("new 길가은"),
                 () -> assertThat(member.getCourse().getName()).isEqualTo("클라우드 엔지니어링"));
+    }
+
+    @Test
+    void 회원_이미지를_변경할_수_있다() throws IOException {
+        Member member = MemberFixture.builder().id(1L).build();
+        MockMultipartFile image =
+                new MockMultipartFile(
+                        "image", "image.png", "image/png", "test image content".getBytes());
+        given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+        given(amazonS3Manager.uploadFile(any(), any()))
+                .willReturn("https://image.com/newImage.png");
+        assertAll(
+                () -> memberService.changeImage(member.getId(), image),
+                () -> assertThat(member.getImage()).isEqualTo("https://image.com/newImage.png"),
+                () -> verify(amazonS3Manager, times(1)).uploadFile(any(), any()));
     }
 }

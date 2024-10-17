@@ -99,6 +99,10 @@ public class Member {
         return state == State.ACTIVE;
     }
 
+    public void changeImage(String image) {
+        this.image = image;
+    }
+
     public void updateName(String name) {
         if (!isNull(name)) {
             this.name = name;

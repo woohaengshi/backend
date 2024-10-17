@@ -4,6 +4,8 @@ import com.woohaengshi.backend.dto.request.member.ChangePasswordRequest;
 import com.woohaengshi.backend.dto.request.member.EditMemberInfoRequest;
 import com.woohaengshi.backend.dto.response.member.ShowMemberResponse;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public interface MemberService {
 
     void changePassword(ChangePasswordRequest request, Long memberId);
@@ -13,4 +15,6 @@ public interface MemberService {
     void editMemberInfo(EditMemberInfoRequest editMemberInfoRequest, Long memberId);
 
     void quit(Long memberId, String refreshToken);
+
+    void changeImage(Long memberId, MultipartFile imageFile);
 }

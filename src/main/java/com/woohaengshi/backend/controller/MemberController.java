@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,6 +47,14 @@ public class MemberController {
         return ResponseEntity.noContent()
                 .header(SET_COOKIE, cookieProvider.createSignOutCookie().toString())
                 .build();
+    }
+
+    @PatchMapping("/image")
+    public ResponseEntity<Void> changeImage(
+            @RequestPart(value = "image", required = false) MultipartFile image,
+            @MemberId Long memberId) {
+        memberService.changeImage(memberId, image);
+        return ResponseEntity.ok().build();
     }
 
     @PatchMapping
