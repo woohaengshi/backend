@@ -96,4 +96,8 @@ public class Member {
     public boolean isActive() {
         return state == State.ACTIVE;
     }
+
+    public void changeImage(String image) {
+        this.image = image;
+    }
 }
