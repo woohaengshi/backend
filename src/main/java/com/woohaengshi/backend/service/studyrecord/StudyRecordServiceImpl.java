@@ -1,17 +1,13 @@
 package com.woohaengshi.backend.service.studyrecord;
 
-import static com.woohaengshi.backend.exception.ErrorCode.MEMBER_NOT_FOUND;
-import static com.woohaengshi.backend.exception.ErrorCode.QUIT_MEMBER;
-import static com.woohaengshi.backend.exception.ErrorCode.STATISTICS_NOT_FOUND;
-import static com.woohaengshi.backend.exception.ErrorCode.SUBJECT_NOT_FOUND;
-import static com.woohaengshi.backend.exception.ErrorCode.TIME_HAVE_TO_GREATER_THAN_EXIST;
+import static com.woohaengshi.backend.exception.ErrorCode.*;
 
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.StudySubject;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.statistics.Statistics;
 import com.woohaengshi.backend.domain.subject.Subject;
-import com.woohaengshi.backend.dto.request.studyrecord.SaveCommentRequest;
+import com.woohaengshi.backend.dto.request.studyrecord.EditSubjectAndCommentRequest;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowMonthlyRecordResponse;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowYearlyRecordResponse;
@@ -28,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
@@ -177,22 +174,58 @@ public class StudyRecordServiceImpl implements StudyRecordService {
         return subjectRepository.findAllByMemberIdAndIsActiveTrue(memberId);
     }
 
-    @Override
-    public void saveComment(SaveCommentRequest request, Long memberId) {
+    private StudyRecord saveComment(LocalDate date, String comment, Long memberId) {
         validateExistMember(memberId);
 
-        studyRecordRepository
-                .findByDateAndMemberId(request.getDate(), memberId)
-                .ifPresentOrElse(
-                        studyRecord -> studyRecord.updateComment(request.getComment()),
-                        () -> studyRecordRepository.save(createInitStudyRecord(request, memberId)));
+        return studyRecordRepository
+                .findByDateAndMemberId(date, memberId)
+                .map(
+                        studyRecord -> {
+                            studyRecord.updateComment(comment);
+                            return studyRecord;
+                        })
+                .orElseGet(
+                        () ->
+                                studyRecordRepository.save(
+                                        createInitStudyRecord(date, comment, memberId)));
     }
 
-    private StudyRecord createInitStudyRecord(SaveCommentRequest request, Long memberId) {
+    private StudyRecord createInitStudyRecord(LocalDate date, String comment, Long memberId) {
         return StudyRecord.builder()
-                .date(request.getDate())
+                .date(date)
                 .member(findMemberById(memberId))
-                .comment(request.getComment())
+                .comment(comment)
                 .build();
+    }
+
+    @Override
+    public void editSubjectsAndComment(EditSubjectAndCommentRequest request, Long memberId) {
+        StudyRecord studyRecord = saveComment(request.getDate(), request.getComment(), memberId);
+        if (!request.getAddedSubject().isEmpty()) {
+            addSubjects(request.getAddedSubject(), studyRecord);
+        }
+        if (!request.getDeletedSubject().isEmpty()) {
+            deleteSubjects(request.getDeletedSubject(), studyRecord);
+        }
+    }
+
+    private void addSubjects(List<Long> addedSubjects, StudyRecord studyRecord) {
+        for (Long subjectId : addedSubjects) {
+            if (!studySubjectRepository.existsBySubjectIdAndStudyRecordId(
+                    subjectId, studyRecord.getId())) {
+                Subject subject = findSubjectById(subjectId);
+                studySubjectRepository.save(createStudySubject(studyRecord, subject));
+            }
+        }
+    }
+
+    private void deleteSubjects(List<Long> deletedSubjects, StudyRecord studyRecord) {
+        for (Long subjectId : deletedSubjects) {
+            if (studySubjectRepository.existsBySubjectIdAndStudyRecordId(
+                    subjectId, studyRecord.getId())) {
+                studySubjectRepository.deleteBySubjectIdAndStudyRecordId(
+                        subjectId, studyRecord.getId());
+            }
+        }
     }
 }
