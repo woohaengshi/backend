@@ -2,6 +2,7 @@ package com.woohaengshi.backend.dto.request.member;
 
 import com.woohaengshi.backend.domain.member.Course;
 import com.woohaengshi.backend.domain.member.Member;
+
 import jakarta.validation.constraints.NotBlank;
 
 import lombok.Getter;
@@ -23,9 +24,6 @@ public class EditMemberInfoRequest {
     private EditMemberInfoRequest() {}
 
     public Member toMember() {
-        return Member.builder()
-                .name(name)
-                .course(Course.from(course))
-                .build();
+        return Member.builder().name(name).course(Course.from(course)).build();
     }
 }

@@ -1,5 +1,7 @@
 package com.woohaengshi.backend.domain.member;
 
+import static java.util.Objects.isNull;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -18,8 +20,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
-import static java.util.Objects.isNull;
 
 @Entity
 @Getter
