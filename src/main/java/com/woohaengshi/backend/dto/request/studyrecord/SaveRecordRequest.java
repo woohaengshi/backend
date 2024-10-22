@@ -20,6 +20,8 @@ public class SaveRecordRequest {
     @Min(value = 1, message = "공부 기록은 1초 부터 저장할 수 있습니다. ")
     private int time;
 
+    private String comment;
+
     private List<Long> subjects = new ArrayList<>();
 
     private SaveRecordRequest() {}
@@ -27,10 +29,11 @@ public class SaveRecordRequest {
     public SaveRecordRequest(LocalDate date, int time, List<Long> subjects) {
         this.date = date;
         this.time = time;
+        this.comment = "";
         this.subjects = subjects;
     }
 
     public StudyRecord toStudyRecord(Member member) {
-        return StudyRecord.builder().date(date).time(time).member(member).build();
+        return StudyRecord.builder().date(date).time(time).member(member).comment(comment).build();
     }
 }

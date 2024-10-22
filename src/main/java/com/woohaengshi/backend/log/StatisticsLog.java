@@ -1,7 +1,7 @@
 package com.woohaengshi.backend.log;
 
 import com.woohaengshi.backend.domain.statistics.Statistics;
-import com.woohaengshi.backend.repository.StatisticsRepository;
+import com.woohaengshi.backend.repository.statistics.StatisticsRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

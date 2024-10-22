@@ -15,11 +15,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
 
@@ -32,8 +29,10 @@ public class AuthController {
     private final CookieProvider cookieProvider;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<Void> signUp(@RequestBody @Valid SignUpRequest signUpRequest) {
-        authService.signUp(signUpRequest);
+    public ResponseEntity<Void> signUp(
+            @RequestPart(value = "signUpRequest") @Valid SignUpRequest signUpRequest,
+            @RequestPart(value = "image", required = false) MultipartFile image) {
+        authService.signUp(signUpRequest, image);
         return ResponseEntity.created(URI.create("/api/v1/sign-in")).build();
     }
 

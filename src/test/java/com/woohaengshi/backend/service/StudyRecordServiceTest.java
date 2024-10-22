@@ -5,8 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import com.woohaengshi.backend.domain.StudyRecord;
@@ -14,6 +13,7 @@ import com.woohaengshi.backend.domain.StudySubject;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.statistics.Statistics;
 import com.woohaengshi.backend.domain.subject.Subject;
+import com.woohaengshi.backend.dto.request.studyrecord.EditSubjectAndCommentRequest;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowMonthlyRecordResponse;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowYearlyRecordResponse;
@@ -22,14 +22,15 @@ import com.woohaengshi.backend.dto.result.ShowCalendarResult;
 import com.woohaengshi.backend.dto.result.SubjectResult;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
-import com.woohaengshi.backend.repository.StatisticsRepository;
 import com.woohaengshi.backend.repository.StudySubjectRepository;
 import com.woohaengshi.backend.repository.SubjectRepository;
+import com.woohaengshi.backend.repository.statistics.StatisticsRepository;
 import com.woohaengshi.backend.repository.studyrecord.StudyRecordRepository;
 import com.woohaengshi.backend.service.studyrecord.StudyRecordServiceImpl;
 import com.woohaengshi.backend.support.fixture.MemberFixture;
 import com.woohaengshi.backend.support.fixture.StatisticsFixture;
 import com.woohaengshi.backend.support.fixture.StudyRecordFixture;
+import com.woohaengshi.backend.support.fixture.SubjectFixture;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -176,22 +177,29 @@ class StudyRecordServiceTest {
     @Test
     void 월_단위_공부_기록을_조회_할_수_있다() {
         YearMonth date = YearMonth.now();
+
         SubjectResult subjectResult1 = new SubjectResult(1L, "HTML");
         SubjectResult subjectResult2 = new SubjectResult(2L, "CSS");
         SubjectResult subjectResult3 = new SubjectResult(3L, "JAVA");
+
         ShowCalendarResult showCalendarResult1 =
-                new ShowCalendarResult(12, 10, List.of(subjectResult1, subjectResult2));
+                new ShowCalendarResult(12, 10, "1", List.of(subjectResult1, subjectResult2));
         ShowCalendarResult showCalendarResult2 =
-                new ShowCalendarResult(13, 100, List.of(subjectResult3));
+                new ShowCalendarResult(13, 100, "2", List.of(subjectResult3));
         ShowCalendarResult showCalendarResult3 =
-                new ShowCalendarResult(14, 200, List.of(subjectResult1, subjectResult3));
+                new ShowCalendarResult(14, 200, "3", List.of(subjectResult1, subjectResult3));
+
         List<ShowCalendarResult> result =
                 List.of(showCalendarResult1, showCalendarResult2, showCalendarResult3);
+
         given(memberRepository.existsById(1L)).willReturn(true);
         given(
                         studyRecordRepository.findStudyRecordInCalendar(
                                 date.getYear(), date.getMonthValue(), 1L))
                 .willReturn(result);
+        given(subjectRepository.findAllByMemberIdAndIsActiveTrue(1L))
+                .willReturn(List.of(SubjectFixture.builder().build()));
+
         ShowMonthlyRecordResponse response = studyRecordService.getMonthlyRecord(date, 1L);
         assertAll(
                 () -> assertThat(response.getYear()).isEqualTo(date.getYear()),
@@ -208,7 +216,13 @@ class StudyRecordServiceTest {
                                 .isEqualTo(showCalendarResult2.getTime()),
                 () ->
                         assertThat(response.getRecords().get(13).getTime())
-                                .isEqualTo(showCalendarResult3.getTime()));
+                                .isEqualTo(showCalendarResult3.getTime()),
+                () ->
+                        assertThat(response.getRecords().get(12).getComment())
+                                .isEqualTo(showCalendarResult1.getComment()),
+                () ->
+                        assertThat(response.getTotalSubjects().get(0).getId())
+                                .isEqualTo(SubjectFixture.builder().build().getId()));
     }
 
     @Test
@@ -255,5 +269,67 @@ class StudyRecordServiceTest {
                         verify(studyRecordRepository, times(1))
                                 .findByDateAndMemberId(request.getDate(), member.getId()),
                 () -> verify(memberRepository, times(1)).findById(member.getId()));
+    }
+
+    @Test
+    void 회고와_공부한_과목을_수정한다() {
+        Member member = MemberFixture.builder().id(1L).build();
+        StudyRecord defaultStudyRecord = mock(StudyRecord.class);
+
+        EditSubjectAndCommentRequest editRequest =
+                new EditSubjectAndCommentRequest(LocalDate.now(), List.of(2L), List.of(3L), "회고수정");
+
+        given(memberRepository.existsById(member.getId())).willReturn(true);
+        given(studyRecordRepository.findByDateAndMemberId(any(LocalDate.class), any(Long.class)))
+                .willReturn(Optional.of(defaultStudyRecord));
+        given(defaultStudyRecord.getId()).willReturn(1L);
+        given(subjectRepository.findById(2L))
+                .willReturn(Optional.of(Subject.builder().id(2L).build()));
+        given(
+                        studySubjectRepository.existsBySubjectIdAndStudyRecordId(
+                                2L, defaultStudyRecord.getId()))
+                .willReturn(false);
+        given(
+                        studySubjectRepository.existsBySubjectIdAndStudyRecordId(
+                                3L, defaultStudyRecord.getId()))
+                .willReturn(true);
+
+        assertAll(
+                () -> studyRecordService.editSubjectsAndComment(editRequest, member.getId()),
+                () -> verify(memberRepository, times(1)).existsById(member.getId()),
+                () ->
+                        verify(studyRecordRepository, times(1))
+                                .findByDateAndMemberId(any(LocalDate.class), any(Long.class)),
+                () ->
+                        verify(studySubjectRepository, times(1))
+                                .existsBySubjectIdAndStudyRecordId(2L, defaultStudyRecord.getId()),
+                () -> verify(studySubjectRepository, times(1)).save(any(StudySubject.class)),
+                () ->
+                        verify(studySubjectRepository, times(1))
+                                .existsBySubjectIdAndStudyRecordId(3L, defaultStudyRecord.getId()),
+                () ->
+                        verify(studySubjectRepository, times(1))
+                                .deleteBySubjectIdAndStudyRecordId(3L, defaultStudyRecord.getId()),
+                () -> verify(defaultStudyRecord, times(1)).updateComment(any(String.class)));
+    }
+
+    @Test
+    void 공부기록이_없는_경우_회고를_추가한다() {
+        Member member = MemberFixture.builder().id(1L).build();
+        EditSubjectAndCommentRequest request =
+                new EditSubjectAndCommentRequest(LocalDate.now(), List.of(), List.of(), "새로운 회고");
+
+        given(memberRepository.existsById(member.getId())).willReturn(true);
+        given(studyRecordRepository.findByDateAndMemberId(any(LocalDate.class), any(Long.class)))
+                .willReturn(Optional.empty());
+        given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+
+        assertAll(
+                () -> studyRecordService.editSubjectsAndComment(request, member.getId()),
+                () -> verify(memberRepository, times(1)).existsById(member.getId()),
+                () ->
+                        verify(studyRecordRepository, times(1))
+                                .findByDateAndMemberId(any(LocalDate.class), any(Long.class)),
+                () -> verify(studyRecordRepository, times(1)).save(any(StudyRecord.class)));
     }
 }

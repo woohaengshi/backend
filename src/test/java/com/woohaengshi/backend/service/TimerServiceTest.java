@@ -44,7 +44,7 @@ public class TimerServiceTest {
         given(subjectRepository.findAllByMemberIdAndIsActiveTrue(member.getId()))
                 .willReturn(subjects);
         given(studyRecordRepository.findByDateAndMemberId(LocalDate.now(), member.getId()))
-                .willReturn(Optional.of(new StudyRecord(1L, 30, LocalDate.now(), member)));
+                .willReturn(Optional.of(new StudyRecord(1L, 30, LocalDate.now(), member, "")));
 
         ShowTimerResponse response = subjectService.getTimer(member.getId());
 

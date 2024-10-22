@@ -1,5 +1,7 @@
 package com.woohaengshi.backend.domain.member;
 
+import static java.util.Objects.isNull;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -95,5 +97,24 @@ public class Member {
 
     public boolean isActive() {
         return state == State.ACTIVE;
+    }
+
+    public void changeImage(String image) {
+        this.image = image;
+    }
+
+    public void updateName(String name) {
+        if (!isNull(name)) {
+            this.name = name;
+        }
+    }
+
+    public void updateCourse(Course course) {
+        this.course = course;
+    }
+
+    public void update(Member member) {
+        updateName(member.getName());
+        updateCourse(member.getCourse());
     }
 }

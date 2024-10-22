@@ -16,9 +16,10 @@ public class ShowCalendarResult {
 
     private int day;
     private int time;
+    private String comment;
     private List<SubjectResult> subjects = new ArrayList<>();
 
     public static ShowCalendarResult init(int day) {
-        return new ShowCalendarResult(day, 0, new ArrayList<>());
+        return new ShowCalendarResult(day, 0, "", new ArrayList<>());
     }
 }

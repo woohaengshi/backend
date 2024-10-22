@@ -20,8 +20,10 @@ import com.woohaengshi.backend.dto.result.SignInResult;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
 import com.woohaengshi.backend.repository.RefreshTokenRepository;
-import com.woohaengshi.backend.repository.StatisticsRepository;
 import com.woohaengshi.backend.repository.SubjectRepository;
+import com.woohaengshi.backend.repository.statistics.StatisticsRepository;
+import com.woohaengshi.backend.s3.AmazonS3Manager;
+import com.woohaengshi.backend.s3.Filepath;
 
 import jakarta.transaction.Transactional;
 
@@ -30,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional
@@ -45,6 +48,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final StatisticsRepository statisticsRepository;
     private final SubjectRepository subjectRepository;
+    private final AmazonS3Manager amazonS3Manager;
 
     @Override
     public SignInResult signIn(SignInRequest request) {
@@ -103,13 +107,20 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void signUp(SignUpRequest request) {
+    public void signUp(SignUpRequest request, MultipartFile imageFile) {
         validateAlreadyExistEmail(request);
-        Member member = request.toMember(passwordEncoder.encode(request.getPassword()));
+        String filename = !isNull(imageFile) ? saveS3Image(imageFile) : null;
+        Member member = request.toMember(passwordEncoder.encode(request.getPassword()), filename);
         memberRepository.save(member);
         getDefaultSubjects(member.getCourse())
                 .forEach(subject -> subjectRepository.save(new Subject(subject, member)));
         statisticsRepository.save(new Statistics(member));
+    }
+
+    private String saveS3Image(MultipartFile multipartFile) {
+        String keyName = amazonS3Manager.makeKeyName(Filepath.PROFILE);
+        String filename = amazonS3Manager.uploadFile(keyName, multipartFile);
+        return filename;
     }
 
     private void validateAlreadyExistEmail(SignUpRequest request) {

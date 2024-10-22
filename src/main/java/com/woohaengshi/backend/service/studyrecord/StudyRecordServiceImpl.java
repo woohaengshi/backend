@@ -1,25 +1,22 @@
 package com.woohaengshi.backend.service.studyrecord;
 
-import static com.woohaengshi.backend.exception.ErrorCode.MEMBER_NOT_FOUND;
-import static com.woohaengshi.backend.exception.ErrorCode.QUIT_MEMBER;
-import static com.woohaengshi.backend.exception.ErrorCode.STATISTICS_NOT_FOUND;
-import static com.woohaengshi.backend.exception.ErrorCode.SUBJECT_NOT_FOUND;
-import static com.woohaengshi.backend.exception.ErrorCode.TIME_HAVE_TO_GREATER_THAN_EXIST;
+import static com.woohaengshi.backend.exception.ErrorCode.*;
 
 import com.woohaengshi.backend.domain.StudyRecord;
 import com.woohaengshi.backend.domain.StudySubject;
 import com.woohaengshi.backend.domain.member.Member;
 import com.woohaengshi.backend.domain.statistics.Statistics;
 import com.woohaengshi.backend.domain.subject.Subject;
+import com.woohaengshi.backend.dto.request.studyrecord.EditSubjectAndCommentRequest;
 import com.woohaengshi.backend.dto.request.studyrecord.SaveRecordRequest;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowMonthlyRecordResponse;
 import com.woohaengshi.backend.dto.response.studyrecord.ShowYearlyRecordResponse;
 import com.woohaengshi.backend.dto.result.ShowCalendarResult;
 import com.woohaengshi.backend.exception.WoohaengshiException;
 import com.woohaengshi.backend.repository.MemberRepository;
-import com.woohaengshi.backend.repository.StatisticsRepository;
 import com.woohaengshi.backend.repository.StudySubjectRepository;
 import com.woohaengshi.backend.repository.SubjectRepository;
+import com.woohaengshi.backend.repository.statistics.StatisticsRepository;
 import com.woohaengshi.backend.repository.studyrecord.StudyRecordRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -27,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +78,10 @@ public class StudyRecordServiceImpl implements StudyRecordService {
                 studyRecordRepository.findStudyRecordInCalendar(
                         date.getYear(), date.getMonthValue(), memberId);
 
-        return ShowMonthlyRecordResponse.of(date, createCalendar(date, studyRecordInCalendar));
+        return ShowMonthlyRecordResponse.of(
+                date,
+                createCalendar(date, studyRecordInCalendar),
+                findSubjectsByMemberId(memberId));
     }
 
     private Map<Integer, ShowCalendarResult> createCalendar(
@@ -167,5 +168,64 @@ public class StudyRecordServiceImpl implements StudyRecordService {
         return memberRepository
                 .findById(memberId)
                 .orElseThrow(() -> new WoohaengshiException(MEMBER_NOT_FOUND));
+    }
+
+    private List<Subject> findSubjectsByMemberId(Long memberId) {
+        return subjectRepository.findAllByMemberIdAndIsActiveTrue(memberId);
+    }
+
+    private StudyRecord saveComment(LocalDate date, String comment, Long memberId) {
+        validateExistMember(memberId);
+
+        return studyRecordRepository
+                .findByDateAndMemberId(date, memberId)
+                .map(
+                        studyRecord -> {
+                            studyRecord.updateComment(comment);
+                            return studyRecord;
+                        })
+                .orElseGet(
+                        () ->
+                                studyRecordRepository.save(
+                                        createInitStudyRecord(date, comment, memberId)));
+    }
+
+    private StudyRecord createInitStudyRecord(LocalDate date, String comment, Long memberId) {
+        return StudyRecord.builder()
+                .date(date)
+                .member(findMemberById(memberId))
+                .comment(comment)
+                .build();
+    }
+
+    @Override
+    public void editSubjectsAndComment(EditSubjectAndCommentRequest request, Long memberId) {
+        StudyRecord studyRecord = saveComment(request.getDate(), request.getComment(), memberId);
+        if (!request.getAddedSubject().isEmpty()) {
+            addSubjects(request.getAddedSubject(), studyRecord);
+        }
+        if (!request.getDeletedSubject().isEmpty()) {
+            deleteSubjects(request.getDeletedSubject(), studyRecord);
+        }
+    }
+
+    private void addSubjects(List<Long> addedSubjects, StudyRecord studyRecord) {
+        for (Long subjectId : addedSubjects) {
+            if (!studySubjectRepository.existsBySubjectIdAndStudyRecordId(
+                    subjectId, studyRecord.getId())) {
+                Subject subject = findSubjectById(subjectId);
+                studySubjectRepository.save(createStudySubject(studyRecord, subject));
+            }
+        }
+    }
+
+    private void deleteSubjects(List<Long> deletedSubjects, StudyRecord studyRecord) {
+        for (Long subjectId : deletedSubjects) {
+            if (studySubjectRepository.existsBySubjectIdAndStudyRecordId(
+                    subjectId, studyRecord.getId())) {
+                studySubjectRepository.deleteBySubjectIdAndStudyRecordId(
+                        subjectId, studyRecord.getId());
+            }
+        }
     }
 }

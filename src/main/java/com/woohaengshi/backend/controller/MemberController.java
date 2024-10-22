@@ -7,6 +7,7 @@ import static org.springframework.http.HttpHeaders.SET_COOKIE;
 import com.woohaengshi.backend.controller.auth.CookieProvider;
 import com.woohaengshi.backend.controller.auth.MemberId;
 import com.woohaengshi.backend.dto.request.member.ChangePasswordRequest;
+import com.woohaengshi.backend.dto.request.member.EditMemberInfoRequest;
 import com.woohaengshi.backend.dto.response.member.ShowMemberResponse;
 import com.woohaengshi.backend.service.member.MemberService;
 
@@ -15,13 +16,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,5 +47,20 @@ public class MemberController {
         return ResponseEntity.noContent()
                 .header(SET_COOKIE, cookieProvider.createSignOutCookie().toString())
                 .build();
+    }
+
+    @PatchMapping("/image")
+    public ResponseEntity<Void> changeImage(
+            @RequestPart(value = "image", required = false) MultipartFile image,
+            @MemberId Long memberId) {
+        memberService.changeImage(memberId, image);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping
+    public ResponseEntity<Void> editMemberInfo(
+            @RequestBody @Valid EditMemberInfoRequest request, @MemberId Long memberId) {
+        memberService.editMemberInfo(request, memberId);
+        return ResponseEntity.ok().build();
     }
 }
